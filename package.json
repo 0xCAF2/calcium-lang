@@ -2,9 +2,17 @@
   "name": "calcium-lang",
   "version": "0.1.0",
   "description": "Calcium language interpreter",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "typescript": "^4.1.5"
   },
   "repository": {
     "type": "git",
