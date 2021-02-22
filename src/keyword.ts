@@ -1,0 +1,28 @@
+enum Keyword {
+  Assignment = "=",
+  Break = 'break',
+  Call = 'call',
+  ClassDef = 'class',
+  Comment = '#',
+  CompoundAddition = '+=',
+  CompoundSubtraction = '-=',
+  CompoundMultiplication = '*=',
+  Continue = 'continue',
+  Elif = 'elif',
+  Else = 'else',
+  EndOfCode = 'end',
+  Except = 'except',
+  ForEach = 'foreach',
+  ForRange = 'forrange',
+  FuncDef = 'def',
+  If = 'if',
+  IfBlock = 'ifblock',
+  Import = 'import',
+  Pass = 'pass',
+  Raise = 'raise',
+  Return = 'return',
+  Try = 'try',
+  While = 'while',
+}
+
+export default Keyword;
