@@ -56,6 +56,15 @@ export enum Command {
 }
 
 export enum Expression {
+  Int = 'int',
+  Str = 'str',
+  Bool = 'bool',
+  None = 'none',
+  List = 'list',
+  Dict = 'dict',
+}
+
+export enum Reference {
   Attribute = 'attr',
   Subscript = 'sub',
   Variable = 'var',
