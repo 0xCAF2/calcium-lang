@@ -1,4 +1,34 @@
-enum Keyword {
+export enum BinaryOperator {
+  Addition = '+',
+  Subtraction = '-',
+  Multiplication = '*',
+  Exponentiation = '**',
+  Division = '/',
+  FloorDivision = '//',
+  Remainder = '%',
+
+  Equal = '==',
+  NotEqual = '!=',
+  LessThan = '<',
+  LessThanOrEqual = '<=',
+  GreaterThan = '>',
+  GreaterThanOrEqual = '>=',
+
+  And = 'and',
+  Or = 'or',
+  Is = 'is',
+  IsNot = 'is not',
+  In = 'in',
+  NotIn = 'not in',
+
+  BitwiseAnd = '&',
+  BitwiseOr = '|',
+  BitwiseXor = '^',
+  LeftShift = '<<',
+  RightShift = '>>',
+}
+
+export enum Command {
   Assignment = "=",
   Break = 'break',
   Call = 'call',
@@ -25,4 +55,14 @@ enum Keyword {
   While = 'while',
 }
 
-export default Keyword;
+export enum Expression {
+  Attribute = 'attr',
+  Subscript = 'sub',
+  Variable = 'var',
+}
+
+export enum UnaryOperator {
+  BitwiseNot = '~',
+  Negative = '-_',
+  Not = 'not',
+}

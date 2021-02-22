@@ -1,5 +1,4 @@
 import Result from "./result";
-
 import Status from './status';
 
 class Engine {
@@ -7,7 +6,7 @@ class Engine {
     return this.step();
   }
   step(): Result {
-    return new Result(Status.Running);
+    return { status: Status.Running };
   }
 }
 
