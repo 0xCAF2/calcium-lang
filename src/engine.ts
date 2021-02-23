@@ -4,6 +4,7 @@ import Command from './commands/command';
 import Environment from "./environment";
 import * as Keyword from './keywords';
 import { handleAssignment } from "./handlers";
+import { threadId } from "worker_threads";
 
 class Engine {
   public env: Environment;
@@ -14,11 +15,16 @@ class Engine {
     return this.env.address.index;
   }
   run(): Result {
-    return this.step();
+    let result: Result = { status: Status.Terminated };
+    while (this.currentIndex < this.env.code.length) {
+      this.step();
+    }
+    return result;
   }
   step(): Result {
     const cmd = this.env.currentLine;
     this.handle(cmd);
+    this.env.address.index += 1;
     return { status: Status.Running };
   }
   private handle(cmd: Command) {

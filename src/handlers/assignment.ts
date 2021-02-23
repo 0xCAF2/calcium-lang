@@ -3,7 +3,7 @@ import Environment from "../environment";
 import { Handler, evaluate } from ".";
 import Assignment from '../commands/assignment';
 import Type from "../type";
-import Expression from "../expressions";
+import { Expression } from "../expressions";
 import Variable from '../expressions/variable';
 import * as Keyword from '../keywords';
 

@@ -1,4 +1,4 @@
-import Expression from '../expressions';
+import { Expression } from '../expressions';
 import Reference from '../expressions/reference';
 import Command from './command';
 
