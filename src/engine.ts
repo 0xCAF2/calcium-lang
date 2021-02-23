@@ -2,9 +2,11 @@ import Result from "./result";
 import Status from './status';
 import Command from './commands/command';
 import Environment from "./environment";
+import * as Keyword from './keywords';
+import { handleAssignment } from "./handlers";
 
 class Engine {
-  private env: Environment;
+  public env: Environment;
   constructor(public code: Command[]) {
     this.env = new Environment(code);
   }
@@ -15,7 +17,18 @@ class Engine {
     return this.step();
   }
   step(): Result {
+    const cmd = this.env.currentLine;
+    this.handle(cmd);
     return { status: Status.Running };
+  }
+  private handle(cmd: Command) {
+    switch (cmd.keyword) {
+      case Keyword.Command.Assignment:
+        handleAssignment(cmd, this.env);
+        break;
+      default:
+        break;
+    }
   }
 }
 
