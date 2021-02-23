@@ -1,4 +1,4 @@
-import Calcium from '../src/main';
+import Calcium from '../src';
 
 describe('test', () => {
   it('Calcium has an Engine object.', () => {
@@ -13,7 +13,6 @@ describe('test', () => {
     expect(Calcium.Keyword).toBeDefined();
     expect(Calcium.Keyword.Reference).toBeDefined();
     expect(Calcium.Keyword.Reference.Variable).toBe('var');
-    expect(Calcium.Index.Assignment.Lhs).toBe(3);
   });
   it('A Assignment command can be created and run.', () => {
     const assignment: Calcium.Command.Assignment = {

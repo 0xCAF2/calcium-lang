@@ -1,7 +1,7 @@
 import Result from "./result";
 import Status from './status';
 import Command from './commands/command';
-import Environment from "./environment/environment";
+import Environment from "./environment";
 
 class Engine {
   private env: Environment;
