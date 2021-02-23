@@ -7,11 +7,11 @@ type ContainerType = ListLiteral | DictLiteral;
 
 type DictLiteral = {};
 
+type ListLiteral = Expression[];
+
 interface Expression {
   kind: Keyword.Expression | Keyword.Reference;
-  value: BasicType | Reference | ContainerType;
+  value: BasicType | ContainerType | Reference;
 }
-
-type ListLiteral = Expression[];
 
 export default Expression;
