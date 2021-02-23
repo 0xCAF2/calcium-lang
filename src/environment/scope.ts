@@ -1,4 +1,4 @@
-import Type from "../type";
+import { Type } from "../type";
 
 export interface Scope {
   lookUp(key: string): Type | undefined;

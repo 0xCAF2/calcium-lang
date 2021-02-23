@@ -4,7 +4,7 @@ import { NameNotFound } from '../errors';
 import { Expression, ListLiteral, DictLiteral } from '../expressions';
 import Variable from '../expressions/variable';
 import * as Keyword from '../keywords';
-import Type from '../type';
+import { Type } from '../type';
 
 export * from './assignment';
 
