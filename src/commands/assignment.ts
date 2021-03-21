@@ -1,9 +1,8 @@
-import { Expression } from '../expressions';
-import Reference from '../expressions/reference';
+import { Expression, Reference } from '../expressions';
 import Command from './command';
 
 interface Assignment extends Command {
-  lhs: Expression;
+  lhs: Reference;
   rhs: Expression;
 }
 

@@ -55,7 +55,7 @@ export enum Command {
   While = 'while',
 }
 
-export enum Expression {
+export enum Type {
   Int = 'int',
   Str = 'str',
   Bool = 'bool',

@@ -1,11 +1,10 @@
-import Command from "../commands/command";
 import Environment from "../environment";
 import { Handler, evaluate } from ".";
-import Assignment from '../commands/assignment';
-import Type from "../type";
-import { Expression } from "../expressions";
-import Variable from '../expressions/variable';
+import { AllTypes } from "../type";
+import { Expression, Reference, Variable } from "../expressions";
 import * as Keyword from '../keywords';
+import Command from "../commands/command";
+import Assignment from "../commands/assignment";
 
 export const handleAssignment: Handler = (cmd: Command, env: Environment) => {
   const assignment = cmd as Assignment;
@@ -13,11 +12,10 @@ export const handleAssignment: Handler = (cmd: Command, env: Environment) => {
   assign(assignment.lhs, rhsValue, env);
 }
 
-const assign = (ref: Expression, value: Type, env: Environment) => {
+const assign = (ref: Reference, value: AllTypes, env: Environment) => {
   switch (ref.kind) {
     case Keyword.Reference.Variable:
-      const variable = ref.content as Variable;
-      env.context.register(variable.name, value);
+      env.context.register((ref as Variable).name, value);
       break;
     default:
       break;
