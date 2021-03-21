@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Calcium language interpreter",
   "main": "dist/index.js",
+  "types": "dict/index.d.ts",
   "files": [
     "dist"
   ],

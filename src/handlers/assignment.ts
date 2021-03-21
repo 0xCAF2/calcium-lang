@@ -1,6 +1,6 @@
 import Environment from "../environment";
 import { Handler, evaluate } from ".";
-import { BuiltinTypes } from "../type";
+import { SomeType } from "../type";
 import { Reference, Variable } from "../expressions";
 import * as Keyword from '../keywords';
 import Command from "../commands/command";
@@ -12,7 +12,7 @@ export const handleAssignment: Handler = (cmd: Command, env: Environment) => {
   assign(assignment.lhs, rhsValue, env);
 }
 
-const assign = (ref: Reference, value: BuiltinTypes, env: Environment) => {
+const assign = (ref: Reference, value: SomeType, env: Environment) => {
   switch (ref.kind) {
     case Keyword.Reference.Variable:
       env.context.register((ref as Variable).name, value);
