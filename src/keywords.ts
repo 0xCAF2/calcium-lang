@@ -55,7 +55,7 @@ export enum Command {
   While = 'while',
 }
 
-export enum Type {
+export enum BuiltinType {
   Int = 'int',
   Str = 'str',
   Bool = 'bool',

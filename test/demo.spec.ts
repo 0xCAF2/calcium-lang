@@ -9,7 +9,7 @@ describe('test', () => {
     expect(Calcium.Keyword.Reference).toBeDefined();
     expect(Calcium.Keyword.Reference.Variable).toBe('var');
   });
-  it('A Assignment command can be created and run.', () => {
+  it('An assignment command can be created and run.', () => {
     const code: Calcium.Command.Line[] = [
       {"indent": 1, "keyword": "#", "version": "0.1.0"},
       {"indent": 1, "keyword": "=", "lhs": { "kind": "var", "name": "x" }, "rhs": { "kind": "int", "value": 7 }},

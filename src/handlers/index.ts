@@ -3,22 +3,22 @@ import Environment from '../environment';
 import { NameNotFound } from '../errors';
 import { Expression, ListLiteral, Variable } from '../expressions';
 import * as Keyword from '../keywords';
-import { AllTypes } from '../type';
+import { BuiltinTypes } from '../type';
 
 export * from './assignment';
 
 export type Handler = (cmd: Command, env: Environment) => void;
 
-export function evaluate(expr: Expression, env: Environment): AllTypes {
+export function evaluate(expr: Expression, env: Environment): BuiltinTypes {
   const kind = expr.kind;
   switch (expr.kind) {
-    case Keyword.Type.Int:
-    case Keyword.Type.Str:
-    case Keyword.Type.Bool:
-    case Keyword.Type.None:
+    case Keyword.BuiltinType.Int:
+    case Keyword.BuiltinType.Str:
+    case Keyword.BuiltinType.Bool:
+    case Keyword.BuiltinType.None:
       return expr.value;
-    case Keyword.Type.List:
-      const list: AllTypes[] = [];
+    case Keyword.BuiltinType.List:
+      const list: BuiltinTypes[] = [];
       for (let elem of expr.value as ListLiteral) {
         list.push(evaluate(elem, env));
       }

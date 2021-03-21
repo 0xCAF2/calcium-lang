@@ -6,7 +6,7 @@ export type DictLiteral = {};
 export type ListLiteral = Expression[];
 
 export interface Value {
-  kind: Keyword.Type;
+  kind: Keyword.BuiltinType;
   value: BasicTypes | ListLiteral | DictLiteral;
 }
 
