@@ -9,10 +9,10 @@ export enum BinaryOperator {
 
   Equal = '==',
   NotEqual = '!=',
-  LessThan = '<',
-  LessThanOrEqual = '<=',
   GreaterThan = '>',
   GreaterThanOrEqual = '>=',
+  LessThan = '<',
+  LessThanOrEqual = '<=',
 
   And = 'and',
   Or = 'or',
@@ -31,7 +31,7 @@ export enum BinaryOperator {
 export enum Command {
   Assignment = "=",
   Break = 'break',
-  Call = 'call',
+  Call = 'call', // for an expression statement of a function call
   ClassDef = 'class',
   Comment = '#',
   CompoundAddition = '+=',
@@ -42,11 +42,9 @@ export enum Command {
   Else = 'else',
   EndOfCode = 'end',
   Except = 'except',
-  ForEach = 'foreach',
-  ForRange = 'forrange',
+  For = 'for',
   FuncDef = 'def',
   If = 'if',
-  IfBlock = 'ifblock',
   Import = 'import',
   Pass = 'pass',
   Raise = 'raise',
@@ -56,18 +54,22 @@ export enum Command {
 }
 
 export enum BuiltinType {
-  Int = 'int',
-  Str = 'str',
   Bool = 'bool',
-  None = 'none',
-  List = 'list',
   Dict = 'dict',
+  Int = 'int',
+  List = 'list',
+  None = 'none',
+  Str = 'str',
 }
 
 export enum Reference {
   Attribute = 'attr',
   Subscript = 'sub',
   Variable = 'var',
+}
+
+export enum Expression {
+  Call = 'call',
 }
 
 export enum UnaryOperator {

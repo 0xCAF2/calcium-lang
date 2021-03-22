@@ -5,11 +5,6 @@ export type DictLiteral = {};
 
 export type ListLiteral = Expression[];
 
-export interface Value {
-  kind: Keyword.BuiltinType;
-  value: BasicTypes | ListLiteral | DictLiteral;
-}
-
 export interface Reference {
   kind: Keyword.Reference;
 }
@@ -18,4 +13,9 @@ export interface Variable extends Reference {
   name: string;
 }
 
-export type Expression = Value | Reference;
+export interface Subscript extends Reference {
+  container: Reference;
+  indexOrKey: number | string;
+}
+
+export type Expression = BasicTypes | Reference;

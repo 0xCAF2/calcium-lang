@@ -12,8 +12,10 @@ describe('test', () => {
   it('An assignment command can be created and run.', () => {
     const code: Calcium.Command.Line[] = [
       {"indent": 1, "keyword": "#", "version": "0.1.0"},
-      {"indent": 1, "keyword": "=", "lhs": { "kind": "var", "name": "x" }, "rhs": { "kind": "int", "value": 7 }},
-      {"indent": 1, "keyword": "=", "lhs": { "kind": "var", "name": "y" }, "rhs": { "kind": "var", "name": "x" }},
+      {"indent": 1, "keyword": "=", "lhs": {"kind": "var", "name": "x"}, "rhs": 7},
+      {"indent": 1, "keyword": "=", "lhs": {"kind": "var", "name": "y"}, "rhs": {"kind": "var", "name": "x"}},
+      {"indent": 1, "keyword": "=", "lhs": {"kind": "var", "name": "z"}, "rhs": [{"kind": "var", "name": "x"}, {"kind": "var", "name": "x"}, 73]},
+      {"indent": 1, "keyword": "=", "lhs": {"kind": "sub", "container": {"kind": "var", "name": "z"}, "indexOrKey": 0}, "rhs": 5},
       {"indent": 1, "keyword": "end"}
     ];
     const engine = new Calcium.Engine(code);
@@ -21,5 +23,6 @@ describe('test', () => {
     expect(engine.run().status).toBe(Calcium.Status.Terminated);
     expect(engine.env.context.lookUp('x')).toBe(7);
     expect(engine.env.context.lookUp('y')).toBe(7);
+    expect(engine.env.context.lookUp('z')).toEqual([5, 7, 73]);
   });
 });

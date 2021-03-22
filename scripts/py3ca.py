@@ -8,7 +8,8 @@ VERSION = '0.1.0'
 PROPERTY_INDENT = 'indent'
 PROPERTY_KEYWORD = 'keyword'
 PROPERTY_KIND = 'kind'
-PROPERTY_CONTENT = 'content'
+PROPERTY_CONTAINER = 'container'
+PROPERTY_INDEX_OR_KEY = 'indexOrKey'
 PROPERTY_NAME = 'name'
 PROPERTY_LHS = 'lhs'
 PROPERTY_RHS = 'rhs'
@@ -376,10 +377,7 @@ class Py3CaVisitor(ast.NodeVisitor):
         return elems
     
     def visit_List(self, node):
-        # List must be nested
-        return [
-            [self.visit(e) for e in node.elts]
-        ]
+        return [self.visit(e) for e in node.elts]
     
     def visit_Dict(self, node):
         obj = {}
@@ -396,9 +394,7 @@ class Py3CaVisitor(ast.NodeVisitor):
     def visit_Name(self, node):
         return {
             PROPERTY_KIND: KEYWORD_VARIABLE,
-            PROPERTY_CONTENT: {
-                PROPERTY_NAME: node.id
-            }
+            PROPERTY_NAME: node.id,
         }
     
     def visit_NameConstant(self, node):
@@ -417,13 +413,17 @@ class Py3CaVisitor(ast.NodeVisitor):
     
     def visit_Subscript(self, node):
         if isinstance(node.slice.value, ast.Num):
-            sub = node.slice.value.n
+            index_or_key = node.slice.value.n
         elif isinstance(node.slice.value, ast.Str):
-            sub = node.slice.value.s
+            index_or_key = node.slice.value.s
         else:
-            sub = self.visit(node.slice.value)
+            index_or_key = self.visit(node.slice.value)
         value = self.visit(node.value)
-        return [KEYWORD_SUBSCRIPT, value, sub]
+        return {
+            PROPERTY_KIND: KEYWORD_SUBSCRIPT,
+            PROPERTY_CONTAINER: value,
+            PROPERTY_INDEX_OR_KEY: index_or_key,
+        }
 
     def visit_Expr(self, node):
         if isinstance(node.value, ast.Call):
