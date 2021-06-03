@@ -1,8 +1,8 @@
 {
   "name": "calcium-lang",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Calcium language interpreter",
-  "main": "src/index.ts",
+  "main": "calcium.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,8 +13,7 @@
   "keywords": [
     "calcium",
     "language",
-    "interpreter",
-    "json"
+    "interpreter"
   ],
   "author": "0xCAF2 <ht@0xcaf2.dev>",
   "license": "MIT",
