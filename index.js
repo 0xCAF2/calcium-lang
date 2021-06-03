@@ -1,5 +1,5 @@
 'use strict';
-let calcium = {};
+const calcium = {};
 ((calcium) => {
   // the value returned by Engine.step() and Engine.run().
   calcium.result = {
