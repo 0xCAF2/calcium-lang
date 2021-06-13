@@ -22,6 +22,10 @@
   },
   "homepage": "https://github.com/0xCAF2/calcium-lang#readme",
   "devDependencies": {
-    "eslint": "^7.27.0"
+    "eslint": "^7.27.0",
+    "jest": "^27.0.4"
+  },
+  "scripts": {
+    "test": "jest"
   }
 }

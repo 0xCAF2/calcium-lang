@@ -3,6 +3,7 @@ node_modules
 
 dist
 
+# remove TypeScript code
 src
 tsconfig.json
 
