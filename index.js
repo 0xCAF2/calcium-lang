@@ -23,7 +23,11 @@ class Engine {
     }
     this.environment = new Environment(code);
     this._breakpoints = [];
-    this.parser = parser ?? new Parser();
+    if (parser) {
+      this.parser = parser;
+    } else {
+      this.parser = new Parser();
+    }
   }
   /// set the index as a breakpoint
   addBreakpoint(index) {
@@ -1158,8 +1162,11 @@ class Environment {
 
     this.global = _global;
 
-    // given by Engine
-    this.parser = parser ?? new Parser();
+    if (parser) {
+      this.parser = parser;
+    } else {
+      this.parser = new Parser();
+    }
 
     // built-in print function uses this function.
     this.print = null;
