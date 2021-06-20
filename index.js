@@ -1980,9 +1980,9 @@ class UnaryOperation {
 
     const table = {};
 
-    table[Cacium.Keyword.NOT] = (operand) => !operand;
-    table[Cacium.Keyword.NEGATIVE] = (operand) => -operand;
-    table[Cacium.Keyword.BITWISE_NOT] = (operand) => ~operand;
+    table[Calcium.Keyword.NOT] = (operand) => !operand;
+    table[Calcium.Keyword.NEGATIVE] = (operand) => -operand;
+    table[Calcium.Keyword.BITWISE_NOT] = (operand) => ~operand;
 
     this.table = table;
   }
@@ -2007,9 +2007,9 @@ class UnaryOperation {
     }
   }
   get description() {
-    if (this.operator === Cacium.Keyword.NEGATIVE) {
+    if (this.operator === Calcium.Keyword.NEGATIVE) {
       return "-" + wrapDescriptionByParen(this.operand);
-    } else if (this.operator === Cacium.Keyword.NOT) {
+    } else if (this.operator === Calcium.Keyword.NOT) {
       return "not " + wrapDescriptionByParen(this.operand);
     } else {
       return this.operator + wrapDescriptionByParen(this.operand);
