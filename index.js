@@ -1906,7 +1906,7 @@ class Subscript {
   }
   evaluate(env) {
     const obj = this.lookUp(env);
-    if (hasException) return null;
+    if (env.hasException) return null;
     const index = env.evaluate(this.indexExpr);
     const value = obj[index];
     if (value !== undefined) {
