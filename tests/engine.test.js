@@ -61,5 +61,29 @@ test("all_command.json", () => {
   engine.setPrintFunction((desc) => {
     expect(desc).toMatch("42");
   });
-  engine.run();
+  const result = engine.run();
+  expect(result).toEqual(Calcium.Result.TERMINATED);
+});
+
+test('full_width.json', () => {
+  const code = [
+    [1, [], "#", "0_18"],
+    [1, [], "=", ["var", "s"], "４２ 42"],
+    [1, [], "=", ["var", "n"], 0],
+    [1, [], "for each", "c", ["var", "s"]],
+      [2, [], "call", ["var", "is_number"], ["attr", "c", "isdigit"], []],
+      [2, [], "ifs"],
+        [3, [], "if", ["var", "is_number"]],
+          [4, [], "call", ["var", "a"], ["var", "int"], [["var", "c"]]],
+          [4, [], "+=", ["var", "n"], ["var", "a"]],
+    [1, [], "call", null, ["var", "print"], [["var", "n"]]],
+    [1, [], "end"]
+  ];
+
+  const engine = new Calcium.Engine(code);
+  engine.setPrintFunction((desc) => {
+    expect(desc).toMatch("12");
+  });
+  const result = engine.run();
+  expect(result).toEqual(Calcium.Result.TERMINATED);
 });

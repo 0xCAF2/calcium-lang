@@ -62,7 +62,7 @@ class Engine {
   /// evaluate expr when stopped at a breakpoint
   debugPrint(expr, callback) {
     const exprObj = this.parser.parseExpression(expr);
-    const result = createDescription(exprObj.debugEvaluate(this.environment));
+    const result = describe(exprObj.debugEvaluate(this.environment));
     callback(result);
   }
   /// create a built-in function from the outside of Calcium
@@ -696,12 +696,12 @@ class Attribute {
   getAttribute(obj, name) {
     if (obj instanceof Array) {
       if (name === "append" || name in methodNames["append"]) {
-        return new BuiltinFuncObj(name, function (args, env) {
+        return new BuiltinFuncObj(name, function(args, env) {
           obj.push(env.evaluate(args[0]));
           return null;
         });
       } else if (name === "pop" || name in methodNames["pop"]) {
-        return new BuiltinFuncObj(name, function (args, env) {
+        return new BuiltinFuncObj(name, function(args, env) {
           let value;
           if (args.length === 0) {
             value = obj.pop();
@@ -718,7 +718,7 @@ class Attribute {
           }
         });
       } else if (name === "insert" || name in methodNames["insert"]) {
-        return new BuiltinFuncObj(name, function (args, env) {
+        return new BuiltinFuncObj(name, function(args, env) {
           let index = env.evaluate(args[0]);
           const elem = env.evaluate(args[1]);
           if (index > obj.length) {
@@ -730,17 +730,26 @@ class Attribute {
       }
     } else if (obj instanceof String || typeof obj === "string") {
       if (name === "find" || name in methodNames["find"]) {
-        return new BuiltinFuncObj(name, function (args, env) {
+        return new BuiltinFuncObj(name, function(args, env) {
           const sub = env.evaluate(args[0]);
           return obj.indexOf(sub);
         });
       } else if (name === "replace" || name in methodNames["replace"]) {
-        return new BuiltinFuncObj(name, function (args, env) {
+        return new BuiltinFuncObj(name, function(args, env) {
           let fromStr = env.evaluate(args[0]);
           let toStr = env.evaluate(args[1]);
           return obj.replace(new RegExp(fromStr, "g"), toStr);
         });
-        // TODO: add split()
+      } else if (name === "split" || name in methodNames["split"]) {
+        return new BuiltinFuncObj(name, function(args, env) {
+          let separator = env.evaluate(args[0]);
+          return obj.split(separator);
+        });
+      } else if (name === "isdigit" || name in methodNames["isdigit"]) {
+        return new BuiltinFuncObj(name, function() {
+          const halfWidth = convertFullWidthNumbers(obj);
+          return /^\d+$/.test(halfWidth);
+        });
       }
     } else if (
       (name === "keys" || name in methodNames["keys"]) &&
@@ -757,7 +766,7 @@ class Attribute {
         obj instanceof Module
       )
     ) {
-      return new BuiltinFuncObj(name, function () {
+      return new BuiltinFuncObj(name, function() {
         return Object.keys(obj);
       });
     } else {
@@ -1069,7 +1078,7 @@ class Namespace {
       table.push({
         name: name,
         type: type,
-        value: createDescription(value),
+        value: describe(value),
       });
     }
     return table;
@@ -1214,8 +1223,9 @@ class Environment {
     _builtinFunctions[builtin.name.INT] = new BuiltinFuncObj(
       builtin.name.INT,
       (args, env) => {
-        const valueToParse = env.evaluate(args[0]);
+        let valueToParse = env.evaluate(args[0]);
         try {
+          valueToParse = convertFullWidthNumbers(valueToParse);
           return parseInt(valueToParse);
         } catch {
           const error = new CannotParseAsIntError();
@@ -1345,7 +1355,7 @@ class Environment {
       (args, env) => {
         const descriptions = args
           .map((v) => env.evaluate(v))
-          .map((v) => createDescription(v));
+          .map((v) => describe(v));
         const strToPrint = descriptions.join(" ") + "\n";
         if (!env.hasException && _self.print) {
           _self.print(strToPrint);
@@ -1357,7 +1367,7 @@ class Environment {
     _builtinFunctions[builtin.name.STR] = new BuiltinFuncObj(
       builtin.name.STR,
       (args, env) => {
-        return createDescription(env.evaluate(args[0]));
+        return describe(env.evaluate(args[0]));
       }
     );
 
@@ -1861,6 +1871,7 @@ class Subscript {
   }
   assign(value, env) {
     const obj = this.lookUp(env);
+    if (env.hasException) return null;
     if (obj instanceof String || typeof obj === "string") {
       const error = new SubscriptNotAllowedError();
       env.raiseException(error.name);
@@ -1895,6 +1906,7 @@ class Subscript {
   }
   evaluate(env) {
     const obj = this.lookUp(env);
+    if (hasException) return null;
     const index = env.evaluate(this.indexExpr);
     const value = obj[index];
     if (value !== undefined) {
@@ -1921,7 +1933,7 @@ class Subscript {
     }
   }
   get description() {
-    return this.objRef.description + `[${createDescription(this.indexExpr)}]`;
+    return this.objRef.description + `[${describe(this.indexExpr)}]`;
   }
 }
 
@@ -2036,7 +2048,7 @@ class Variable {
 }
 
 // returns representation for print()
-function createDescription(obj) {
+function describe(obj) {
   if (
     typeof obj === "number" ||
     typeof obj === "string" ||
@@ -2052,7 +2064,7 @@ function createDescription(obj) {
         if (typeof elem === "string" || elem instanceof String) {
           desc.push(`'${elem}'`);
         } else {
-          desc.push(createDescription(elem));
+          desc.push(describe(elem));
         }
       }
     }
@@ -2089,7 +2101,7 @@ function createDescription(obj) {
         if (typeof value === "string" || value instanceof String) {
           kvStr = `${kvStr}'${value}'`;
         } else {
-          kvStr = kvStr + createDescription(value);
+          kvStr = kvStr + describe(value);
         }
       }
       desc.push(kvStr);
@@ -2115,9 +2127,9 @@ function registerExceptionClass(jsErrorClass, env) {
 
 function wrapDescriptionByParen(obj) {
   if (obj instanceof BinaryOperation || obj instanceof UnaryOperation) {
-    return `(${createDescription(obj)})`;
+    return `(${describe(obj)})`;
   } else {
-    return createDescription(obj);
+    return describe(obj);
   }
 }
 
@@ -2215,9 +2227,11 @@ const methodNames = {
   append: {},
   find: {},
   insert: {},
+  isdigit: {},
   keys: {},
   pop: {},
   replace: {},
+  split: {},
 };
 
 // commands
@@ -2701,6 +2715,21 @@ class While {
     const block = new Block(Calcium.BlockKind.WHILE, env.address, begin, end);
     env.beginBlock(block);
   }
+}
+
+function convertFullWidthNumbers(str) {
+  return (
+    str.replace(/１/g, '1')
+    .replace(/２/g, '2')
+    .replace(/３/g, '3')
+    .replace(/４/g, '4')
+    .replace(/５/g, '5')
+    .replace(/６/g, '6')
+    .replace(/７/g, '7')
+    .replace(/８/g, '8')
+    .replace(/９/g, '9')
+    .replace(/０/g, '0')
+  );
 }
 
 function executeConditionalBlock(env) {
