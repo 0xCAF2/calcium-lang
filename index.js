@@ -1877,7 +1877,10 @@ class Subscript {
       env.raiseException(error.name);
       return null;
     }
-    const index = env.evaluate(this.indexExpr);
+    let index = env.evaluate(this.indexExpr);
+    if (index < 0) {
+      index += obj.length;
+    }
     obj[index] = value;
   }
   debugEvaluate(env) {
@@ -1907,7 +1910,10 @@ class Subscript {
   evaluate(env) {
     const obj = this.lookUp(env);
     if (env.hasException) return null;
-    const index = env.evaluate(this.indexExpr);
+    let index = env.evaluate(this.indexExpr);
+    if (index < 0) {
+      index += obj.length;
+    }
     const value = obj[index];
     if (value !== undefined) {
       return value;
