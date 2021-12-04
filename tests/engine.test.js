@@ -111,3 +111,29 @@ test('negative_index.json', () => {
   const result = engine.run();
   expect(result).toEqual(Calcium.Result.TERMINATED);
 });
+
+test('pop.json', () => {
+  const code = [
+    [1, [], "#", "0_18"],
+    [1, [], "=", ["var", "l"], [[0, 1, 2]]],
+    [1, [], "call", ["var", "v"], ["attr", "l", "pop"], []],
+    [1, [], "call", null, ["var", "print"], [["var", "v"]]],
+    [1, [], "call", null, ["attr", "l", "append"], [["var", "v"]]],
+    [1, [], "call", ["var", "v"], ["attr", "l", "pop"], [0]],
+    [1, [], "call", null, ["var", "print"], [["var", "v"]]],
+    [1, [], "end"]
+  ]
+
+  const engine = new Calcium.Engine(code)
+  let counter = 0
+  engine.setPrintFunction((desc) => {
+    if (counter === 0) {
+      expect(desc).toMatch(/^2\n$/)
+      ++counter
+    } else {
+      expect(desc).toMatch(/^0\n$/)
+    }
+  })
+  const result = engine.run()
+  expect(result).toEqual(Calcium.Result.TERMINATED)
+})
