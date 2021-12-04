@@ -707,7 +707,7 @@ class Attribute {
             value = obj.pop();
           } else {
             let index = env.evaluate(args[0]);
-            value = obj.splice(index, 1);
+            value = obj.splice(index, 1)[0];
           }
           if (value !== undefined) {
             return value;
