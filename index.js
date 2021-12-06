@@ -696,12 +696,12 @@ class Attribute {
   getAttribute(obj, name) {
     if (obj instanceof Array) {
       if (name === "append" || name in methodNames["append"]) {
-        return new BuiltinFuncObj(name, function(args, env) {
+        return new BuiltinFuncObj(name, function (args, env) {
           obj.push(env.evaluate(args[0]));
           return null;
         });
       } else if (name === "pop" || name in methodNames["pop"]) {
-        return new BuiltinFuncObj(name, function(args, env) {
+        return new BuiltinFuncObj(name, function (args, env) {
           let value;
           if (args.length === 0) {
             value = obj.pop();
@@ -718,7 +718,7 @@ class Attribute {
           }
         });
       } else if (name === "insert" || name in methodNames["insert"]) {
-        return new BuiltinFuncObj(name, function(args, env) {
+        return new BuiltinFuncObj(name, function (args, env) {
           let index = env.evaluate(args[0]);
           const elem = env.evaluate(args[1]);
           if (index > obj.length) {
@@ -730,23 +730,23 @@ class Attribute {
       }
     } else if (obj instanceof String || typeof obj === "string") {
       if (name === "find" || name in methodNames["find"]) {
-        return new BuiltinFuncObj(name, function(args, env) {
+        return new BuiltinFuncObj(name, function (args, env) {
           const sub = env.evaluate(args[0]);
           return obj.indexOf(sub);
         });
       } else if (name === "replace" || name in methodNames["replace"]) {
-        return new BuiltinFuncObj(name, function(args, env) {
+        return new BuiltinFuncObj(name, function (args, env) {
           let fromStr = env.evaluate(args[0]);
           let toStr = env.evaluate(args[1]);
           return obj.replace(new RegExp(fromStr, "g"), toStr);
         });
       } else if (name === "split" || name in methodNames["split"]) {
-        return new BuiltinFuncObj(name, function(args, env) {
+        return new BuiltinFuncObj(name, function (args, env) {
           let separator = env.evaluate(args[0]);
           return obj.split(separator);
         });
       } else if (name === "isdigit" || name in methodNames["isdigit"]) {
-        return new BuiltinFuncObj(name, function() {
+        return new BuiltinFuncObj(name, function () {
           const halfWidth = convertFullWidthNumbers(obj);
           return /^\d+$/.test(halfWidth);
         });
@@ -766,7 +766,7 @@ class Attribute {
         obj instanceof Module
       )
     ) {
-      return new BuiltinFuncObj(name, function() {
+      return new BuiltinFuncObj(name, function () {
         return Object.keys(obj);
       });
     } else {
@@ -786,8 +786,26 @@ class BinaryOperation {
 
     const table = {};
 
-    table[Calcium.Keyword.ADDITION] = (leftOperand, rightOperand) =>
-      leftOperand + rightOperand;
+    table[Calcium.Keyword.ADDITION] = (leftOperand, rightOperand) => {
+      if (typeof leftOperand === "number" && typeof rightOperand === "number")
+        return leftOperand + rightOperand;
+      else if (
+        (typeof leftOperand === "string" || leftOperand instanceof String) &&
+        (typeof rightOperand === "string" || rightOperand instanceof String)
+      ) {
+        return leftOperand + rightOperand;
+      } else if (
+        leftOperand instanceof Array &&
+        rightOperand instanceof Array
+      ) {
+        const list = [];
+        list.concat(leftOperand);
+        list.concat(rightOperand);
+        return list;
+      } else {
+        throw new TypeOfOperandNotMatchError();
+      }
+    };
 
     table[Calcium.Keyword.SUBTRACTION] = (leftOperand, rightOperand) =>
       leftOperand - rightOperand;
@@ -973,9 +991,14 @@ class BinaryOperation {
     try {
       return operatorFunction(leftOperandValue, rightOperandValue);
     } catch (e) {
-      const error = new InvalidOperationError();
-      env.raiseException(error.name, [this.operator]);
-      return null;
+      if (e instanceof TypeOfOperandNotMatchError) {
+        env.raiseException(e.name);
+        return null;
+      } else {
+        const error = new InvalidOperationError();
+        env.raiseException(error.name, [this.operator]);
+        return null;
+      }
     }
   }
   get description() {
@@ -1404,6 +1427,7 @@ class Environment {
     registerExceptionClass(InvalidBreakError, this);
     registerExceptionClass(InvalidContinueError, this);
     registerExceptionClass(InvalidExceptionError, this);
+    registerExceptionClass(InvalidTypeError, this);
     registerExceptionClass(InvalidOperationError, this);
     registerExceptionClass(InvalidReturnError, this);
     registerExceptionClass(ModuleNotImportedError, this);
@@ -1412,6 +1436,7 @@ class Environment {
     registerExceptionClass(SubscriptNotAllowedError, this);
     registerExceptionClass(SuperCallFailedError, this);
     registerExceptionClass(SuperclassNotValidError, this);
+    registerExceptionClass(TypeOfOperandNotMatchError, this);
     registerExceptionClass(ValueNotFoundError, this);
   }
   // enter a block if its begin method returns true
@@ -1878,8 +1903,15 @@ class Subscript {
       return null;
     }
     let index = env.evaluate(this.indexExpr);
-    if (index < 0) {
-      index += obj.length;
+    if (obj instanceof Array) {
+      if (typeof index !== "number") {
+        const error = new InvalidTypeError();
+        env.raiseException(error.name);
+        return null;
+      }
+      if (index < 0) {
+        index += obj.length;
+      }
     }
     obj[index] = value;
   }
@@ -1911,8 +1943,19 @@ class Subscript {
     const obj = this.lookUp(env);
     if (env.hasException) return null;
     let index = env.evaluate(this.indexExpr);
-    if (index < 0) {
-      index += obj.length;
+    if (
+      obj instanceof Array ||
+      typeof obj === "string" ||
+      obj instanceof String
+    ) {
+      if (typeof index !== "number") {
+        const error = new InvalidTypeError();
+        env.raiseException(error.name);
+        return null;
+      }
+      if (index < 0) {
+        index += obj.length;
+      }
     }
     const value = obj[index];
     if (value !== undefined) {
@@ -2724,18 +2767,17 @@ class While {
 }
 
 function convertFullWidthNumbers(str) {
-  return (
-    str.replace(/１/g, '1')
-    .replace(/２/g, '2')
-    .replace(/３/g, '3')
-    .replace(/４/g, '4')
-    .replace(/５/g, '5')
-    .replace(/６/g, '6')
-    .replace(/７/g, '7')
-    .replace(/８/g, '8')
-    .replace(/９/g, '9')
-    .replace(/０/g, '0')
-  );
+  return str
+    .replace(/１/g, "1")
+    .replace(/２/g, "2")
+    .replace(/３/g, "3")
+    .replace(/４/g, "4")
+    .replace(/５/g, "5")
+    .replace(/６/g, "6")
+    .replace(/７/g, "7")
+    .replace(/８/g, "8")
+    .replace(/９/g, "9")
+    .replace(/０/g, "0");
 }
 
 function executeConditionalBlock(env) {
@@ -2917,6 +2959,14 @@ class InvalidExceptionError extends Error {
   }
 }
 
+class InvalidTypeError extends Error {
+  constructor(message, index) {
+    super(message);
+    this.index = index;
+    this.name = "InvalidTypeError";
+  }
+}
+
 class InvalidOperationError extends Error {
   constructor(message, index) {
     super(message);
@@ -2982,6 +3032,14 @@ class SuperclassNotValidError extends Error {
   }
 }
 
+class TypeOfOperandNotMatchError extends Error {
+  constructor(message, index) {
+    super(message);
+    this.index = index;
+    this.name = "TypeOfOperandNotMatchError";
+  }
+}
+
 class ValueNotFoundError extends Error {
   constructor(message, index, key) {
     super(message);
@@ -3004,6 +3062,7 @@ Calcium.Error = {
   InvalidBreakError,
   InvalidContinueError,
   InvalidExceptionError,
+  InvalidTypeError,
   InvalidOperationError,
   InvalidReturnError,
   ModuleNotImportedError,
@@ -3012,6 +3071,7 @@ Calcium.Error = {
   SubscriptNotAllowedError,
   SuperCallFailedError,
   SuperclassNotValidError,
+  TypeOfOperandNotMatchError,
   ValueNotFoundError,
 };
 
