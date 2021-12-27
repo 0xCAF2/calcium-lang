@@ -1,6 +1,6 @@
 {
   "name": "calcium-lang",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Calcium language interpreter",
   "main": "index.js",
   "files": [
