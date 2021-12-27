@@ -1,12 +1,12 @@
 import Result from "./result";
-import Status from './status';
+import Status from "./status";
 import Environment from "./environment";
-import * as Keyword from './keywords';
+import * as Keyword from "./keywords";
 import { handleAssignment } from "./handlers";
 import Command from "./commands/command";
 
 class Engine {
-  public env: Environment;
+  env: Environment;
   constructor(public code: Command[]) {
     this.env = new Environment(code);
   }
