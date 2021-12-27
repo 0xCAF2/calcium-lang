@@ -43,40 +43,30 @@ print(result)
 
 will be translated to:
 
-```javascript
+```json
 [
   [1, [], "def", "is_remainder_zero", ["x", "y"]],
-  [2, [], "=", ["var", "r"], ["==", ["%", ["var", "x"], ["var", "y"]], 0]],
-  [2, [], "return", ["var", "r"]],
+    [2, [], "=", ["var", "r"], ["==", ["%", ["var", "x"], ["var", "y"]], 0]],
+    [2, [], "return", ["var", "r"]],
   [1, [], "=", ["var", "prime"], [[]]],
   [1, [], "for range", "i", [101]],
-  [2, [], "=", ["var", "j"], 2],
-  [2, [], "while", true],
-  [3, [], "ifs"],
-  [4, [], "if", [">=", ["var", "j"], ["var", "i"]]],
-  [5, [], "break"],
-  [
-    3,
-    [],
-    "call",
-    ["var", "is_zero"],
-    ["var", "is_remainder_zero"],
-    [
-      ["var", "i"],
-      ["var", "j"],
-    ],
-  ],
-  [3, [], "ifs"],
-  [4, [], "if", ["var", "is_zero"]],
-  [5, [], "break"],
-  [4, [], "else"],
-  [5, [], "+=", ["var", "j"], 1],
-  [2, [], "ifs"],
-  [3, [], "if", ["==", ["var", "j"], ["var", "i"]]],
-  [4, [], "call", null, ["attr", "prime", "append"], [["var", "i"]]],
+    [2, [], "=", ["var", "j"], 2],
+    [2, [], "while", true],
+      [3, [], "ifs"],
+        [4, [], "if", [">=", ["var", "j"], ["var", "i"]]],
+          [5, [], "break"],
+      [3, [], "call", ["var", "is_zero"], ["var", "is_remainder_zero"], [["var", "i"], ["var", "j"]]],
+      [3, [], "ifs"],
+        [4, [], "if", ["var", "is_zero"]],
+          [5, [], "break"],
+        [4, [], "else"],
+          [5, [], "+=", ["var", "j"], 1],
+    [2, [], "ifs"],
+      [3, [], "if", ["==", ["var", "j"], ["var", "i"]]],
+        [4, [], "call", null, ["attr", "prime", "append"], [["var", "i"]]],
   [1, [], "=", ["var", "result"], ["var", "prime"]],
   [1, [], "call", null, ["var", "print"], [["var", "result"]]],
-  [1, [], "end"],
+  [1, [], "end"]
 ];
 ```
 
@@ -87,8 +77,8 @@ Calcium's one line corresponds to Python's.
 You can use a calcium engine in a Web page or an embedded WebView.
 
 ```javascript
-const calcium = require("calcium-lang");
-const engine = new calcium.Engine(code); // code should be a JSON array.
+import { Calcium as Ca } from "calcium-lang";
+const engine = new Ca.Engine(code); // code should be a JSON array.
 ```
 
 creates the runtime engine. To output from print function set a callback as:
