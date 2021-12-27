@@ -16,7 +16,7 @@ class Engine {
       // parse from string representation
       code = JSON.parse(jsonArray);
     } else if (jsonArray instanceof Array) {
-      // jsonArray is already Calcium code
+      // jsonArray is already Calcium code.
       code = jsonArray;
     } else {
       code = [];
@@ -222,6 +222,8 @@ Calcium.Index = {
 
   SUBSCRIPT_REFERENCED_OBJECT: 1,
   SUBSCRIPT_INDEX_EXPR: 2,
+  SUBSCRIPT_SLICE_START: 2,
+  SUBSCRIPT_SLICE_END: 3,
 
   UNARY_OPERAND: 1,
 
@@ -613,10 +615,20 @@ class Parser {
       const objRef = this.parseReference(
         arrayObj[Calcium.Index.SUBSCRIPT_REFERENCED_OBJECT]
       );
-      const indexExpr = this.parseExpression(
-        arrayObj[Calcium.Index.SUBSCRIPT_INDEX_EXPR]
-      );
-      return new Subscript(objRef, indexExpr);
+      if (arrayObj.length === 3) {
+        const indexExpr = this.parseExpression(
+          arrayObj[Calcium.Index.SUBSCRIPT_INDEX_EXPR]
+        );
+        return new Subscript(objRef, indexExpr);
+      } else {
+        const sliceStart = this.parseExpression(
+          arrayObj[Calcium.Index.SUBSCRIPT_SLICE_START]
+        );
+        const sliceEnd = this.parseExpression(
+          arrayObj[Calcium.Index.SUBSCRIPT_SLICE_END]
+        );
+        return new Subscript(objRef, null, sliceStart, sliceEnd);
+      }
     }
   }
 }
@@ -1433,6 +1445,7 @@ class Environment {
     registerExceptionClass(ModuleNotImportedError, this);
     registerExceptionClass(NameNotFoundError, this);
     registerExceptionClass(ObjectNotIterableError, this);
+    registerExceptionClass(SliceNotSupportedError, this);
     registerExceptionClass(SubscriptNotAllowedError, this);
     registerExceptionClass(SuperCallFailedError, this);
     registerExceptionClass(SuperclassNotValidError, this);
@@ -1890,9 +1903,11 @@ class Module {
 }
 
 class Subscript {
-  constructor(objRef, indexExpr) {
+  constructor(objRef, indexExpr, sliceStart, sliceEnd) {
     this.objRef = objRef;
     this.indexExpr = indexExpr;
+    this.sliceStart = sliceStart;
+    this.sliceEnd = sliceEnd;
   }
   assign(value, env) {
     const obj = this.lookUp(env);
@@ -1902,18 +1917,58 @@ class Subscript {
       env.raiseException(error.name);
       return null;
     }
-    let index = env.evaluate(this.indexExpr);
-    if (obj instanceof Array) {
-      if (typeof index !== "number") {
-        const error = new InvalidTypeError();
+    if (this.indexExpr !== null) {
+      let index = env.evaluate(this.indexExpr);
+      if (obj instanceof Array) {
+        if (typeof index !== "number") {
+          const error = new InvalidTypeError();
+          env.raiseException(error.name);
+          return null;
+        }
+        if (index < 0) {
+          index += obj.length;
+        }
+      }
+      obj[index] = value;
+    } else {
+      // Only arrays support slice manipulation.
+      if (!(obj instanceof Array)) {
+        const error = new SubscriptNotAllowedError();
         env.raiseException(error.name);
         return null;
       }
-      if (index < 0) {
-        index += obj.length;
+      // value must be an array.
+      if (!(value instanceof Array)) {
+        const error = new SliceNotSupportedError();
+        env.raiseException(error.name);
+        return null;
+      }
+      let start, end;
+      if (this.sliceStart === null) {
+        start = 0;
+      } else {
+        start = env.evaluate(this.sliceStart);
+        if (typeof start !== "number") {
+          const error = new InvalidTypeError();
+          env.raiseException(error.name);
+          return null;
+        }
+      }
+      if (this.sliceEnd !== null) {
+        end = env.evaluate(this.sliceEnd);
+        if (typeof end !== "number") {
+          const error = new InvalidTypeError();
+          env.raiseException(error.name);
+          return null;
+        }
+      }
+      // end could be undefined.
+      if (end === undefined) {
+        obj.splice(start, obj.length, ...value);
+      } else {
+        obj.splice(start, end - start, ...value);
       }
     }
-    obj[index] = value;
   }
   debugEvaluate(env) {
     const obj = env.debugEvaluate(this.objRef);
@@ -1942,28 +1997,63 @@ class Subscript {
   evaluate(env) {
     const obj = this.lookUp(env);
     if (env.hasException) return null;
-    let index = env.evaluate(this.indexExpr);
-    if (
-      obj instanceof Array ||
-      typeof obj === "string" ||
-      obj instanceof String
-    ) {
-      if (typeof index !== "number") {
-        const error = new InvalidTypeError();
+    if (this.indexExpr !== null) {
+      let index = env.evaluate(this.indexExpr);
+      if (
+        obj instanceof Array ||
+        typeof obj === "string" ||
+        obj instanceof String
+      ) {
+        if (typeof index !== "number") {
+          const error = new InvalidTypeError();
+          env.raiseException(error.name);
+          return null;
+        }
+        if (index < 0) {
+          index += obj.length;
+        }
+      }
+      const value = obj[index];
+      if (value !== undefined) {
+        return value;
+      } else {
+        const error = new ValueNotFoundError();
+        env.raiseException(error.name, [`${index} not found`]);
+        return null;
+      }
+    } else {
+      // Only arrays and strings support slice manipulation.
+      if (!(obj instanceof Array
+        || obj instanceof String || typeof obj === "string")) {
+        const error = new SubscriptNotAllowedError();
         env.raiseException(error.name);
         return null;
       }
-      if (index < 0) {
-        index += obj.length;
+      let start, end;
+      if (this.sliceStart === null) {
+        start = 0;
+      } else {
+        start = env.evaluate(this.sliceStart);
+        if (typeof start !== "number") {
+          const error = new InvalidTypeError();
+          env.raiseException(error.name);
+          return null;
+        }
       }
-    }
-    const value = obj[index];
-    if (value !== undefined) {
-      return value;
-    } else {
-      const error = new ValueNotFoundError();
-      env.raiseException(error.name, [`${index} not found`]);
-      return null;
+      if (this.sliceEnd !== null) {
+        end = env.evaluate(this.sliceEnd);
+        if (typeof end !== "number") {
+          const error = new InvalidTypeError();
+          env.raiseException(error.name);
+          return null;
+        }
+      }
+      // end could be undefined.
+      if (end === undefined) {
+        return obj.slice(start);
+      } else {
+        return obj.slice(start, end);
+      }
     }
   }
   lookUp(env) {
@@ -1982,7 +2072,13 @@ class Subscript {
     }
   }
   get description() {
-    return this.objRef.description + `[${describe(this.indexExpr)}]`;
+    if (this.indexExpr !== null) {
+      return this.objRef.description + `[${describe(this.indexExpr)}]`;
+    } else {
+      const start = this.sliceStart === null ? '' : describe(this.sliceStart);
+      const end = this.sliceEnd === null ? '' : describe(this.sliceEnd);
+      return this.objRef.description + `[${start}:${end}]`;
+    }
   }
 }
 
@@ -2959,14 +3055,6 @@ class InvalidExceptionError extends Error {
   }
 }
 
-class InvalidTypeError extends Error {
-  constructor(message, index) {
-    super(message);
-    this.index = index;
-    this.name = "InvalidTypeError";
-  }
-}
-
 class InvalidOperationError extends Error {
   constructor(message, index) {
     super(message);
@@ -2980,6 +3068,14 @@ class InvalidReturnError extends Error {
     super(message);
     this.index = index;
     this.name = "InvalidReturnError";
+  }
+}
+
+class InvalidTypeError extends Error {
+  constructor(message, index) {
+    super(message);
+    this.index = index;
+    this.name = "InvalidTypeError";
   }
 }
 
@@ -3005,6 +3101,14 @@ class ObjectNotIterableError extends Error {
     super(message);
     this.index = index;
     this.name = "ObjectNotIterableError";
+  }
+}
+
+class SliceNotSupportedError extends Error {
+  constructor(message, index) {
+    super(message);
+    this.index = index;
+    this.name = "SliceNotSupportedError";
   }
 }
 
@@ -3068,6 +3172,7 @@ Calcium.Error = {
   ModuleNotImportedError,
   NameNotFoundError,
   ObjectNotIterableError,
+  SliceNotSupportedError,
   SubscriptNotAllowedError,
   SuperCallFailedError,
   SuperclassNotValidError,

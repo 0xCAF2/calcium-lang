@@ -167,4 +167,60 @@ test('error_addition.json', () => {
   expect(result).toEqual(Calcium.Result.EXCEPTION);
   expect(engine.environment.exception.attributes.exception.selfClass.name)
   .toMatch(Calcium.Error.TypeOfOperandNotMatchError.name);
+
+});
+
+test('implement slice operation', () => {
+  const code = [
+    [1, [], "#", "0_18"],
+    [1, [], "=", ["var", "x"], [[0, 1, 2, 3, 4]]],
+    [1, [], "call", null, ["var", "print"], [["var", "x"]]],
+    [1, [], "call", null, ["var", "print"], [["sub", ["var", "x"], 0, 3]]],
+    [1, [], "call", null, ["var", "print"], [["sub", ["var", "x"], null, 3]]],
+    [1, [], "call", null, ["var", "print"], [["sub", ["var", "x"], 1, 5]]],
+    [1, [], "call", null, ["var", "print"], [["sub", ["var", "x"], 1, null]]],
+    [1, [], "call", null, ["var", "print"], [["sub", ["var", "x"], null, null]]],
+    [1, [], "=", ["sub", ["var", "x"], null, 3], [[5, 6]]],
+    [1, [], "call", null, ["var", "print"], [["var", "x"]]],
+    [1, [], "=", ["sub", ["var", "x"], 1, 3], [[8, 9]]],
+    [1, [], "call", null, ["var", "print"], [["var", "x"]]],
+    [1, [], "=", ["sub", ["var", "x"], 2, null], [[10, 11, 12, 13]]],
+    [1, [], "call", null, ["var", "print"], [["var", "x"]]],
+    [1, [], "=", ["var", "y"], ["sub", ["var", "x"], null, null]],
+    [1, [], "=", ["sub", ["var", "x"], null, null], [[15]]],
+    [1, [], "call", null, ["var", "print"], [["var", "x"]]],
+    [1, [], "call", null, ["var", "print"], [["var", "y"]]],
+    [1, [], "end"]
+  ];
+
+  const engine = new Calcium.Engine(code);
+  let counter = 0;
+  engine.setPrintFunction((desc) => {
+    if (counter === 0) {
+      expect(desc).toMatch("[0, 1, 2, 3, 4]");
+      ++counter;
+    } else if (counter === 1 || counter === 2) {
+      expect(desc).toMatch("[0, 1, 2]");
+      ++counter;
+    } else if (counter === 3 || counter === 4) {
+      expect(desc).toMatch("[1, 2, 3, 4]");
+      ++counter;
+    } else if (counter === 5) {
+      expect(desc).toMatch("[0, 1, 2, 3, 4]");
+      ++counter;
+    } else if (counter === 6) {
+      expect(desc).toMatch("[5, 6, 3, 4]");
+      ++counter;
+    } else if (counter === 7) {
+      expect(desc).toMatch("[5, 8, 9, 4]");
+      ++counter;
+    } else if (counter === 8 || counter === 10) {
+      expect(desc).toMatch("[5, 8, 10, 11, 12, 13]");
+      ++counter;
+    } else if (counter === 9) {
+      expect(desc).toMatch("[15]");
+      ++counter;
+    }
+  });
+  engine.run();
 });
