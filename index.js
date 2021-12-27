@@ -1,6 +1,6 @@
 "use strict";
 const Calcium = {};
-/// Enum for the value returned by Engine.step() and Engine.run()
+/// Enum returned by Engine.step() and Engine.run()
 Calcium.Result = {
   TERMINATED: 0,
   EXECUTED: 1,
