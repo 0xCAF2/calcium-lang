@@ -178,7 +178,7 @@ test('implement slice operation', () => {
     [1, [], "call", null, ["var", "print"], [["var", "x"]]],
     [1, [], "call", null, ["var", "print"], [["sub", ["var", "x"], 0, 3]]],
     [1, [], "call", null, ["var", "print"], [["sub", ["var", "x"], null, 3]]],
-    [1, [], "call", null, ["var", "print"], [["sub", ["var", "x"], 1, 5]]],
+    [1, [], "call", null, ["var", "print"], [["sub", ["var", "x"], 1, -1]]],
     [1, [], "call", null, ["var", "print"], [["sub", ["var", "x"], 1, null]]],
     [1, [], "call", null, ["var", "print"], [["sub", ["var", "x"], null, null]]],
     [1, [], "=", ["sub", ["var", "x"], null, 3], [[5, 6]]],
@@ -204,7 +204,10 @@ test('implement slice operation', () => {
     } else if (counter === 1 || counter === 2) {
       expect(desc).toMatch("[0, 1, 2]");
       ++counter;
-    } else if (counter === 3 || counter === 4) {
+    } else if (counter === 3) {
+      expect(desc).toMatch("[1, 2, 3]");
+      ++counter;
+    } else if (counter === 4) {
       expect(desc).toMatch("[1, 2, 3, 4]");
       ++counter;
     } else if (counter === 5) {
