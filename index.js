@@ -1978,7 +1978,7 @@ class Subscript {
       if (end === undefined) {
         obj.splice(start, obj.length, ...value);
       } else {
-        const count = end - start;
+        let count = end - start;
         if (count < 0) {
           count = 0;
         }
