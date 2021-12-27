@@ -192,6 +192,12 @@ test('implement slice operation', () => {
     [1, [], "call", null, ["var", "print"], [["var", "x"]]],
     [1, [], "call", null, ["var", "print"], [["var", "y"]]],
     [1, [], "call", null, ["var", "print"], [["sub", ["var", "y"], ["var", "a"], null]]],
+    [1, [], "=", ["sub", ["var", "y"], 3, -1], [[20, 21]]],
+    [1, [], "call", null, ["var", "print"], [["var", "y"]]],
+    [1, [], "=", ["sub", ["var", "y"], -3, null], [[30, 31]]],
+    [1, [], "call", null, ["var", "print"], [["var", "y"]]],
+    [1, [], "=", ["sub", ["var", "y"], -33, 2], [[40]]],
+    [1, [], "call", null, ["var", "print"], [["var", "y"]]],
     [1, [], "end"]
   ];
 
@@ -227,6 +233,15 @@ test('implement slice operation', () => {
       ++counter;
     } else if (counter === 11) {
       expect(desc).toMatch("[11, 12, 13]");
+      ++counter;
+    } else if (counter === 12) {
+      expect(desc).toMatch("[5, 8, 10, 20, 21, 13]");
+      ++counter;
+    } else if (counter === 13) {
+      expect(desc).toMatch("[5, 8, 10, 30, 31]");
+      ++counter;
+    } else if (counter === 14) {
+      expect(desc).toMatch("[40, 10, 30, 31]");
       ++counter;
     }
   });

@@ -1953,6 +1953,12 @@ class Subscript {
           env.raiseException(error.name);
           return null;
         }
+        if (start < 0) {
+          start += obj.length;
+          if (start < 0) {
+            start = 0;
+          }
+        }
       }
       if (this.sliceEnd !== null) {
         end = env.evaluate(this.sliceEnd);
@@ -1961,12 +1967,22 @@ class Subscript {
           env.raiseException(error.name);
           return null;
         }
+        if (end < 0) {
+          end += obj.length;
+          if (end < 0) {
+            end = 0;
+          }
+        }
       }
       // end could be undefined.
       if (end === undefined) {
         obj.splice(start, obj.length, ...value);
       } else {
-        obj.splice(start, end - start, ...value);
+        const count = end - start;
+        if (count < 0) {
+          count = 0;
+        }
+        obj.splice(start, count, ...value);
       }
     }
   }
