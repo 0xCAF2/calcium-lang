@@ -173,6 +173,7 @@ test('error_addition.json', () => {
 test('implement slice operation', () => {
   const code = [
     [1, [], "#", "0_18"],
+    [1, [], "=", ["var", "a"], 3],
     [1, [], "=", ["var", "x"], [[0, 1, 2, 3, 4]]],
     [1, [], "call", null, ["var", "print"], [["var", "x"]]],
     [1, [], "call", null, ["var", "print"], [["sub", ["var", "x"], 0, 3]]],
@@ -190,6 +191,7 @@ test('implement slice operation', () => {
     [1, [], "=", ["sub", ["var", "x"], null, null], [[15]]],
     [1, [], "call", null, ["var", "print"], [["var", "x"]]],
     [1, [], "call", null, ["var", "print"], [["var", "y"]]],
+    [1, [], "call", null, ["var", "print"], [["sub", ["var", "y"], ["var", "a"], null]]],
     [1, [], "end"]
   ];
 
@@ -219,6 +221,9 @@ test('implement slice operation', () => {
       ++counter;
     } else if (counter === 9) {
       expect(desc).toMatch("[15]");
+      ++counter;
+    } else if (counter === 11) {
+      expect(desc).toMatch("[11, 12, 13]");
       ++counter;
     }
   });
