@@ -1,4 +1,4 @@
-import { Command, Comment } from "../command";
+import Command, { Comment } from "../command";
 import { CommandNotFound } from "../error";
 import Index from "../index/index";
 import Keyword from "../keyword";
