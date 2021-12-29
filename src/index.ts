@@ -1,13 +1,4 @@
-import Engine from './engine';
-import * as Keyword from './keywords';
-import Status from './status';
-import * as Command from './commands';
+import Runtime, { PrintFunction } from "./runtime";
+import Status from "./runtime/status";
 
-const Calcium = {
-  Engine,
-  Keyword,
-  Status,
-  Command,
-};
-
-export default Calcium;
+export { PrintFunction, Runtime, Status };

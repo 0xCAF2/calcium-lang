@@ -1,8 +1,9 @@
 enum Status {
+  Break,
+  ExceptionUnhandled,
+  Paused,
   Running,
   Terminated,
-  Break,
-  Error,
 }
 
 export default Status;

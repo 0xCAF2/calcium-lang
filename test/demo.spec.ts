@@ -1,28 +1,15 @@
-import Calcium from '../src';
+import * as Calcium from "../src";
 
-describe('test', () => {
-  it('Calcium has an Engine object.', () => {
-    expect(Calcium).toHaveProperty('Engine');
+it("Output 'Hello, World.'", () => {
+  const code = [
+    [1, [], "#", "0_18"],
+    [1, [], "call", null, ["var", "print"], ["Hello, World."]],
+    [1, [], "end"],
+  ] as any[];
+  const runtime = new Calcium.Runtime(code);
+  runtime.setPrintFunction((desc) => {
+    expect(desc).toMatch("Hello, World.");
   });
-  it('Some keywords and indexes are declared.', () => {
-    expect(Calcium.Keyword).toBeDefined();
-    expect(Calcium.Keyword.Reference).toBeDefined();
-    expect(Calcium.Keyword.Reference.Variable).toBe('var');
-  });
-  it('An assignment command can be created and run.', () => {
-    const code: Calcium.Command[] = [
-      {"indent": 1, "keyword": "#", "version": "0.1.0"},
-      {"indent": 1, "keyword": "=", "lhs": {"kind": "var", "name": "x"}, "rhs": 7},
-      {"indent": 1, "keyword": "=", "lhs": {"kind": "var", "name": "y"}, "rhs": {"kind": "var", "name": "x"}},
-      {"indent": 1, "keyword": "=", "lhs": {"kind": "var", "name": "z"}, "rhs": [{"kind": "var", "name": "x"}, {"kind": "var", "name": "x"}, 73]},
-      {"indent": 1, "keyword": "=", "lhs": {"kind": "sub", "container": {"kind": "var", "name": "z"}, "indexOrKey": 0}, "rhs": 5},
-      {"indent": 1, "keyword": "end"}
-    ];
-    const engine = new Calcium.Engine(code);
-    expect(engine.currentIndex).toBe(0);
-    expect(engine.run().status).toBe(Calcium.Status.Terminated);
-    expect(engine.env.context.lookUp('x')).toBe(7);
-    expect(engine.env.context.lookUp('y')).toBe(7);
-    expect(engine.env.context.lookUp('z')).toEqual([5, 7, 73]);
-  });
+  expect(runtime.env.currentLineIndex).toBe(0);
+  expect(runtime.step()).toBe(Calcium.Status.Terminated);
 });

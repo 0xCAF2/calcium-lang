@@ -1,4 +1,1 @@
-x = 7
-y = x
-z = [x, 7, 73]
-z[0] = 5
+print('Hello, World.')
