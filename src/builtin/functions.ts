@@ -11,8 +11,8 @@ export function print(
   args: JSONElementType.Any[],
   env: Environment
 ): InternalType {
-  if (env.printFunc) {
-    env.printFunc("Hello, World.");
+  if (env.funcToOutput) {
+    env.funcToOutput("Hello, World.");
   }
   return null;
 }

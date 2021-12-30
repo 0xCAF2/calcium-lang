@@ -1,12 +1,10 @@
 import Environment from "../runtime/environment";
-import Keyword from "../keyword";
 
+import Call from "./call";
 import Comment from "./comment";
 
-interface Command {
+export interface Command {
   execute(env: Environment): void;
 }
 
-export default Command;
-
-export { Comment };
+export { Call, Comment };

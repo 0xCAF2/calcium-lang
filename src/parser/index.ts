@@ -1,30 +1,65 @@
-import Command, { Comment } from "../command";
-import { CommandNotFound } from "../error";
+import * as JSONElementType from "./jsonElement";
+import * as Cmd from "../command";
+import * as Err from "../error";
+import * as Expr from "../expression";
 import Index from "../index/index";
-import Keyword from "../keyword";
+import { default as Kw } from "../keyword";
 import Statement from "../runtime/statement";
 
 export default class Parser {
   constructor(
     public readonly table = new Map<
-      Keyword.Command,
-      (stmt: Statement) => Command
+      Kw.Command,
+      (stmt: Statement) => Cmd.Command
     >()
   ) {
-    this.table.set(Keyword.Command.Comment, (stmt) => {
+    this.table.set(Kw.Command.Call, (stmt) => {
+      const lhs = this.convert(stmt[Index.Call.Lhs]) as Expr.Reference;
+      const funcRef = this.convert(stmt[Index.Call.FuncRef]) as Expr.Reference;
+      const args = this.extractArgs(
+        stmt[Index.Call.Args] as JSONElementType.Any[]
+      );
+      return new Cmd.Call(lhs, funcRef, args);
+    });
+
+    this.table.set(Kw.Command.Comment, (stmt) => {
       const text = stmt[Index.Comment.Text];
       if (typeof text === "string") {
-        return new Comment(text);
+        return new Cmd.Comment(text);
       } else {
-        return new Comment(null);
+        return new Cmd.Comment(null);
       }
     });
   }
-  read(stmt: Statement): Command {
+
+  convert(expr: JSONElementType.Any): Expr.Expression {
+    if (Array.isArray(expr)) {
+      const kw = expr[Index.Expression.Keyword];
+      if (kw === Kw.Reference.Variable) {
+        return new Expr.Variable(expr[Index.Variable.Name] as string);
+      } else {
+        return {};
+      }
+    } else if (typeof expr === "string") {
+      return expr; // TODO: change to Str
+    }
+    return {};
+  }
+
+  extractArgs(args: JSONElementType.Any[]): Expr.Expression[] {
+    return [];
+  }
+
+  /**
+   *
+   * @param stmt a JSON array that represents one line to execute
+   * @returns a command object to be executed
+   */
+  read(stmt: Statement): Cmd.Command {
     const kw = stmt[Index.Statement.Keyword];
     const cmd = this.table.get(kw)?.(stmt);
     if (cmd === undefined) {
-      throw new CommandNotFound();
+      throw new Err.CommandNotFound();
     } else {
       return cmd;
     }

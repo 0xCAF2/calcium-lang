@@ -1,12 +1,12 @@
-import Command from ".";
+import { Command } from ".";
 import Environment from "../runtime/environment";
-import { Reference } from "../expression";
+import * as Expr from "../expression";
 
 export default class Call implements Command {
   constructor(
-    public readonly lhs: Reference | null,
-    public readonly funcRef: Reference,
-    public readonly args: unknown[]
+    public readonly lhs: Expr.Reference | null,
+    public readonly funcRef: Expr.Reference,
+    public readonly args: Expr.Expression[]
   ) {}
 
   execute(env: Environment): void {

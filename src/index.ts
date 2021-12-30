@@ -1,4 +1,4 @@
-import Runtime, { PrintFunction } from "./runtime";
+import Runtime, { OutputFunction } from "./runtime";
 import Status from "./runtime/status";
 
-export { PrintFunction, Runtime, Status };
+export { OutputFunction as PrintFunction, Runtime, Status };

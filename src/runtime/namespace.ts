@@ -5,7 +5,7 @@ type Store = Map<string, InternalType>;
 /**
  * saves variables, functions, and so on in each namespace
  */
-export abstract class Namespace {
+export default class Namespace {
   /**
    * saves key value pairs.
    */
@@ -15,14 +15,19 @@ export abstract class Namespace {
    *
    * @param parent nesting scope
    */
-  constructor(public readonly parent?: Namespace) {}
+  constructor(private readonly parent?: Namespace) {}
 
   /**
    * searches identifier and return its value
    * @param key identifier
    */
   lookUp(key: string): InternalType | undefined {
-    return this.dict.get(key);
+    const value = this.dict.get(key);
+    if (value !== undefined) {
+      return value;
+    } else {
+      return this.parent?.lookUp(key);
+    }
   }
 
   /**
@@ -34,13 +39,3 @@ export abstract class Namespace {
     this.dict.set(key, value);
   }
 }
-
-/**
- * the global scope
- */
-export class Global extends Namespace {}
-
-/**
- * function's local scope
- */
-export class Local extends Namespace {}

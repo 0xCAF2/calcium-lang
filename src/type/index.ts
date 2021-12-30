@@ -1,4 +1,5 @@
-/**
- * All types used by Calcium runtime are represented by Proxy objects.
- */
-export type InternalType = typeof Proxy | null;
+import BuiltinFunc from "./builtinFunc";
+
+export type InternalType = BuiltinFunc | null;
+
+export { BuiltinFunc };

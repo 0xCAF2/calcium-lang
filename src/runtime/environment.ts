@@ -1,11 +1,12 @@
 import Address from "./address";
-import Keyword from "../keyword";
-import { PrintFunction } from ".";
+import { default as Kw } from "../keyword";
+import Namespace from "./namespace";
+import { OutputFunction } from ".";
 import Statement from "./statement";
 
 export default class Environment {
   /**
-   * a current point of the execution
+   * the current point of the execution
    */
   address = new Address(1, 0);
 
@@ -15,20 +16,28 @@ export default class Environment {
   code: Statement[];
 
   /**
+   * the current context that has associations from a name to a value
+   */
+  context: Namespace;
+
+  /**
    * an external function to output from built-in print function
    */
-  printFunc?: PrintFunction;
+  funcToOutput?: OutputFunction;
 
   /**
    *
    * @param code must be a valid JSON array or its stringified representation.
+   *
    */
-  constructor(code: string | Statement[]) {
+  constructor(code: string | Statement[], builtin: Namespace) {
     if (typeof code === "string") {
       this.code = JSON.parse(code);
     } else {
       this.code = code;
     }
+    const global = new Namespace(builtin);
+    this.context = global;
   }
 
   /**
@@ -36,7 +45,7 @@ export default class Environment {
    * @returns next `Command` object to be executed
    */
   findNextLine(): Statement {
-    return [1, [], Keyword.Command.Comment, "0_18"];
+    return [1, [], Kw.Command.Comment, "0_18"];
   }
 
   /**

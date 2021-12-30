@@ -1,8 +1,8 @@
 import { print } from "./functions";
-export { BuiltinFuncBody } from "./functions";
+import { BuiltinFuncBody } from "./functions";
 
-const Builtins = {
+export const BuiltinFunctions: { [key: string]: BuiltinFuncBody } = {
   print,
 };
 
-export default Builtins;
+export { BuiltinFuncBody } from "./functions";

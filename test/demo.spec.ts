@@ -7,8 +7,8 @@ it("Output 'Hello, World.'", () => {
     [1, [], "end"],
   ] as any[];
   const runtime = new Calcium.Runtime(code);
-  runtime.setPrintFunction((desc) => {
-    expect(desc).toMatch("Hello, World.");
+  runtime.setOutputFunction((desc) => {
+    expect(desc).toMatch("Hello, World!"); // must be failed
   });
   expect(runtime.env.currentLineIndex).toBe(0);
   expect(runtime.step()).toBe(Calcium.Status.Terminated);

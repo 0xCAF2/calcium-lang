@@ -11,7 +11,7 @@ export enum Assignment {
 
 export enum Call {
   Lhs = 3,
-  Reference = 4,
+  FuncRef = 4,
   Args = 5,
   KeywordArgs = 6,
 }

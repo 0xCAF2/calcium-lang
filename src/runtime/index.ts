@@ -1,5 +1,7 @@
-import { BuiltinFuncBody } from "../builtin";
+import { BuiltinFunctions, BuiltinFuncBody } from "../builtin";
+import { BuiltinFunc } from "../type";
 import Environment from "./environment";
+import Namespace from "./namespace";
 import Parser from "../parser";
 import Statement from "./statement";
 import Status from "./status";
@@ -19,17 +21,24 @@ export default class Runtime {
    *
    * @param code must be a string or a JSON array of Calcium statements.
    */
-  constructor(code: string | Statement[], options?: Options) {
-    this.env = new Environment(code);
-    this.parser = options?.parser ?? new Parser();
+  constructor(code: string | Statement[], opt?: Options) {
+    this.parser = opt?.parser ?? new Parser();
+    // set up built-ins
+    const builtin = new Namespace();
+    for (let name in BuiltinFunctions) {
+      const builtinFunc = new BuiltinFunc(name, BuiltinFunctions[name]);
+      builtin.register(name, builtinFunc);
+    }
+    const env = new Environment(code, builtin);
+    this.env = env;
   }
 
   /**
    *
-   * @param printFunc built-in function to output
+   * @param funcToOutput built-in function's body to output
    */
-  setPrintFunction(printFunc: PrintFunction) {
-    this.env.printFunc = printFunc;
+  setOutputFunction(funcToOutput: OutputFunction) {
+    this.env.funcToOutput = funcToOutput;
   }
 
   /**
@@ -45,7 +54,7 @@ export default class Runtime {
   }
 }
 
-export type PrintFunction = (desc: string) => void;
+export type OutputFunction = (desc: string) => void;
 
 export type Options = {
   parser?: Parser;
