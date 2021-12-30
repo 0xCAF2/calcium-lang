@@ -35,6 +35,10 @@ export default class Parser {
         return new Cmd.Comment(null);
       }
     });
+
+    this.table.set(Kw.Command.End, (stmt) => {
+      return new Cmd.End();
+    });
   }
 
   convertToExpression(expr: JSONElementType.Any): Expr.Expression {

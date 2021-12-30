@@ -40,7 +40,7 @@ export enum Command {
   Continue = "continue",
   Elif = "elif",
   Else = "else",
-  EndOfCode = "end",
+  End = "end",
   Except = "except",
   For = "for",
   FuncDef = "def",

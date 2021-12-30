@@ -13,4 +13,6 @@ it("Output 'Hello, World.'", () => {
   expect(runtime.env.currentLineIndex).toBe(0);
   expect(runtime.step()).toBe(Calcium.Status.Running);
   expect(runtime.step()).toBe(Calcium.Status.Running);
+  expect(runtime.step()).toBe(Calcium.Status.Terminated);
+  expect(runtime.step()).toBe(Calcium.Status.Terminated);
 });

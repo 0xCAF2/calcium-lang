@@ -58,9 +58,15 @@ export default class Runtime {
    * @returns the result of the execution
    */
   step(): Status {
+    if (this.env.address.index >= this.env.code.length) {
+      return Status.Terminated;
+    }
     const stmt = this.findNextLine();
     const cmd = this.parser.read(stmt);
-    if (cmd instanceof Cmd.End) cmd.execute(this.env);
+    if (cmd instanceof Cmd.End) {
+      return Status.Terminated;
+    }
+    cmd.execute(this.env);
     return Status.Running;
   }
 }
