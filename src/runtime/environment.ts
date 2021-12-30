@@ -28,7 +28,7 @@ export default class Environment {
   /**
    *
    * @param code must be a valid JSON array or its stringified representation.
-   *
+   * @param builtin the namespace for built-in objects
    */
   constructor(code: string | Statement[], builtin: Namespace) {
     if (typeof code === "string") {
@@ -38,14 +38,6 @@ export default class Environment {
     }
     const global = new Namespace(builtin);
     this.context = global;
-  }
-
-  /**
-   *
-   * @returns next `Command` object to be executed
-   */
-  findNextLine(): Statement {
-    return [1, [], Kw.Command.Comment, "0_18"];
   }
 
   /**

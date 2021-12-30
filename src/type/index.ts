@@ -1,5 +1,7 @@
 import BuiltinFunc from "./builtinFunc";
+import None from "./none";
+import Str from "./str";
 
-export type InternalType = BuiltinFunc | null;
+export type Any = BuiltinFunc | null;
 
-export { BuiltinFunc };
+export { BuiltinFunc, None, Str };

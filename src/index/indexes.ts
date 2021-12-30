@@ -63,7 +63,7 @@ export enum Return {
 }
 
 export enum Expression {
-  KEYWORD = 0,
+  Keyword = 0,
 }
 
 export enum Attribute {

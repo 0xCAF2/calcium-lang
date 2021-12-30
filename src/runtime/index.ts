@@ -1,5 +1,6 @@
 import { BuiltinFunctions, BuiltinFuncBody } from "../builtin";
 import { BuiltinFunc } from "../type";
+import * as Cmd from "../command";
 import Environment from "./environment";
 import Namespace from "./namespace";
 import Parser from "../parser";
@@ -35,6 +36,16 @@ export default class Runtime {
 
   /**
    *
+   * @returns next `Statement` object to be executed
+   */
+  findNextLine(): Statement {
+    const stmt = this.env.code[this.env.address.index];
+    this.env.address.index += 1;
+    return stmt;
+  }
+
+  /**
+   *
    * @param funcToOutput built-in function's body to output
    */
   setOutputFunction(funcToOutput: OutputFunction) {
@@ -47,10 +58,10 @@ export default class Runtime {
    * @returns the result of the execution
    */
   step(): Status {
-    const stmt = this.env.findNextLine();
+    const stmt = this.findNextLine();
     const cmd = this.parser.read(stmt);
-    cmd.execute(this.env);
-    return Status.Terminated;
+    if (cmd instanceof Cmd.End) cmd.execute(this.env);
+    return Status.Running;
   }
 }
 

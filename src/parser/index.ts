@@ -5,6 +5,7 @@ import * as Expr from "../expression";
 import Index from "../index/index";
 import { default as Kw } from "../keyword";
 import Statement from "../runtime/statement";
+import * as Type from "../type";
 
 export default class Parser {
   constructor(
@@ -14,8 +15,12 @@ export default class Parser {
     >()
   ) {
     this.table.set(Kw.Command.Call, (stmt) => {
-      const lhs = this.convert(stmt[Index.Call.Lhs]) as Expr.Reference;
-      const funcRef = this.convert(stmt[Index.Call.FuncRef]) as Expr.Reference;
+      const lhs = this.convertToExpression(
+        stmt[Index.Call.Lhs]
+      ) as Expr.Reference;
+      const funcRef = this.convertToExpression(
+        stmt[Index.Call.FuncRef]
+      ) as Expr.Reference;
       const args = this.extractArgs(
         stmt[Index.Call.Args] as JSONElementType.Any[]
       );
@@ -32,22 +37,43 @@ export default class Parser {
     });
   }
 
-  convert(expr: JSONElementType.Any): Expr.Expression {
+  convertToExpression(expr: JSONElementType.Any): Expr.Expression {
     if (Array.isArray(expr)) {
-      const kw = expr[Index.Expression.Keyword];
-      if (kw === Kw.Reference.Variable) {
-        return new Expr.Variable(expr[Index.Variable.Name] as string);
+      if (Array.isArray(expr[0])) {
+        // expr is an array literal.
+        const list: Expr.Expression[] = [];
+        for (let elem of expr[0]) {
+          list.push(this.convertToExpression(elem));
+        }
+        return list; // TODO: change to List
       } else {
-        return {};
+        return this.convertToReference(expr as JSONElementType.Reference);
       }
     } else if (typeof expr === "string") {
-      return expr; // TODO: change to Str
+      return new Type.Str(expr);
+    } else if (expr === null) {
+      return Type.None;
+    } else {
+      throw new Err.CannotConvertToExpression();
     }
-    return {};
+  }
+
+  convertToReference(expr: JSONElementType.Reference): Expr.Reference {
+    const kw = expr[Index.Expression.Keyword];
+    if (kw === Kw.Reference.Variable) {
+      return new Expr.Variable(expr[Index.Variable.Name] as string);
+    } else {
+      throw new Err.UnsupportedKeyword(kw as string);
+    }
   }
 
   extractArgs(args: JSONElementType.Any[]): Expr.Expression[] {
-    return [];
+    const convertedArgs: Expr.Expression[] = [];
+    for (let a of args) {
+      const arg = this.convertToExpression(a);
+      convertedArgs.push(arg);
+    }
+    return convertedArgs;
   }
 
   /**
