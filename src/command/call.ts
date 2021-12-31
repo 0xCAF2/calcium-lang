@@ -1,4 +1,4 @@
-import * as Type from "../factory";
+import * as Type from "../type";
 import { Command } from ".";
 import Environment from "../runtime/environment";
 import * as Expr from "../expression";
@@ -22,7 +22,8 @@ export default class Call implements Command {
   ) {}
 
   execute(env: Environment): void {
-    const funcObj = this.funcRef.evaluate(env) as Expr.InternalType;
+    const evaluate = Reflect.get(this.funcRef, Sym.evaluate);
+    const funcObj = Reflect.apply(evaluate, this.funcRef, [env]);
     const result = funcObj[Sym.call](this.args, env);
     if (this.lhs !== Type.None) {
       (this.lhs as Expr.Reference).assign(result, env);

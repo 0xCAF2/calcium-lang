@@ -1,7 +1,7 @@
 import Environment from "../runtime/environment";
 import * as Expr from "../expression";
 import { default as Sym } from "../symbol";
-import * as Type from "../factory";
+import * as Type from "../type";
 
 /**
  * signature for the body of a built-in function.
@@ -16,8 +16,10 @@ export type FuncBody = (args: Expr.Expression[], env: Environment) => Type.Any;
  */
 export function print(args: Expr.Expression[], env: Environment): Type.Any {
   const result: string[] = [];
-  for (let elem of args) {
-    result.push(Reflect.get(elem, Sym.description));
+  for (let a of args) {
+    const evaluate = Reflect.get(a, Sym.evaluate);
+    const value = Reflect.apply(evaluate, a, [env]);
+    result.push(Reflect.get(value, Sym.description));
   }
   if (env.funcToOutput) {
     env.funcToOutput(result.join(" "));

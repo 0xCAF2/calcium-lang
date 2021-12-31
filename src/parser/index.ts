@@ -1,13 +1,13 @@
 import * as JSONElementType from "./jsonElement";
 import * as Cmd from "../command";
-import createList from "../factory/list";
-import createStr from "../factory/str";
+import createList from "../type/list";
+import createStr from "../type/str";
 import * as Err from "../error";
 import * as Expr from "../expression";
 import Index from "../index/index";
 import * as Kw from "../keyword";
 import Statement from "../runtime/statement";
-import * as Type from "../factory";
+import * as Type from "../type";
 
 /**
  * a default parser for Calcium language
@@ -23,14 +23,19 @@ export default class Parser {
       (stmt: Statement) => Cmd.Command
     >()
   ) {
+    // an assignment
+    this.table.set(Kw.Command.Assignment, (stmt) => {
+      const lhs = this.convertToReference(
+        stmt[Index.Assignment.Lhs] as JSONElementType.Reference
+      );
+      const rhs = this.convertToExpression(stmt[Index.Assignment.Rhs]);
+      return new Cmd.Assignment(lhs, rhs);
+    });
+
     // a function call
     this.table.set(Kw.Command.Call, (stmt) => {
-      const lhs = this.convertToExpression(
-        stmt[Index.Call.Lhs]
-      ) as Expr.Reference;
-      const funcRef = this.convertToExpression(
-        stmt[Index.Call.FuncRef]
-      ) as Expr.Reference;
+      const lhs = this.convertToExpression(stmt[Index.Call.Lhs]);
+      const funcRef = this.convertToExpression(stmt[Index.Call.FuncRef]);
       const args = this.extractArgs(
         stmt[Index.Call.Args] as JSONElementType.Any[]
       );

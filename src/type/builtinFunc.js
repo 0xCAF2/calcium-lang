@@ -6,6 +6,7 @@ export default function createBuiltinFunc(name, body) {
       if (property === Sym.name) return name;
       else if (property === Sym.body) return body;
       else if (property === Sym.call) return (args, env) => body(args, env);
+      else if (property === Sym.evaluate) return (_) => this;
       else return target[property];
     }
   });

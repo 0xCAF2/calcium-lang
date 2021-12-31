@@ -1,6 +1,7 @@
 import Environment from "../runtime/environment";
 import * as Err from "../error";
-import * as Type from "../factory";
+import { default as Sym } from "../symbol";
+import * as Type from "../type";
 
 /**
  * a simple reference to a value
@@ -18,7 +19,7 @@ export default class Variable {
     env.context.register(this.name, rhs);
   }
 
-  evaluate(env: Environment): Type.Any {
+  [Sym.evaluate](env: Environment): Type.Any {
     const value = env.context.lookUp(this.name);
     if (value === undefined) {
       throw new Err.NameNotFound(this.name);
@@ -27,7 +28,7 @@ export default class Variable {
     }
   }
 
-  get description(): string {
+  get [Sym.description](): string {
     return this.name;
   }
 }

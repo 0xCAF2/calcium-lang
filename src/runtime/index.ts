@@ -1,5 +1,5 @@
 import * as Cmd from "../command";
-import createBuiltinFunc from "../factory/builtinFunc";
+import createBuiltinFunc from "../type/builtinFunc";
 import Environment from "./environment";
 import Namespace from "./namespace";
 import Parser from "../parser";

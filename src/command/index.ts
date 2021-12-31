@@ -1,5 +1,6 @@
 import Environment from "../runtime/environment";
 
+import Assignment from "./assignment";
 import Call from "./call";
 import Comment from "./comment";
 import End from "./end";
@@ -11,4 +12,4 @@ export interface Command {
   execute(env: Environment): void;
 }
 
-export { Call, Comment, End };
+export { Assignment, Call, Comment, End };
