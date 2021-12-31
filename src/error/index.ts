@@ -1,3 +1,10 @@
+export class AttributeNotFound extends Error {
+  constructor(public readonly key: string) {
+    super(`${key} not found.`);
+    this.key = key;
+  }
+}
+
 export class CannotApplySubscript extends Error {}
 export class CannotConvertToExpression extends Error {}
 export class CommandNotFound extends Error {}

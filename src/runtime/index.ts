@@ -1,5 +1,5 @@
 import * as Cmd from "../command";
-import createBuiltinFunc from "../type/builtinFunc";
+import createBuiltinFunc from "../factory/builtinFunc";
 import Environment from "./environment";
 import Namespace from "./namespace";
 import Parser from "../parser";
@@ -46,6 +46,20 @@ export default class Runtime {
     const stmt = this.env.code[this.env.address.index];
     this.env.address.index += 1;
     return stmt;
+  }
+
+  run(): Status {
+    if (this.env.address.index >= this.env.code.length) {
+      return Status.Terminated;
+    }
+    while (true) {
+      const result = this.step();
+      if (result !== Status.Running) {
+        return result;
+      } else {
+        continue;
+      }
+    }
   }
 
   /**

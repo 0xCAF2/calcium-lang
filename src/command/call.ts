@@ -1,4 +1,4 @@
-import * as Type from "../type";
+import { None } from "../factory";
 import { Command } from ".";
 import Environment from "../runtime/environment";
 import * as Expr from "../expression";
@@ -16,7 +16,7 @@ export default class Call implements Command {
    * @param args arguments
    */
   constructor(
-    public readonly lhs: Expr.Reference | typeof Type.None,
+    public readonly lhs: Expr.Reference | typeof None,
     public readonly funcRef: Expr.Reference,
     public readonly args: Expr.Expression[]
   ) {}
@@ -25,7 +25,7 @@ export default class Call implements Command {
     const evaluate = Reflect.get(this.funcRef, Sym.evaluate);
     const funcObj = Reflect.apply(evaluate, this.funcRef, [env]);
     const result = funcObj[Sym.call](this.args, env);
-    if (this.lhs !== Type.None) {
+    if (this.lhs !== None) {
       (this.lhs as Expr.Reference).assign(result, env);
     }
   }

@@ -1,13 +1,13 @@
 import * as JSONElementType from "./jsonElement";
 import * as Cmd from "../command";
-import createList from "../type/list";
-import createStr from "../type/str";
+import createList from "../factory/list";
+import createStr from "../factory/str";
 import * as Err from "../error";
 import * as Expr from "../expression";
 import Index from "../index/index";
 import * as Kw from "../keyword";
 import Statement from "../runtime/statement";
-import * as Type from "../type";
+import { None } from "../factory";
 
 /**
  * a default parser for Calcium language
@@ -35,7 +35,9 @@ export default class Parser {
     // a function call
     this.table.set(Kw.Command.Call, (stmt) => {
       const lhs = this.convertToExpression(stmt[Index.Call.Lhs]);
-      const funcRef = this.convertToExpression(stmt[Index.Call.FuncRef]);
+      const funcRef = this.convertToReference(
+        stmt[Index.Call.FuncRef] as JSONElementType.Reference
+      );
       const args = this.extractArgs(
         stmt[Index.Call.Args] as JSONElementType.Any[]
       );
@@ -79,7 +81,7 @@ export default class Parser {
     } else if (typeof expr === "string") {
       return createStr(expr) as Expr.InternalType;
     } else if (expr === null) {
-      return Type.None;
+      return None;
     } else {
       throw new Err.CannotConvertToExpression();
     }
