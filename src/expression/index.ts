@@ -1,4 +1,6 @@
-import { None, Any } from "../factory";
+import { None } from "../factory";
+import BinaryOperation from "./binaryOperation";
+import UnaryOperation from "./unaryOperation";
 import Variable from "./variable";
 
 export type Reference = Variable;
@@ -6,8 +8,13 @@ export type Reference = Variable;
 /**
  * All objects in Calcium use a Proxy.
  */
-export type InternalType = Any;
+export type InternalType = typeof Proxy;
 
-export type Expression = InternalType | Reference | typeof None;
+export type Expression =
+  | BinaryOperation
+  | InternalType
+  | Reference
+  | UnaryOperation
+  | typeof None;
 
-export { Variable };
+export { BinaryOperation, UnaryOperation, Variable };

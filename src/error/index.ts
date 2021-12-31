@@ -18,6 +18,8 @@ export class NameNotFound extends Error {
   }
 }
 
+export class OperationFailed extends Error {}
+
 export class UnsupportedKeyword extends Error {
   constructor(public readonly keyword: string) {
     super(`${keyword} is not supported.`);

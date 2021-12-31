@@ -8,6 +8,7 @@ import Index from "../index/index";
 import * as Kw from "../keyword";
 import Statement from "../runtime/statement";
 import { None } from "../factory";
+import createInt from "../factory/int";
 
 /**
  * a default parser for Calcium language
@@ -60,6 +61,18 @@ export default class Parser {
     });
   }
 
+  convertToBinaryOperation(
+    operator: string,
+    expr: JSONElementType.BinaryOperation
+  ): Expr.BinaryOperation {
+    if (!Kw.BinaryOperatorsSet.has(operator)) {
+      throw new Err.CannotConvertToExpression();
+    }
+    const left = this.convertToExpression(expr[Index.BinaryOperator.Left]);
+    const right = this.convertToExpression(expr[Index.BinaryOperator.Right]);
+    return new Expr.BinaryOperation(operator, left, right);
+  }
+
   /**
    * parse JSON element(s) and return `Expression`.
    * @param expr any JSON element
@@ -74,12 +87,29 @@ export default class Parser {
           list.push(this.convertToExpression(elem));
         }
         return createList(list) as Expr.InternalType;
-      } else {
+      } else if (
+        expr[0] === Kw.Reference.Variable ||
+        expr[0] === Kw.Reference.Attribute ||
+        expr[0] === Kw.Reference.Subscript
+      ) {
         // expr is a reference.
-        return this.convertToReference(expr as JSONElementType.Reference);
+        return this.convertToReference(expr);
+      } else if (
+        expr[0] === Kw.UnaryOperator.BitwiseNot ||
+        expr[0] === Kw.UnaryOperator.Negative ||
+        expr[0] === Kw.UnaryOperator.Not
+      ) {
+        return this.convertToUnaryOperation(expr[0], expr);
+      } else if (expr.length === 3) {
+        // expr could be a binary operation
+        return this.convertToBinaryOperation(expr[0], expr);
+      } else {
+        throw new Err.CannotConvertToExpression();
       }
+    } else if (typeof expr === "number") {
+      return createInt(expr);
     } else if (typeof expr === "string") {
-      return createStr(expr) as Expr.InternalType;
+      return createStr(expr);
     } else if (expr === null) {
       return None;
     } else {
@@ -99,6 +129,13 @@ export default class Parser {
     } else {
       throw new Err.UnsupportedKeyword(kw as string);
     }
+  }
+
+  convertToUnaryOperation(
+    operator: string,
+    expr: JSONElementType.UnaryOperation
+  ): Expr.UnaryOperation {
+    return new Expr.UnaryOperation(operator, None); // TODO change here
   }
 
   /**

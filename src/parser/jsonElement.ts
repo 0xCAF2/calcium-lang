@@ -9,6 +9,39 @@ export type DictLiteral = {};
 
 export type Reference = Variable | Attribute | Subscript;
 
+export type BinaryOperation = [
+  (
+    | "+"
+    | "-"
+    | "*"
+    | "**"
+    | "/"
+    | "//"
+    | "%"
+    | "=="
+    | "!="
+    | ">"
+    | ">="
+    | "<"
+    | "<="
+    | "and"
+    | "or"
+    | "is"
+    | "is not"
+    | "in"
+    | "not in"
+    | "&"
+    | "|"
+    | "^"
+    | "<<"
+    | ">>"
+  ),
+  Any,
+  Any
+];
+
+export type UnaryOperation = ["~" | "-_" | "not", Any];
+
 export type Variable = ["var", string];
 
 export type Attribute = ["attr", Reference, string];
@@ -19,4 +52,10 @@ export type IndexOrKey = number | string | Variable;
 
 export type SliceEnd = number | Variable;
 
-export type Any = Primitive | ArrayLiteral | DictLiteral | Reference;
+export type Any =
+  | Primitive
+  | ArrayLiteral
+  | DictLiteral
+  | Reference
+  | BinaryOperation
+  | UnaryOperation;
