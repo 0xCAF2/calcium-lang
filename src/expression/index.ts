@@ -1,10 +1,14 @@
-import { None } from "../type";
+import { NoneType } from "../factory";
+import Symbols from "../symbol";
 import Variable from "./variable";
 
 export type Reference = Variable;
 
-export type Literal = {};
+/**
+ * All objects in Calcium use a Proxy.
+ */
+export type InternalType = any;
 
-export type Expression = Literal | Reference | typeof None;
+export type Expression = InternalType | Reference | NoneType;
 
 export { Variable };

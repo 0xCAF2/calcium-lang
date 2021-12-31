@@ -1,19 +1,29 @@
 import * as JSONElementType from "./jsonElement";
 import * as Cmd from "../command";
+import createList from "../factory/list";
+import createStr from "../factory/str";
 import * as Err from "../error";
 import * as Expr from "../expression";
 import Index from "../index/index";
-import { default as Kw } from "../keyword";
+import * as Kw from "../keyword";
 import Statement from "../runtime/statement";
-import * as Type from "../type";
+import * as Type from "../factory";
 
+/**
+ * a default parser for Calcium language
+ */
 export default class Parser {
+  /**
+   *
+   * @param table has default implementation when it is undefined.
+   */
   constructor(
     public readonly table = new Map<
       Kw.Command,
       (stmt: Statement) => Cmd.Command
     >()
   ) {
+    // a function call
     this.table.set(Kw.Command.Call, (stmt) => {
       const lhs = this.convertToExpression(
         stmt[Index.Call.Lhs]
@@ -27,6 +37,7 @@ export default class Parser {
       return new Cmd.Call(lhs, funcRef, args);
     });
 
+    // a comment line
     this.table.set(Kw.Command.Comment, (stmt) => {
       const text = stmt[Index.Comment.Text];
       if (typeof text === "string") {
@@ -36,11 +47,17 @@ export default class Parser {
       }
     });
 
+    // the end of program
     this.table.set(Kw.Command.End, (stmt) => {
       return new Cmd.End();
     });
   }
 
+  /**
+   * parse JSON element(s) and return `Expression`.
+   * @param expr any JSON element
+   * @returns an internal type or a reference
+   */
   convertToExpression(expr: JSONElementType.Any): Expr.Expression {
     if (Array.isArray(expr)) {
       if (Array.isArray(expr[0])) {
@@ -49,12 +66,13 @@ export default class Parser {
         for (let elem of expr[0]) {
           list.push(this.convertToExpression(elem));
         }
-        return list; // TODO: change to List
+        return createList(list) as Expr.InternalType;
       } else {
+        // expr is a reference.
         return this.convertToReference(expr as JSONElementType.Reference);
       }
     } else if (typeof expr === "string") {
-      return new Type.Str(expr);
+      return createStr(expr) as Expr.InternalType;
     } else if (expr === null) {
       return Type.None;
     } else {
@@ -62,6 +80,11 @@ export default class Parser {
     }
   }
 
+  /**
+   * parse a reference array and return an reference object used in runtime.
+   * @param expr a reference array such as `["var", "x"]`
+   * @returns a reference object to be evaluated later
+   */
   convertToReference(expr: JSONElementType.Reference): Expr.Reference {
     const kw = expr[Index.Expression.Keyword];
     if (kw === Kw.Reference.Variable) {
@@ -71,6 +94,11 @@ export default class Parser {
     }
   }
 
+  /**
+   * used by `Call`.
+   * @param args arguments given to a function
+   * @returns converted objects that will be evaluated in runtime
+   */
   extractArgs(args: JSONElementType.Any[]): Expr.Expression[] {
     const convertedArgs: Expr.Expression[] = [];
     for (let a of args) {

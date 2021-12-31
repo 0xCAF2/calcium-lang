@@ -1,3 +1,6 @@
+/**
+ * the result of execution on `Runtime`
+ */
 enum Status {
   Break,
   ExceptionUnhandled,

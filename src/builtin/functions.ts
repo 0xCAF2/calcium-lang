@@ -1,15 +1,26 @@
 import Environment from "../runtime/environment";
-import { Any } from "../type";
-import * as JSONElementType from "../parser/jsonElement";
+import * as Expr from "../expression";
+import { default as Sym } from "../symbol";
+import * as Type from "../factory";
 
-export type BuiltinFuncBody = (
-  args: JSONElementType.Any[],
-  env: Environment
-) => Any;
+/**
+ * signature for the body of a built-in function.
+ */
+export type FuncBody = (args: Expr.Expression[], env: Environment) => Type.Any;
 
-export function print(args: JSONElementType.Any[], env: Environment): Any {
-  if (env.funcToOutput) {
-    env.funcToOutput("Hello, World.");
+/**
+ * the built-in print function
+ * @param args positional arguments
+ * @param env
+ * @returns return None
+ */
+export function print(args: Expr.Expression[], env: Environment): Type.Any {
+  const result: string[] = [];
+  for (let elem of args) {
+    result.push(Reflect.get(elem, Sym.description));
   }
-  return null;
+  if (env.funcToOutput) {
+    env.funcToOutput(result.join(" "));
+  }
+  return Type.None;
 }

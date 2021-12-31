@@ -1,8 +1,8 @@
 import { print } from "./functions";
-import { BuiltinFuncBody } from "./functions";
+import { FuncBody } from "./functions";
 
-export const BuiltinFunctions: { [key: string]: BuiltinFuncBody } = {
+export const functions: { [key: string]: FuncBody } = {
   print,
 };
 
-export { BuiltinFuncBody } from "./functions";
+export { FuncBody } from "./functions";

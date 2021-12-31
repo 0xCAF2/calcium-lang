@@ -1,6 +1,9 @@
-import { Any } from "../parser/jsonElement";
-import Keyword from "../keyword";
+import * as JSONElementType from "../parser/jsonElement";
+import * as Kw from "../keyword";
 
-type Statement = [number, unknown[], Keyword.Command, ...Any[]];
+/**
+ * a JSON array that represents one line in Calcium
+ */
+type Statement = [number, unknown[], Kw.Command, ...JSONElementType.Any[]];
 
 export default Statement;

@@ -1,4 +1,4 @@
-import { Any } from "../type";
+import { Any } from "../factory";
 
 type Store = Map<string, Any>;
 

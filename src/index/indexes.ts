@@ -13,7 +13,6 @@ export enum Call {
   Lhs = 3,
   FuncRef = 4,
   Args = 5,
-  KeywordArgs = 6,
 }
 
 export enum Class {

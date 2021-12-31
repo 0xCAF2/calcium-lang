@@ -1,5 +1,4 @@
 import Address from "./address";
-import { default as Kw } from "../keyword";
 import Namespace from "./namespace";
 import { OutputFunction } from ".";
 import Statement from "./statement";
