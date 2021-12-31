@@ -4,7 +4,7 @@ import { default as Sym } from "../symbol";
 import Environment from "./environment";
 import evaluate from "./evaluate";
 
-export default function getValue(
+export default function retrieveValue(
   target: Expr.Expression,
   env: Environment
 ): Primitive {

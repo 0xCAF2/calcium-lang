@@ -1,7 +1,7 @@
 import createInt from "../factory/int";
 import Environment from "../runtime/environment";
 import * as Expr from "./index";
-import getValue from "../runtime/getValue";
+import retrieveValue from "../runtime/retrieveValue";
 import { InternalType } from "../expression";
 import * as Kw from "../keyword";
 import { OperationFailed } from "../error";
@@ -16,8 +16,8 @@ type Operate = (
 export default class BinaryOperation {
   static table: { [key: string]: Operate } = {
     [Kw.BinaryOperator.Addition]: (l, r, env) => {
-      const valueL = getValue(l, env);
-      const valueR = getValue(r, env);
+      const valueL = retrieveValue(l, env);
+      const valueR = retrieveValue(r, env);
       if (typeof valueL === "number" && typeof valueR === "number") {
         return createInt(valueL + valueR);
       }
