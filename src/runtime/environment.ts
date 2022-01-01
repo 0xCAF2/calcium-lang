@@ -4,6 +4,9 @@ import Namespace from "./namespace";
 import { OutputFunction } from ".";
 import Statement from "./statement";
 
+/**
+ * the runtime environment that has data to control the execution
+ */
 export default class Environment {
   /**
    * the current point of the execution
@@ -58,6 +61,9 @@ export default class Environment {
     return this.exception !== undefined;
   }
 
+  /**
+   * get the last block that had been entered
+   */
   get lastBlock(): Block {
     return this.blocks[this.blocks.length - 1];
   }

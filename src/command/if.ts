@@ -1,9 +1,11 @@
 import Environment from "../runtime/environment";
 import * as Expr from "../expression";
-import { Block, Kind } from "../runtime/block";
 import Conditional from "./conditional";
 import retrieveValue from "../runtime/retrieveValue";
 
+/**
+ * if control flow
+ */
 export default class If extends Conditional {
   constructor(public readonly condition: Expr.Expression) {
     super();

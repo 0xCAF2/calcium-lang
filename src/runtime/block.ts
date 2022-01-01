@@ -1,9 +1,21 @@
 import Environment from "../runtime/environment";
 import Address from "./address";
 
+/**
+ * when returns true, the block should be executed.
+ */
 export type Enter = (env: Environment) => boolean;
-export type Exit = (env: Environment) => void;
 
+/**
+ * executed when the block ends
+ * The returned value represents a result when a `Block` ends with
+ * a jump over two or more points on the address.
+ */
+export type Exit = (env: Environment) => Result;
+
+/**
+ * the kind of a `Block`
+ */
 export enum Kind {
   Ifs = "Ifs",
   IfElifElse = "IfElifElse",
@@ -16,27 +28,48 @@ export enum Kind {
   Except = "Except",
 }
 
-const hasJumppedOver: Map<Kind, boolean> = new Map([
-  [Kind.Ifs, false],
-  [Kind.IfElifElse, true],
-  [Kind.ForRange, true],
-  [Kind.ForEach, true],
-  [Kind.While, true],
-  [Kind.Call, true],
-  [Kind.ClassDef, false],
-  [Kind.Try, false],
-  [Kind.Except, false],
-]);
-
 export enum Result {
+  /**
+   * an exception has occurred
+   */
   Invalid = "Invalid",
+  /**
+   * moved over two or more points
+   */
   Jumpped = "Jumpped",
-  Shifted = "Shifted",
+  /**
+   * shifted one point only
+   */
+  Exited = "Shifted",
 }
 
-export class Block {
-  address: Address;
+/**
+ */
+const results: Map<Kind, Result> = new Map([
+  [Kind.Ifs, Result.Exited],
+  [Kind.IfElifElse, Result.Jumpped],
+  [Kind.ForRange, Result.Jumpped],
+  [Kind.ForEach, Result.Jumpped],
+  [Kind.While, Result.Jumpped],
+  [Kind.Call, Result.Jumpped],
+  [Kind.ClassDef, Result.Exited],
+  [Kind.Try, Result.Exited],
+  [Kind.Except, Result.Exited],
+]);
 
+/**
+ * a syntactic scope
+ */
+export class Block {
+  readonly address: Address;
+
+  /**
+   *
+   * @param kind
+   * @param address
+   * @param shouldEnter determine whether this block should be executed
+   * @param willExit executed before this block ends
+   */
   constructor(
     public readonly kind: Kind,
     address: Address,
@@ -49,7 +82,7 @@ export class Block {
   enter(env: Environment) {
     env.address = this.address.clone();
     if (this.shouldEnter(env)) {
-      env.address.shift(1);
+      env.address.shift(1); // add x by one step
       env.blocks.push(this);
     }
   }
@@ -59,7 +92,6 @@ export class Block {
     if (env.exceptionThrown) {
       return Result.Invalid;
     }
-    this.willExit(env);
-    return hasJumppedOver.get(this.kind) ? Result.Jumpped : Result.Shifted;
+    return this.willExit(env); // each command can have their own result
   }
 }

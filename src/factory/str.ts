@@ -3,6 +3,11 @@ import { InternalType } from "../expression";
 import Environment from "../runtime/environment";
 import { default as Sym } from "../symbol";
 
+/**
+ *
+ * @param value
+ * @returns an internal representation of a string
+ */
 export default function createStr(value: string): InternalType {
   const self = new Proxy(
     {},

@@ -4,8 +4,14 @@ import { InternalType } from "../factory";
 import UnaryOperation from "./unaryOperation";
 import Variable from "./variable";
 
+/**
+ * any expression that contains an identifier
+ */
 export type Reference = Variable;
 
+/**
+ * any expression that is not evaluated
+ */
 export type Expression =
   | BinaryOperation
   | InternalType

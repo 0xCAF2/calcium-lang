@@ -7,8 +7,14 @@ export type ArrayLiteral = [unknown[]];
 
 export type DictLiteral = {};
 
+/**
+ * JSON representation of reference expressions in Calcium
+ */
 export type Reference = Variable | Attribute | Subscript;
 
+/**
+ * JSON representation of binary operators in Calcium
+ */
 export type BinaryOperation = [
   (
     | "+"
@@ -52,6 +58,9 @@ export type IndexOrKey = number | string | Variable;
 
 export type SliceEnd = number | Variable;
 
+/**
+ * any JSON element for Calcium language
+ */
 export type Any =
   | Primitive
   | ArrayLiteral

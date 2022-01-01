@@ -23,10 +23,10 @@ export default class Parser {
   ) {
     // an assignment
     this.table.set(Kw.Command.Assignment, (stmt) => {
-      const lhs = this.convertToReference(
+      const lhs = this.translateReference(
         stmt[Index.Assignment.Lhs] as JSONElementType.Reference
       );
-      const rhs = this.convertToExpression(stmt[Index.Assignment.Rhs]);
+      const rhs = this.translateExpression(stmt[Index.Assignment.Rhs]);
       return new Cmd.Assignment(lhs, rhs);
     });
 
@@ -36,8 +36,8 @@ export default class Parser {
       const lhs =
         lhsElem === null
           ? None
-          : this.convertToReference(lhsElem as JSONElementType.Reference);
-      const funcRef = this.convertToReference(
+          : this.translateReference(lhsElem as JSONElementType.Reference);
+      const funcRef = this.translateReference(
         stmt[Index.Call.FuncRef] as JSONElementType.Reference
       );
       const args = this.extractArgs(
@@ -62,12 +62,12 @@ export default class Parser {
     });
 
     this.table.set(Kw.Command.If, (stmt) => {
-      const condition = this.convertToExpression(stmt[Index.Conditional.expr]);
+      const condition = this.translateExpression(stmt[Index.Conditional.expr]);
       return new Cmd.If(condition);
     });
 
     this.table.set(Kw.Command.Elif, (stmt) => {
-      const condition = this.convertToExpression(stmt[Index.Conditional.expr]);
+      const condition = this.translateExpression(stmt[Index.Conditional.expr]);
       return new Cmd.Elif(condition);
     });
 
@@ -81,15 +81,44 @@ export default class Parser {
     });
   }
 
-  convertToBinaryOperation(
+  /**
+   * used by `Call`.
+   * @param args arguments given to a function
+   * @returns converted objects that will be evaluated in runtime
+   */
+  extractArgs(args: JSONElementType.Any[]): Expr.Expression[] {
+    const convertedArgs: Expr.Expression[] = [];
+    for (let a of args) {
+      const arg = this.translateExpression(a);
+      convertedArgs.push(arg);
+    }
+    return convertedArgs;
+  }
+
+  /**
+   *
+   * @param stmt a JSON array that represents one line to execute
+   * @returns a command object to be executed
+   */
+  read(stmt: Statement): Cmd.Command {
+    const kw = stmt[Index.Statement.Keyword];
+    const cmd = this.table.get(kw)?.(stmt);
+    if (cmd === undefined) {
+      throw new Err.CommandNotFound();
+    } else {
+      return cmd;
+    }
+  }
+
+  translateBinaryOperation(
     operator: string,
     expr: JSONElementType.BinaryOperation
   ): Expr.BinaryOperation {
     if (!Kw.BinaryOperatorsSet.has(operator)) {
       throw new Err.CannotConvertToExpression();
     }
-    const left = this.convertToExpression(expr[Index.BinaryOperator.Left]);
-    const right = this.convertToExpression(expr[Index.BinaryOperator.Right]);
+    const left = this.translateExpression(expr[Index.BinaryOperator.Left]);
+    const right = this.translateExpression(expr[Index.BinaryOperator.Right]);
     return new Expr.BinaryOperation(operator, left, right);
   }
 
@@ -98,13 +127,13 @@ export default class Parser {
    * @param expr any JSON element
    * @returns an internal type or a reference
    */
-  convertToExpression(expr: JSONElementType.Any): Expr.Expression {
+  translateExpression(expr: JSONElementType.Any): Expr.Expression {
     if (Array.isArray(expr)) {
       if (Array.isArray(expr[0])) {
         // expr is an array literal.
         const list: Expr.Expression[] = [];
         for (let elem of expr[0]) {
-          list.push(this.convertToExpression(elem));
+          list.push(this.translateExpression(elem));
         }
         return createList(list) as Expr.InternalType;
       } else if (
@@ -113,16 +142,16 @@ export default class Parser {
         expr[0] === Kw.Reference.Subscript
       ) {
         // expr is a reference.
-        return this.convertToReference(expr);
+        return this.translateReference(expr);
       } else if (
         expr[0] === Kw.UnaryOperator.BitwiseNot ||
         expr[0] === Kw.UnaryOperator.Negative ||
         expr[0] === Kw.UnaryOperator.Not
       ) {
-        return this.convertToUnaryOperation(expr[0], expr);
+        return this.translateUnaryOperation(expr[0], expr);
       } else if (expr.length === 3) {
         // expr could be a binary operation
-        return this.convertToBinaryOperation(expr[0], expr);
+        return this.translateBinaryOperation(expr[0], expr);
       } else {
         throw new Err.CannotConvertToExpression();
       }
@@ -144,7 +173,7 @@ export default class Parser {
    * @param expr a reference array such as `["var", "x"]`
    * @returns a reference object to be evaluated later
    */
-  convertToReference(expr: JSONElementType.Reference): Expr.Reference {
+  translateReference(expr: JSONElementType.Reference): Expr.Reference {
     const kw = expr[Index.Expression.Keyword];
     if (kw === Kw.Reference.Variable) {
       return new Expr.Variable(expr[Index.Variable.Name] as string);
@@ -153,39 +182,10 @@ export default class Parser {
     }
   }
 
-  convertToUnaryOperation(
+  translateUnaryOperation(
     operator: string,
     expr: JSONElementType.UnaryOperation
   ): Expr.UnaryOperation {
     return new Expr.UnaryOperation(operator, None); // TODO change here
-  }
-
-  /**
-   * used by `Call`.
-   * @param args arguments given to a function
-   * @returns converted objects that will be evaluated in runtime
-   */
-  extractArgs(args: JSONElementType.Any[]): Expr.Expression[] {
-    const convertedArgs: Expr.Expression[] = [];
-    for (let a of args) {
-      const arg = this.convertToExpression(a);
-      convertedArgs.push(arg);
-    }
-    return convertedArgs;
-  }
-
-  /**
-   *
-   * @param stmt a JSON array that represents one line to execute
-   * @returns a command object to be executed
-   */
-  read(stmt: Statement): Cmd.Command {
-    const kw = stmt[Index.Statement.Keyword];
-    const cmd = this.table.get(kw)?.(stmt);
-    if (cmd === undefined) {
-      throw new Err.CommandNotFound();
-    } else {
-      return cmd;
-    }
   }
 }

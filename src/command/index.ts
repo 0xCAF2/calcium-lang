@@ -1,5 +1,3 @@
-import Environment from "../runtime/environment";
-
 export { default as Assignment } from "./assignment";
 export { default as Call } from "./call";
 export { default as Command } from "./command";

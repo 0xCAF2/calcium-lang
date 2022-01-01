@@ -1,3 +1,8 @@
 import If from "./if";
 
-export default class Elif extends If {}
+/**
+ * elif control flow
+ */
+export default class Elif extends If {
+  // inherit `If` command
+}

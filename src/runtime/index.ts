@@ -5,7 +5,7 @@ import Namespace from "./namespace";
 import Parser from "../parser";
 import Statement from "./statement";
 import Status from "./status";
-import { functions, FuncBody } from "../builtin";
+import * as Builtin from "../builtin";
 import { InternalType } from "../expression";
 import Index from "../indexes";
 import { Result } from "./block";
@@ -20,6 +20,9 @@ export default class Runtime {
    */
   env: Environment;
 
+  /**
+   * a utility flag to execute on a Worker
+   */
   isPaused = false;
 
   /**
@@ -35,10 +38,10 @@ export default class Runtime {
     this.parser = opt?.parser ?? new Parser();
     // set up built-ins
     const builtin = new Namespace();
-    for (let name in functions) {
+    for (let name in Builtin.Functions) {
       const builtinFunc = createBuiltinFunc(
         name,
-        functions[name]
+        Builtin.Functions[name]
       ) as InternalType;
       builtin.register(name, builtinFunc);
     }
@@ -50,10 +53,40 @@ export default class Runtime {
     this.breakpoints.add(line);
   }
 
+  pause() {
+    this.isPaused = true;
+  }
+
+  removeBreakpoint(line: number) {
+    this.breakpoints.delete(line);
+  }
+
+  resume() {
+    this.isPaused = false;
+  }
+
+  run(): Status {
+    if (this.env.address.line >= this.env.code.length) {
+      return Status.Terminated;
+    }
+    while (true) {
+      const result = this.step();
+      if (result !== Status.Running) {
+        return result;
+      } else {
+        continue;
+      }
+    }
+  }
+
   /**
    *
-   * @returns next `Statement` object to be executed
+   * @param funcToOutput built-in function's body to output
    */
+  setOutputFunction(funcToOutput: OutputFunction) {
+    this.env.funcToOutput = funcToOutput;
+  }
+
   skipToNextLine() {
     let nextIndex: number;
     outer: while (true) {
@@ -84,32 +117,6 @@ export default class Runtime {
     this.env.address.line = nextIndex;
   }
 
-  removeBreakpoint(line: number) {
-    this.breakpoints.delete(line);
-  }
-
-  run(): Status {
-    if (this.env.address.line >= this.env.code.length) {
-      return Status.Terminated;
-    }
-    while (true) {
-      const result = this.step();
-      if (result !== Status.Running) {
-        return result;
-      } else {
-        continue;
-      }
-    }
-  }
-
-  /**
-   *
-   * @param funcToOutput built-in function's body to output
-   */
-  setOutputFunction(funcToOutput: OutputFunction) {
-    this.env.funcToOutput = funcToOutput;
-  }
-
   /**
    * execute one line.
    *
@@ -126,6 +133,8 @@ export default class Runtime {
       return Status.Terminated;
     }
     cmd.execute(this.env);
+
+    if (this.isPaused) return Status.Paused;
 
     this.skipToNextLine();
 
@@ -153,5 +162,5 @@ export type OutputFunction = (desc: string) => void;
 
 export type Options = {
   parser?: Parser;
-  builtins?: { [name: string]: FuncBody };
+  builtins?: { [name: string]: Builtin.FuncBody };
 };

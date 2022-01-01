@@ -3,6 +3,9 @@ import { InternalType } from "../expression";
 import Environment from "../runtime/environment";
 import { default as Sym } from "../symbol";
 
+/**
+ * represent `None` object
+ */
 const None = new Proxy(
   {},
   {

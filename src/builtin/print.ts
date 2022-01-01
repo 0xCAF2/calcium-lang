@@ -1,15 +1,7 @@
 import Environment from "../runtime/environment";
 import * as Expr from "../expression";
-import { default as Sym } from "../symbol";
 import { None } from "../factory";
-
-/**
- * signature for the body of a built-in function.
- */
-export type FuncBody = (
-  args: Expr.Expression[],
-  env: Environment
-) => Expr.InternalType;
+import Sym from "../symbol";
 
 /**
  * the built-in print function
@@ -17,7 +9,7 @@ export type FuncBody = (
  * @param env
  * @returns return None
  */
-export function print(
+export default function print(
   args: Expr.Expression[],
   env: Environment
 ): Expr.InternalType {

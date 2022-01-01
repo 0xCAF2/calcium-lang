@@ -3,6 +3,11 @@ import { InternalType } from "../expression";
 import { default as Sym } from "../symbol";
 import { AttributeNotFound } from "../error";
 
+/**
+ *
+ * @param value
+ * @returns the internal representation of a boolean value
+ */
 export default function createBool(value: boolean): InternalType {
   const self = new Proxy(
     {},

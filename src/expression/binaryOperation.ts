@@ -8,8 +8,14 @@ import { OperationFailed } from "../error";
 import RawType from "./rawType";
 import { default as Sym } from "../symbol";
 
+/**
+ * execute an arbitrary binary operator
+ */
 type Operate = (l: RawType, r: RawType, env: Environment) => InternalType;
 
+/**
+ * use a binary operator and calculate
+ */
 export default class BinaryOperation {
   static table: { [key: string]: Operate } = {
     [Kw.BinaryOperator.Addition]: (l, r, env) => {

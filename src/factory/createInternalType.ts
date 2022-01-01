@@ -5,6 +5,11 @@ import { InternalType } from "../expression";
 import None from "./none";
 import RawType from "../expression/rawType";
 
+/**
+ * a utility function to create an internal type from the raw object
+ * @param value
+ * @returns
+ */
 export default function createInternalType(value: RawType): InternalType {
   switch (typeof value) {
     case "number":

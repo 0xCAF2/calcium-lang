@@ -1,8 +1,11 @@
-import { print } from "./functions";
-import { FuncBody } from "./functions";
+import FuncBody from "./funcBody";
+import print from "./print";
 
-export const functions: { [key: string]: FuncBody } = {
+/**
+ * built-in functions
+ */
+export const Functions: { [key: string]: FuncBody } = {
   print,
 };
 
-export { FuncBody } from "./functions";
+export { FuncBody };
