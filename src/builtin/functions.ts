@@ -1,12 +1,15 @@
 import Environment from "../runtime/environment";
 import * as Expr from "../expression";
 import { default as Sym } from "../symbol";
-import { None, Any } from "../factory";
+import { None } from "../factory";
 
 /**
  * signature for the body of a built-in function.
  */
-export type FuncBody = (args: Expr.Expression[], env: Environment) => Any;
+export type FuncBody = (
+  args: Expr.Expression[],
+  env: Environment
+) => Expr.InternalType;
 
 /**
  * the built-in print function
@@ -14,7 +17,10 @@ export type FuncBody = (args: Expr.Expression[], env: Environment) => Any;
  * @param env
  * @returns return None
  */
-export function print(args: Expr.Expression[], env: Environment): Any {
+export function print(
+  args: Expr.Expression[],
+  env: Environment
+): Expr.InternalType {
   const result: string[] = [];
   for (let a of args) {
     const evaluate = Reflect.get(a, Sym.evaluate);
@@ -24,5 +30,5 @@ export function print(args: Expr.Expression[], env: Environment): Any {
   if (env.funcToOutput) {
     env.funcToOutput(result.join(" "));
   }
-  return None as Any;
+  return None;
 }

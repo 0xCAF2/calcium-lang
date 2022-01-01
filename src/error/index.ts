@@ -8,6 +8,7 @@ export class AttributeNotFound extends Error {
 export class CannotApplySubscript extends Error {}
 export class CannotConvertToExpression extends Error {}
 export class CommandNotFound extends Error {}
+export class InconsistentBlock extends Error {}
 export class IndexMustBeInt extends Error {}
 export class KeyMustBeStr extends Error {}
 

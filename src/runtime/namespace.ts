@@ -1,6 +1,6 @@
-import { Any } from "../factory";
+import { InternalType } from "../expression";
 
-type Store = Map<string, Any>;
+type Store = Map<string, InternalType>;
 
 /**
  * saves variables, functions, and so on in each namespace
@@ -9,7 +9,7 @@ export default class Namespace {
   /**
    * saves key value pairs.
    */
-  private dict: Store = new Map<string, Any>();
+  private dict: Store = new Map<string, InternalType>();
 
   /**
    *
@@ -21,7 +21,7 @@ export default class Namespace {
    * searches identifier and return its value
    * @param key identifier
    */
-  lookUp(key: string): Any | undefined {
+  lookUp(key: string): InternalType | undefined {
     const value = this.dict.get(key);
     if (value !== undefined) {
       return value;
@@ -35,7 +35,7 @@ export default class Namespace {
    * @param key identifier
    * @param value right hand side of assignment
    */
-  register(key: string, value: Any): void {
+  register(key: string, value: InternalType): void {
     this.dict.set(key, value);
   }
 }

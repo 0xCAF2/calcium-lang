@@ -1,14 +1,11 @@
 import * as JSONElementType from "./jsonElement";
 import * as Cmd from "../command";
-import createList from "../factory/list";
-import createStr from "../factory/str";
 import * as Err from "../error";
 import * as Expr from "../expression";
-import Index from "../index/index";
+import Index from "../indexes/index";
 import * as Kw from "../keyword";
 import Statement from "../runtime/statement";
-import { None } from "../factory";
-import createInt from "../factory/int";
+import { createBool, createInt, createList, createStr, None } from "../factory";
 
 /**
  * a default parser for Calcium language
@@ -35,7 +32,11 @@ export default class Parser {
 
     // a function call
     this.table.set(Kw.Command.Call, (stmt) => {
-      const lhs = this.convertToExpression(stmt[Index.Call.Lhs]);
+      const lhsElem = stmt[Index.Call.Lhs];
+      const lhs =
+        lhsElem === null
+          ? None
+          : this.convertToReference(lhsElem as JSONElementType.Reference);
       const funcRef = this.convertToReference(
         stmt[Index.Call.FuncRef] as JSONElementType.Reference
       );
@@ -53,6 +54,25 @@ export default class Parser {
       } else {
         return new Cmd.Comment(null);
       }
+    });
+
+    // conditional statements
+    this.table.set(Kw.Command.Ifs, (stmt) => {
+      return new Cmd.Ifs();
+    });
+
+    this.table.set(Kw.Command.If, (stmt) => {
+      const condition = this.convertToExpression(stmt[Index.Conditional.expr]);
+      return new Cmd.If(condition);
+    });
+
+    this.table.set(Kw.Command.Elif, (stmt) => {
+      const condition = this.convertToExpression(stmt[Index.Conditional.expr]);
+      return new Cmd.Elif(condition);
+    });
+
+    this.table.set(Kw.Command.Else, (stmt) => {
+      return new Cmd.Else();
     });
 
     // the end of program
@@ -110,6 +130,8 @@ export default class Parser {
       return createInt(expr);
     } else if (typeof expr === "string") {
       return createStr(expr);
+    } else if (typeof expr === "boolean") {
+      return createBool(expr);
     } else if (expr === null) {
       return None;
     } else {

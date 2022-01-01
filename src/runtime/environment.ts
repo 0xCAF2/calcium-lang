@@ -1,4 +1,5 @@
 import Address from "./address";
+import { Block } from "./block";
 import Namespace from "./namespace";
 import { OutputFunction } from ".";
 import Statement from "./statement";
@@ -10,6 +11,11 @@ export default class Environment {
   address = new Address(1, 0);
 
   /**
+   * a stack of command blocks
+   */
+  blocks: Block[] = [];
+
+  /**
    * an array that contains code lines
    */
   code: Statement[];
@@ -18,6 +24,8 @@ export default class Environment {
    * the current context that has associations from a name to a value
    */
   context: Namespace;
+
+  exception?: Error;
 
   /**
    * an external function to output from built-in print function
@@ -40,9 +48,17 @@ export default class Environment {
   }
 
   /**
-   * get the current line index on the execution
+   * get the current line index in the code array
    */
   get currentLineIndex(): number {
-    return this.address.index;
+    return this.address.line;
+  }
+
+  get exceptionThrown(): boolean {
+    return this.exception !== undefined;
+  }
+
+  get lastBlock(): Block {
+    return this.blocks[this.blocks.length - 1];
   }
 }

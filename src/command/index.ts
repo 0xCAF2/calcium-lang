@@ -1,15 +1,11 @@
 import Environment from "../runtime/environment";
 
-import Assignment from "./assignment";
-import Call from "./call";
-import Comment from "./comment";
-import End from "./end";
-
-/**
- * Each class that implements `Command` has own behaviors.
- */
-export interface Command {
-  execute(env: Environment): void;
-}
-
-export { Assignment, Call, Comment, End };
+export { default as Assignment } from "./assignment";
+export { default as Call } from "./call";
+export { default as Command } from "./command";
+export { default as Comment } from "./comment";
+export { default as Elif } from "./elif";
+export { default as Else } from "./else";
+export { default as End } from "./end";
+export { default as If } from "./if";
+export { default as Ifs } from "./ifs";

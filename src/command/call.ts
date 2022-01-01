@@ -1,5 +1,5 @@
 import { None } from "../factory";
-import { Command } from ".";
+import Command from "./command";
 import evaluate from "../runtime/evaluate";
 import Environment from "../runtime/environment";
 import * as Expr from "../expression";

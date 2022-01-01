@@ -2,11 +2,11 @@
  * the result of execution on `Runtime`
  */
 enum Status {
-  Break,
-  ExceptionUnhandled,
-  Paused,
-  Running,
-  Terminated,
+  AtBreakpoint = "AtBreakpoint",
+  ExceptionUnhandled = "ExceptionUnhandled",
+  Paused = "Paused",
+  Running = "Running",
+  Terminated = "Terminated",
 }
 
 export default Status;

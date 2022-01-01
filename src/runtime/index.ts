@@ -7,12 +7,20 @@ import Statement from "./statement";
 import Status from "./status";
 import { functions, FuncBody } from "../builtin";
 import { InternalType } from "../expression";
+import Index from "../indexes";
+import { Result } from "./block";
+import { InconsistentBlock } from "../error";
+import * as Kw from "../keyword";
 
 export default class Runtime {
+  breakpoints = new Set<number>();
+
   /**
    * has data required on execution.
    */
   env: Environment;
+
+  isPaused = false;
 
   /**
    * parses a statement in JSON arrays, then returns a command.
@@ -38,18 +46,50 @@ export default class Runtime {
     this.env = env;
   }
 
+  addBreakpoint(line: number) {
+    this.breakpoints.add(line);
+  }
+
   /**
    *
    * @returns next `Statement` object to be executed
    */
-  findNextLine(): Statement {
-    const stmt = this.env.code[this.env.address.index];
-    this.env.address.index += 1;
-    return stmt;
+  skipToNextLine() {
+    let nextIndex: number;
+    outer: while (true) {
+      nextIndex = this.env.address.line + 1;
+      inner: while (true) {
+        const nextStmt = this.env.code[nextIndex];
+        const nextIndent = nextStmt[Index.Statement.Indent];
+        const delta = this.env.address.indent - nextIndent;
+        if (delta > 0) {
+          // some blocks must be popped.
+          for (let i = 0; i < delta; ++i) {
+            const result = this.env.lastBlock.exit(this.env);
+            if (result === Result.Invalid) {
+              throw new InconsistentBlock();
+            } else if (result === Result.Jumpped) {
+              continue outer;
+            }
+          }
+          break outer;
+        } else if (delta === 0) {
+          break outer;
+        } else {
+          nextIndex += 1;
+          continue inner;
+        }
+      }
+    }
+    this.env.address.line = nextIndex;
+  }
+
+  removeBreakpoint(line: number) {
+    this.breakpoints.delete(line);
   }
 
   run(): Status {
-    if (this.env.address.index >= this.env.code.length) {
+    if (this.env.address.line >= this.env.code.length) {
       return Status.Terminated;
     }
     while (true) {
@@ -76,16 +116,36 @@ export default class Runtime {
    * @returns the result of the execution
    */
   step(): Status {
-    if (this.env.address.index >= this.env.code.length) {
+    if (this.env.address.line >= this.env.code.length) {
       return Status.Terminated;
     }
-    const stmt = this.findNextLine();
+
+    let stmt = this.currentStatement;
     const cmd = this.parser.read(stmt);
     if (cmd instanceof Cmd.End) {
       return Status.Terminated;
     }
     cmd.execute(this.env);
+
+    this.skipToNextLine();
+
+    stmt = this.currentStatement;
+    let kw = stmt[Index.Statement.Keyword];
+    // pass through Ifs and Comment commands
+    while (kw === Kw.Command.Ifs || kw === Kw.Command.Comment) {
+      const cmd = this.parser.read(stmt);
+      cmd.execute(this.env);
+      this.skipToNextLine();
+      stmt = this.currentStatement;
+      kw = stmt[Index.Statement.Keyword];
+    }
+
+    if (this.breakpoints.has(this.env.address.line)) return Status.AtBreakpoint;
     return Status.Running;
+  }
+
+  get currentStatement(): Statement {
+    return this.env.code[this.env.address.line];
   }
 }
 

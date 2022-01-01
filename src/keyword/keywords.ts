@@ -45,6 +45,7 @@ export enum Command {
   For = "for",
   FuncDef = "def",
   If = "if",
+  Ifs = "ifs",
   Import = "import",
   Pass = "pass",
   Raise = "raise",

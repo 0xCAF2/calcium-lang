@@ -1,7 +1,7 @@
 import Environment from "../runtime/environment";
 import * as Err from "../error";
 import { default as Sym } from "../symbol";
-import { Any } from "../factory";
+import InternalType from "../factory/internalType";
 
 /**
  * a simple reference to a value
@@ -15,11 +15,11 @@ export default class Variable {
    * @param rhs a right hand side value
    * @param env
    */
-  assign(rhs: Any, env: Environment) {
+  assign(rhs: InternalType, env: Environment) {
     env.context.register(this.name, rhs);
   }
 
-  [Sym.evaluate](env: Environment): Any {
+  [Sym.evaluate](env: Environment): InternalType {
     const value = env.context.lookUp(this.name);
     if (value === undefined) {
       throw new Err.NameNotFound(this.name);

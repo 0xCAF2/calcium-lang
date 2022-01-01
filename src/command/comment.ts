@@ -1,4 +1,4 @@
-import { Command } from ".";
+import Command from "./command";
 import Environment from "../runtime/environment";
 
 /**
