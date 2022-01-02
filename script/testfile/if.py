@@ -10,4 +10,4 @@ if a or b:
         c = 'NG 3'
 else:
     c = 'NG 4'
-print(c)
+print(c == None)

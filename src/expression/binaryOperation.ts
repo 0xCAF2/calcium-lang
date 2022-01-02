@@ -24,6 +24,12 @@ export default class BinaryOperation {
       }
       throw new OperationFailed();
     },
+    [Kw.BinaryOperator.Equal]: (l, r, env) => {
+      return Type.createBool(l === r);
+    },
+    [Kw.BinaryOperator.NotEqual]: (l, r, env) => {
+      return Type.createBool(l !== r);
+    },
     [Kw.BinaryOperator.And]: (l, r, env) => {
       const result = l && r;
       return Type.createInternalType(result);
