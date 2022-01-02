@@ -13,5 +13,8 @@ it("add.py", () => {
   [1, [], "end"]
 ] as any[];
   const runtime = new Calcium.Runtime(code);
+  runtime.setOutputFunction((desc) => {
+    console.log(desc);
+  });
   expect(runtime.run()).toBe(Calcium.Status.Terminated);
 });

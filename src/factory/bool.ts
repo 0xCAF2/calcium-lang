@@ -13,7 +13,7 @@ export default function createBool(value: boolean): InternalType {
     {},
     {
       get(target, property, receiver) {
-        if (property === Sym.description) return value.toString();
+        if (property === Sym.description) return value ? "True" : "False";
         else if (property === Sym.value) return value;
         else if (property === Sym.evaluate) return (env: Environment) => self;
         else throw new AttributeNotFound(property.toString());

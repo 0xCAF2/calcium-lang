@@ -20,6 +20,9 @@ import * as Calcium from "../src";
 it("{}", () => {{
   const code = {} as any[];
   const runtime = new Calcium.Runtime(code);
+  runtime.setOutputFunction((desc) => {{
+    console.log(desc);
+  }});
   expect(runtime.run()).toBe(Calcium.Status.Terminated);
 }});
 '''.format(filename, code[:-1]))

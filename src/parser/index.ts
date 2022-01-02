@@ -56,14 +56,13 @@ export default class Parser {
       }
     });
 
-    // conditional statements
-    this.table.set(Kw.Command.Ifs, (stmt) => {
-      return new Cmd.Ifs();
-    });
-
-    this.table.set(Kw.Command.If, (stmt) => {
-      const condition = this.translateExpression(stmt[Index.Conditional.expr]);
-      return new Cmd.If(condition);
+    // compound assignment
+    this.table.set(Kw.Command.CompoundAddition, (stmt) => {
+      const lhs = this.translateReference(
+        stmt[Index.Assignment.Lhs] as JSONElementType.Reference
+      );
+      const rhs = this.translateExpression(stmt[Index.Assignment.Rhs]);
+      return new Cmd.CompoundAssignment(Kw.BinaryOperator.Addition, lhs, rhs);
     });
 
     this.table.set(Kw.Command.Elif, (stmt) => {
@@ -78,6 +77,20 @@ export default class Parser {
     // the end of program
     this.table.set(Kw.Command.End, (stmt) => {
       return new Cmd.End();
+    });
+
+    this.table.set(Kw.Command.If, (stmt) => {
+      const condition = this.translateExpression(stmt[Index.Conditional.expr]);
+      return new Cmd.If(condition);
+    });
+
+    this.table.set(Kw.Command.Ifs, (stmt) => {
+      return new Cmd.Ifs();
+    });
+
+    this.table.set(Kw.Command.While, (stmt) => {
+      const condition = this.translateExpression(stmt[Index.Conditional.expr]);
+      return new Cmd.While(condition);
     });
   }
 

@@ -21,14 +21,24 @@ export default class BinaryOperation {
     [Kw.BinaryOperator.Addition]: (l, r, env) => {
       if (typeof l === "number" && typeof r === "number") {
         return Type.createInt(l + r);
+      } else {
+        throw new OperationFailed();
       }
-      throw new OperationFailed();
     },
     [Kw.BinaryOperator.Equal]: (l, r, env) => {
       return Type.createBool(l === r);
     },
     [Kw.BinaryOperator.NotEqual]: (l, r, env) => {
       return Type.createBool(l !== r);
+    },
+    [Kw.BinaryOperator.LessThan]: (l, r, env) => {
+      if (typeof l === "number" && typeof r === "number") {
+        return Type.createBool(l < r);
+      } else if (typeof l === "string" && typeof r === "string") {
+        return Type.createBool(l < r);
+      } else {
+        throw new OperationFailed();
+      }
     },
     [Kw.BinaryOperator.And]: (l, r, env) => {
       const result = l && r;
