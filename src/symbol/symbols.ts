@@ -3,6 +3,7 @@ const Symbols = {
   call: Symbol("call"),
   description: Symbol("description"),
   evaluate: Symbol("evaluate"),
+  keys: Symbol("keys"),
   name: Symbol("name"),
   value: Symbol("value"),
 };

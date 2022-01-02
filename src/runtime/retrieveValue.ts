@@ -1,5 +1,5 @@
 import * as Expr from "../expression";
-import { RawType } from "../factory";
+import RawType from "../expression/rawType";
 import { default as Sym } from "../symbol";
 import Environment from "./environment";
 import evaluate from "./evaluate";

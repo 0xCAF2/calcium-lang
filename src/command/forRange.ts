@@ -19,18 +19,18 @@ export default class ForRange implements Command {
 
   execute(env: Environment) {
     let loopCounter: LoopCounter;
-    const stopValue = retrieveValue(this.stop, env);
+    const stopValue = retrieveValue(this.stop, env) as number;
     if (this.start === null && this.step === null) {
       // e.g. for i in range(10):
       loopCounter = new LoopCounter(0, stopValue, 1);
     } else if (this.start !== null && this.step === null) {
       // e.g. for i in range(1, 11):
-      const startValue = retrieveValue(this.start, env);
+      const startValue = retrieveValue(this.start, env) as number;
       loopCounter = new LoopCounter(startValue, stopValue, 1);
     } else if (this.start !== null && this.step !== null) {
       // e.g. for i in range(0, 22, 2):
-      const startValue = retrieveValue(this.start, env);
-      const stepValue = retrieveValue(this.step, env);
+      const startValue = retrieveValue(this.start, env) as number;
+      const stepValue = retrieveValue(this.step, env) as number;
       loopCounter = new LoopCounter(startValue, stopValue, stepValue);
     }
     const block = new Block(

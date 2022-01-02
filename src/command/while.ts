@@ -10,7 +10,7 @@ export default class While implements Command {
     const block = new Block(
       Kind.While,
       env.address,
-      (env) => retrieveValue(this.condition, env),
+      (env) => retrieveValue(this.condition, env) as boolean,
       (env) => {
         block.enter(env);
         return Result.Jumpped;

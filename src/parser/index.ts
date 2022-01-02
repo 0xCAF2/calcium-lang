@@ -91,6 +91,12 @@ export default class Parser {
       return new Cmd.End();
     });
 
+    this.table.set(Kw.Command.ForEach, (stmt) => {
+      const elemName = stmt[Index.ForEach.ElementName] as string;
+      const iterable = this.translateExpression(stmt[Index.ForEach.Iterable]);
+      return new Cmd.ForEach(elemName, iterable);
+    });
+
     this.table.set(Kw.Command.ForRange, (stmt) => {
       const varName = stmt[Index.ForRange.VariableName] as string;
       const rangeValues = stmt[Index.ForRange.Values] as JSONElementType.Any[];
@@ -110,13 +116,12 @@ export default class Parser {
         throw new Err.InvalidRange();
       }
       return new Cmd.ForRange(varName, start, stop, step);
-    }),
-      this.table.set(Kw.Command.If, (stmt) => {
-        const condition = this.translateExpression(
-          stmt[Index.Conditional.expr]
-        );
-        return new Cmd.If(condition);
-      });
+    });
+
+    this.table.set(Kw.Command.If, (stmt) => {
+      const condition = this.translateExpression(stmt[Index.Conditional.expr]);
+      return new Cmd.If(condition);
+    });
 
     this.table.set(Kw.Command.Ifs, (stmt) => {
       return new Cmd.Ifs();

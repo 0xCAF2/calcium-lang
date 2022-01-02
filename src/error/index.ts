@@ -20,6 +20,8 @@ export class NameNotFound extends Error {
   }
 }
 
+export class ObjectNotIterable extends Error {}
+
 export class OperationFailed extends Error {}
 
 export class UnsupportedKeyword extends Error {
