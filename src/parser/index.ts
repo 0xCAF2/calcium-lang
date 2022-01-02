@@ -65,6 +65,18 @@ export default class Parser {
       return new Cmd.CompoundAssignment(Kw.BinaryOperator.Addition, lhs, rhs);
     });
 
+    this.table.set(Kw.Command.CompoundMultiplication, (stmt) => {
+      const lhs = this.translateReference(
+        stmt[Index.Assignment.Lhs] as JSONElementType.Reference
+      );
+      const rhs = this.translateExpression(stmt[Index.Assignment.Rhs]);
+      return new Cmd.CompoundAssignment(
+        Kw.BinaryOperator.Multiplication,
+        lhs,
+        rhs
+      );
+    });
+
     this.table.set(Kw.Command.Elif, (stmt) => {
       const condition = this.translateExpression(stmt[Index.Conditional.expr]);
       return new Cmd.Elif(condition);
@@ -79,10 +91,32 @@ export default class Parser {
       return new Cmd.End();
     });
 
-    this.table.set(Kw.Command.If, (stmt) => {
-      const condition = this.translateExpression(stmt[Index.Conditional.expr]);
-      return new Cmd.If(condition);
-    });
+    this.table.set(Kw.Command.ForRange, (stmt) => {
+      const varName = stmt[Index.ForRange.VariableName] as string;
+      const rangeValues = stmt[Index.ForRange.Values] as JSONElementType.Any[];
+      let start = null,
+        stop: Expr.Expression,
+        step = null;
+      if (rangeValues.length === 1) {
+        stop = this.translateExpression(rangeValues[0]);
+      } else if (rangeValues.length === 2) {
+        start = this.translateExpression(rangeValues[0]);
+        stop = this.translateExpression(rangeValues[1]);
+      } else if (rangeValues.length === 3) {
+        start = this.translateExpression(rangeValues[0]);
+        stop = this.translateExpression(rangeValues[1]);
+        step = this.translateExpression(rangeValues[2]);
+      } else {
+        throw new Err.InvalidRange();
+      }
+      return new Cmd.ForRange(varName, start, stop, step);
+    }),
+      this.table.set(Kw.Command.If, (stmt) => {
+        const condition = this.translateExpression(
+          stmt[Index.Conditional.expr]
+        );
+        return new Cmd.If(condition);
+      });
 
     this.table.set(Kw.Command.Ifs, (stmt) => {
       return new Cmd.Ifs();

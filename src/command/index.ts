@@ -6,6 +6,7 @@ export { default as CompoundAssignment } from "./compoundAssignment";
 export { default as Elif } from "./elif";
 export { default as Else } from "./else";
 export { default as End } from "./end";
+export { default as ForRange } from "./forRange";
 export { default as If } from "./if";
 export { default as Ifs } from "./ifs";
 export { default as While } from "./while";

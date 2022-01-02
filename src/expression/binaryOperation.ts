@@ -21,9 +21,21 @@ export default class BinaryOperation {
     [Kw.BinaryOperator.Addition]: (l, r, env) => {
       if (typeof l === "number" && typeof r === "number") {
         return Type.createInt(l + r);
+      } else if (typeof l === "string" && typeof r === "string") {
+        return Type.createStr(l + r);
       } else {
         throw new OperationFailed();
       }
+    },
+    [Kw.BinaryOperator.Multiplication]: (l, r, env) => {
+      if (typeof r === "number") {
+        if (typeof l === "number") {
+          return Type.createInt(l * r);
+        } else if (typeof l === "string") {
+          return Type.createStr(l.repeat(r));
+        }
+      }
+      throw new OperationFailed();
     },
     [Kw.BinaryOperator.Equal]: (l, r, env) => {
       return Type.createBool(l === r);
