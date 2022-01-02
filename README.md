@@ -77,8 +77,8 @@ Calcium's one line corresponds to Python's.
 You can use a calcium engine in a Web page or an embedded WebView.
 
 ```javascript
-import { Calcium as Ca } from "calcium-lang";
-const engine = new Ca.Engine(code); // code should be a JSON array.
+import { Calcium } from "calcium-lang";
+const engine = new Calcium.Engine(code); // code should be a JSON array.
 ```
 
 creates the runtime engine. To output from print function set a callback as:
