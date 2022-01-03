@@ -1,5 +1,6 @@
-import * as Expr from "../expression";
+import { Expression } from "../expression";
 import { FuncBody } from "../builtin";
+import { InternalType } from "../type";
 import { default as Sym } from "../symbol";
 import Environment from "../runtime/environment";
 import { AttributeNotFound } from "../error";
@@ -13,7 +14,7 @@ import { AttributeNotFound } from "../error";
 export default function createBuiltinFunc(
   name: string,
   body: FuncBody
-): Expr.InternalType {
+): InternalType {
   const self = new Proxy(
     {},
     {
@@ -21,11 +22,12 @@ export default function createBuiltinFunc(
         if (property === Sym.name) return name;
         else if (property === Sym.body) return body;
         else if (property === Sym.call)
-          return (args: Expr.Expression[], env: Environment) => body(args, env);
+          return (f: { args: Expression[]; env: Environment }) =>
+            body(f.args, f.env);
         else if (property === Sym.evaluate) return (env: Environment) => self;
         else throw new AttributeNotFound(property.toString());
       },
     }
   );
-  return self as Expr.InternalType;
+  return self as InternalType;
 }

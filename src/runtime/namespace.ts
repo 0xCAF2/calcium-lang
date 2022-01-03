@@ -1,4 +1,4 @@
-import { InternalType } from "../expression";
+import { InternalType } from "../type";
 
 type Store = Map<string, InternalType>;
 
@@ -15,7 +15,10 @@ export default class Namespace {
    *
    * @param parent nesting scope
    */
-  constructor(private readonly parent?: Namespace) {}
+  constructor(
+    public readonly parent?: Namespace,
+    public readonly isClassScope = false
+  ) {}
 
   /**
    * searches identifier and return its value
@@ -35,7 +38,18 @@ export default class Namespace {
    * @param key identifier
    * @param value right hand side of assignment
    */
-  register(key: string, value: InternalType): void {
+  register(key: string, value: InternalType) {
     this.dict.set(key, value);
+  }
+
+  /**
+   * the parent scope of a function or a method
+   */
+  get nestingScope(): Namespace {
+    let scope: Namespace = this;
+    while (scope.parent!.isClassScope) {
+      scope = scope.parent!;
+    }
+    return scope;
   }
 }

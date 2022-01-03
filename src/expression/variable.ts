@@ -1,7 +1,7 @@
 import Environment from "../runtime/environment";
 import * as Err from "../error";
 import { default as Sym } from "../symbol";
-import InternalType from "../factory/internalType";
+import { InternalType } from "../type";
 
 /**
  * a simple reference to a value

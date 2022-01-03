@@ -1,5 +1,5 @@
 import Environment from "../runtime/environment";
-import { InternalType } from "../expression";
+import { InternalType } from "../type";
 import { default as Sym } from "../symbol";
 import { AttributeNotFound } from "../error";
 

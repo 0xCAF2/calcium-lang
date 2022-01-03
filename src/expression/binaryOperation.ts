@@ -1,11 +1,10 @@
-import * as Type from "../factory";
+import * as Factory from "../factory";
 import Environment from "../runtime/environment";
 import * as Expr from "./index";
-import retrieveValue from "../runtime/retrieveValue";
-import { InternalType } from "../expression";
+import retrieveValue from "../util/retrieveValue";
 import * as Kw from "../keyword";
 import { OperationFailed } from "../error";
-import RawType from "./rawType";
+import { InternalType, RawType } from "../type";
 import { default as Sym } from "../symbol";
 
 /**
@@ -20,9 +19,9 @@ export default class BinaryOperation {
   static table: { [key: string]: Operate } = {
     [Kw.BinaryOperator.Addition]: (l, r, env) => {
       if (typeof l === "number" && typeof r === "number") {
-        return Type.createInt(l + r);
+        return Factory.createInt(l + r);
       } else if (typeof l === "string" && typeof r === "string") {
-        return Type.createStr(l + r);
+        return Factory.createStr(l + r);
       } else {
         throw new OperationFailed();
       }
@@ -30,35 +29,35 @@ export default class BinaryOperation {
     [Kw.BinaryOperator.Multiplication]: (l, r, env) => {
       if (typeof r === "number") {
         if (typeof l === "number") {
-          return Type.createInt(l * r);
+          return Factory.createInt(l * r);
         } else if (typeof l === "string") {
-          return Type.createStr(l.repeat(r));
+          return Factory.createStr(l.repeat(r));
         }
       }
       throw new OperationFailed();
     },
     [Kw.BinaryOperator.Equal]: (l, r, env) => {
-      return Type.createBool(l === r);
+      return Factory.Factory(l === r);
     },
     [Kw.BinaryOperator.NotEqual]: (l, r, env) => {
-      return Type.createBool(l !== r);
+      return Factory.Factory(l !== r);
     },
     [Kw.BinaryOperator.LessThan]: (l, r, env) => {
       if (typeof l === "number" && typeof r === "number") {
-        return Type.createBool(l < r);
+        return Factory.Factory(l < r);
       } else if (typeof l === "string" && typeof r === "string") {
-        return Type.createBool(l < r);
+        return Factory.Factory(l < r);
       } else {
         throw new OperationFailed();
       }
     },
     [Kw.BinaryOperator.And]: (l, r, env) => {
       const result = l && r;
-      return Type.createInternalType(result);
+      return Factory.createInternalType(result);
     },
     [Kw.BinaryOperator.Or]: (l, r, env) => {
       const result = l || r;
-      return Type.createInternalType(result);
+      return Factory.createInternalType(result);
     },
   };
 

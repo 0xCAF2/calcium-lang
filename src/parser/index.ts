@@ -5,7 +5,8 @@ import * as Expr from "../expression";
 import Index from "../indexes/index";
 import * as Kw from "../keyword";
 import Statement from "../runtime/statement";
-import { createBool, createInt, createList, createStr, None } from "../factory";
+import { Factory, createInt, createList, createStr, None } from "../factory";
+import { InternalType } from "../type";
 
 /**
  * a default parser for Calcium language
@@ -77,8 +78,14 @@ export default class Parser {
       );
     });
 
+    this.table.set(Kw.Command.Def, (stmt) => {
+      const name = stmt[Index.FuncDef.Name] as string;
+      const params = stmt[Index.FuncDef.Parameters] as string[];
+      return new Cmd.Def(name, params);
+    });
+
     this.table.set(Kw.Command.Elif, (stmt) => {
-      const condition = this.translateExpression(stmt[Index.Conditional.expr]);
+      const condition = this.translateExpression(stmt[Index.Conditional.Expr]);
       return new Cmd.Elif(condition);
     });
 
@@ -119,7 +126,7 @@ export default class Parser {
     });
 
     this.table.set(Kw.Command.If, (stmt) => {
-      const condition = this.translateExpression(stmt[Index.Conditional.expr]);
+      const condition = this.translateExpression(stmt[Index.Conditional.Expr]);
       return new Cmd.If(condition);
     });
 
@@ -127,8 +134,17 @@ export default class Parser {
       return new Cmd.Ifs();
     });
 
+    this.table.set(Kw.Command.Return, (stmt) => {
+      if (stmt.length > Index.Return.Expr) {
+        const expr = this.translateExpression(stmt[Index.Return.Expr]);
+        return new Cmd.Return(expr);
+      } else {
+        return new Cmd.Return();
+      }
+    });
+
     this.table.set(Kw.Command.While, (stmt) => {
-      const condition = this.translateExpression(stmt[Index.Conditional.expr]);
+      const condition = this.translateExpression(stmt[Index.Conditional.Expr]);
       return new Cmd.While(condition);
     });
   }
@@ -187,7 +203,7 @@ export default class Parser {
         for (let elem of expr[0]) {
           list.push(this.translateExpression(elem));
         }
-        return createList(list) as Expr.InternalType;
+        return createList(list) as InternalType;
       } else if (
         expr[0] === Kw.Reference.Variable ||
         expr[0] === Kw.Reference.Attribute ||
@@ -212,7 +228,7 @@ export default class Parser {
     } else if (typeof expr === "string") {
       return createStr(expr);
     } else if (typeof expr === "boolean") {
-      return createBool(expr);
+      return Factory(expr);
     } else if (expr === null) {
       return None;
     } else {

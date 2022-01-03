@@ -18,17 +18,16 @@ export default class Address {
 
   /**
    * jump and go to the specified address
-   * @param x an indent
-   * @param y a line number (the index of a array)
+   * @param toPoint
    */
-  jump(x: number, y: number) {
-    this.shift(x);
-    this.skip(y);
+  jump(toPoint: Address) {
+    this.indent = toPoint.indent;
+    this.line = toPoint.line;
   }
 
   /**
    * add the delta to the indent
-   * @param x the delta of an indent
+   * @param x the delta of the indent
    */
   shift(x: number) {
     this.indent += x;
@@ -36,7 +35,7 @@ export default class Address {
 
   /**
    * add the delta to the line number
-   * @param y the delta of line number
+   * @param y the delta of the line number
    */
   skip(y: number) {
     this.line += y;

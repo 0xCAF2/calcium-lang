@@ -25,7 +25,7 @@ export enum Comment {
 }
 
 export enum Conditional {
-  expr = 3,
+  Expr = 3,
 }
 
 export enum Except {
@@ -58,7 +58,7 @@ export enum Raise {
 }
 
 export enum Return {
-  RETURN_VALUE = 3,
+  Expr = 3,
 }
 
 export enum Expression {

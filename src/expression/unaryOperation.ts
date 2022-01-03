@@ -1,4 +1,4 @@
-import * as Expr from "./index";
+import { Expression } from "./index";
 
 /**
  * use a unary operator and calculate
@@ -6,6 +6,6 @@ import * as Expr from "./index";
 export default class UnaryOperation {
   constructor(
     public readonly operator: string,
-    public readonly operand: Expr.Expression
+    public readonly operand: Expression
   ) {}
 }

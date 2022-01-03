@@ -1,9 +1,10 @@
-import Environment from "./environment";
-import { Expression, InternalType } from "../expression";
+import Environment from "../runtime/environment";
+import { Expression } from "../expression";
 import { default as Sym } from "../symbol";
+import { InternalType } from "../type";
 
 /**
- * an utility function that applies `evaluate` method to the expression
+ * a utility function that applies `evaluate` method to the expression
  * @param target
  * @param env
  * @returns

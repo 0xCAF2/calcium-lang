@@ -1,6 +1,6 @@
 import { None } from "../factory";
 import Command from "./command";
-import evaluate from "../runtime/evaluate";
+import evaluate from "../util/evaluate";
 import Environment from "../runtime/environment";
 import * as Expr from "../expression";
 import { default as Sym } from "../symbol";
@@ -24,9 +24,6 @@ export default class Call implements Command {
 
   execute(env: Environment): void {
     const funcObj = evaluate(this.funcRef, env);
-    const result = Reflect.get(funcObj, Sym.call)(this.args, env);
-    if (this.lhs !== None) {
-      (this.lhs as Expr.Reference).assign(result, env);
-    }
+    Reflect.get(funcObj, Sym.call)({ args: this.args, env, lhs: this.lhs });
   }
 }

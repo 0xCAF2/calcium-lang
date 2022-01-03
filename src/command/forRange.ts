@@ -2,7 +2,7 @@ import Command from "./command";
 import Environment from "../runtime/environment";
 import * as Expr from "../expression";
 import LoopCounter from "../runtime/loopCounter";
-import retrieveValue from "../runtime/retrieveValue";
+import retrieveValue from "../util/retrieveValue";
 import { Block, Kind, Result } from "../runtime/block";
 import { createInt } from "../factory";
 

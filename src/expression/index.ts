@@ -1,6 +1,6 @@
 import { None } from "../factory";
 import BinaryOperation from "./binaryOperation";
-import { InternalType } from "../factory";
+import { InternalType } from "../type";
 import UnaryOperation from "./unaryOperation";
 import Variable from "./variable";
 
@@ -19,4 +19,4 @@ export type Expression =
   | UnaryOperation
   | typeof None;
 
-export { BinaryOperation, InternalType, UnaryOperation, Variable };
+export { BinaryOperation, UnaryOperation, Variable };

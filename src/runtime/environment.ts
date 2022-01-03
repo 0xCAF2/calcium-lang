@@ -1,8 +1,10 @@
 import Address from "./address";
 import { Block } from "./block";
 import Namespace from "./namespace";
-import { OutputFunction } from ".";
+import OutputFunction from "./outputFunction";
 import Statement from "./statement";
+import { InternalType } from "../type";
+import { None } from "../factory";
 
 /**
  * the runtime environment that has data to control the execution
@@ -24,7 +26,7 @@ export default class Environment {
   code: Statement[];
 
   /**
-   * the current context that has associations from a name to a value
+   * the current context that has associations from a name to the value
    */
   context: Namespace;
 
@@ -34,6 +36,16 @@ export default class Environment {
    * an external function to output from built-in print function
    */
   funcToOutput?: OutputFunction;
+
+  /**
+   * used to return a value from a function
+   */
+  returnedValue: InternalType = None;
+
+  /**
+   * a call stack
+   */
+  stack: Namespace[] = [];
 
   /**
    *

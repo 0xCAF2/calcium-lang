@@ -1,7 +1,7 @@
 import Command from "./command";
 import * as Expr from "../expression";
 import Environment from "../runtime/environment";
-import evaluate from "../runtime/evaluate";
+import evaluate from "../util/evaluate";
 
 /**
  * the command of assignemnt

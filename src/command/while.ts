@@ -1,11 +1,11 @@
 import Command from "./command";
 import Environment from "../runtime/environment";
-import * as Expr from "../expression";
+import { Expression } from "../expression";
 import { Block, Kind, Result } from "../runtime/block";
-import retrieveValue from "../runtime/retrieveValue";
+import retrieveValue from "../util/retrieveValue";
 
 export default class While implements Command {
-  constructor(public readonly condition: Expr.Expression) {}
+  constructor(public readonly condition: Expression) {}
   execute(env: Environment) {
     const block = new Block(
       Kind.While,

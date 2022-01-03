@@ -1,6 +1,6 @@
-import * as Expr from "../expression";
-import InternalType from "./internalType";
+import { Expression } from "../expression";
+import { InternalType } from "../type";
 
-export default function createList(value: Expr.Expression[]): InternalType {
+export default function createList(value: Expression[]): InternalType {
   throw new Error("not implemented");
 }

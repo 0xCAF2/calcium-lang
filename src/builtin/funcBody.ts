@@ -1,12 +1,10 @@
 import Environment from "../runtime/environment";
-import * as Expr from "../expression";
+import { Expression } from "../expression";
+import { InternalType } from "../type";
 
 /**
  * signature for the body of a built-in function.
  */
-type FuncBody = (
-  args: Expr.Expression[],
-  env: Environment
-) => Expr.InternalType;
+type FuncBody = (args: Expression[], env: Environment) => InternalType;
 
 export default FuncBody;

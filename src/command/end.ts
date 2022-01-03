@@ -1,5 +1,5 @@
 import Command from "./command";
-import environment from "../runtime/environment";
+import Environment from "../runtime/environment";
 
 /**
  * terminate a program
@@ -9,7 +9,7 @@ export default class End implements Command {
    * do nothing.
    * @param env
    */
-  execute(env: environment): void {
+  execute(env: Environment) {
     // Do nothing
   }
 }

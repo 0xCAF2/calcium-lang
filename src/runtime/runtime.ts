@@ -6,11 +6,12 @@ import Parser from "../parser";
 import Statement from "./statement";
 import Status from "./status";
 import * as Builtin from "../builtin";
-import { InternalType } from "../expression";
+import { InternalType } from "../type";
 import Index from "../indexes";
 import { Result } from "./block";
 import { InconsistentBlock } from "../error";
 import * as Kw from "../keyword";
+import OutputFunction from "./outputFunction";
 
 export default class Runtime {
   breakpoints = new Set<number>();
@@ -157,8 +158,6 @@ export default class Runtime {
     return this.env.code[this.env.address.line];
   }
 }
-
-export type OutputFunction = (desc: string) => void;
 
 export type Options = {
   parser?: Parser;

@@ -1,17 +1,18 @@
 import Command from "./command";
 import Environment from "../runtime/environment";
-import * as Expr from "../expression";
-import { createInternalType, InternalType } from "../factory";
-import retrieveValue from "../runtime/retrieveValue";
+import { Expression } from "../expression";
+import { createInternalType } from "../factory";
+import retrieveValue from "../util/retrieveValue";
 import { ObjectNotIterable } from "../error";
 import { default as Sym } from "../symbol";
 import LoopCounter from "../runtime/loopCounter";
 import { Block, Kind, Result } from "../runtime/block";
+import { InternalType } from "../type";
 
 export default class ForEach implements Command {
   constructor(
     public readonly elemName: string,
-    public readonly iterable: Expr.Expression
+    public readonly iterable: Expression
   ) {}
   execute(env: Environment) {
     const iterableObj = retrieveValue(this.iterable, env);

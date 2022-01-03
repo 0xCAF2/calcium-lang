@@ -1,7 +1,7 @@
 import Command from "./command";
 import Environment from "../runtime/environment";
 import * as Expr from "../expression";
-import evaluate from "../runtime/evaluate";
+import evaluate from "../util/evaluate";
 
 export default class CompoundAssignment implements Command {
   constructor(
