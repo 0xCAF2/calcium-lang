@@ -26,6 +26,15 @@ export default class BinaryOperation {
         throw new OperationFailed();
       }
     },
+
+    [Kw.BinaryOperator.Subtraction]: (l, r, env) => {
+      if (typeof l === "number" && typeof r === "number") {
+        return Factory.createInt(l - r);
+      } else {
+        throw new OperationFailed();
+      }
+    },
+
     [Kw.BinaryOperator.Multiplication]: (l, r, env) => {
       if (typeof r === "number") {
         if (typeof l === "number") {
@@ -36,40 +45,69 @@ export default class BinaryOperation {
       }
       throw new OperationFailed();
     },
-    [Kw.BinaryOperator.Equal]: (l, r, env) => {
-      return Factory.Factory(l === r);
-    },
-    [Kw.BinaryOperator.NotEqual]: (l, r, env) => {
-      return Factory.Factory(l !== r);
-    },
-    [Kw.BinaryOperator.LessThan]: (l, r, env) => {
+
+    [Kw.BinaryOperator.FloorDivision]: (l, r, env) => {
       if (typeof l === "number" && typeof r === "number") {
-        return Factory.Factory(l < r);
-      } else if (typeof l === "string" && typeof r === "string") {
-        return Factory.Factory(l < r);
+        return Factory.createInt(Math.floor(l / r));
       } else {
         throw new OperationFailed();
       }
     },
+
+    [Kw.BinaryOperator.Remainder]: (l, r, env) => {
+      if (typeof l === "number" && typeof r === "number") {
+        return Factory.createInt(l % r);
+      } else {
+        throw new OperationFailed();
+      }
+    },
+
+    [Kw.BinaryOperator.Exponentiation]: (l, r, env) => {
+      if (typeof l === "number" && typeof r === "number") {
+        return Factory.createInt(l ** r);
+      } else {
+        throw new OperationFailed();
+      }
+    },
+
+    [Kw.BinaryOperator.Equal]: (l, r, env) => {
+      return Factory.createBool(l === r);
+    },
+
+    [Kw.BinaryOperator.NotEqual]: (l, r, env) => {
+      return Factory.createBool(l !== r);
+    },
+
+    [Kw.BinaryOperator.LessThan]: (l, r, env) => {
+      if (typeof l === "number" && typeof r === "number") {
+        return Factory.createBool(l < r);
+      } else if (typeof l === "string" && typeof r === "string") {
+        return Factory.createBool(l < r);
+      } else {
+        throw new OperationFailed();
+      }
+    },
+
     [Kw.BinaryOperator.And]: (l, r, env) => {
       const result = l && r;
       return Factory.createInternalType(result);
     },
+
     [Kw.BinaryOperator.Or]: (l, r, env) => {
       const result = l || r;
       return Factory.createInternalType(result);
     },
   };
 
-  [Sym.evaluate](env: Environment): InternalType {
-    const valueL = retrieveValue(this.left, env);
-    const valueR = retrieveValue(this.right, env);
-    return BinaryOperation.table[this.operator](valueL, valueR, env);
-  }
-
   constructor(
     public readonly operator: string,
     public readonly left: Expr.Expression,
     public readonly right: Expr.Expression
   ) {}
+
+  [Sym.evaluate](env: Environment): InternalType {
+    const valueL = retrieveValue(this.left, env);
+    const valueR = retrieveValue(this.right, env);
+    return BinaryOperation.table[this.operator](valueL, valueR, env);
+  }
 }
