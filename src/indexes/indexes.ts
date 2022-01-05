@@ -67,7 +67,7 @@ export enum Expression {
 
 export enum Attribute {
   varName = 1,
-  attributeNames = 2,
+  firstAttributeName = 2,
 }
 
 export enum BinaryOperator {

@@ -257,7 +257,7 @@ export default class Parser {
       return new Expr.Variable(expr[Index.Variable.Name] as string);
     } else if (kw === Kw.Reference.Attribute) {
       const attrNames: string[] = [];
-      for (let i = Index.Attribute.attributeNames; i < expr.length; ++i) {
+      for (let i = Index.Attribute.firstAttributeName; i < expr.length; ++i) {
         attrNames.push(expr[i] as string);
       }
       return new Expr.Attribute(
