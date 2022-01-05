@@ -2,17 +2,17 @@ import python2calcium
 import os
 import os.path
 
-testfile_dirname = './testfile'
-test_dirpath = '../test'
+testpyfile_dir = './testfile'
+testts_dir = '../test'
 
-testfiles = os.listdir(testfile_dirname)
+testfiles = os.listdir(testpyfile_dir)
 
 for filename in testfiles:
-    filepath = os.path.join(testfile_dirname, filename)
+    filepath = os.path.join(testpyfile_dir, filename)
     with open(filepath) as fin:
         code = python2calcium.convert(fin.read())
         testpath = os.path.join(
-            test_dirpath, filename.replace('.py', '.spec.ts'))
+            testts_dir, filename.replace('.py', '.spec.ts'))
         with open(testpath, 'w') as fout:
             fout.write('''
 import * as Calcium from "../src";

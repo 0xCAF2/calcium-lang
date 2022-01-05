@@ -40,10 +40,10 @@ export default class Runtime {
     // set up built-ins
     const builtin = new Namespace();
     for (let name in Builtin.Functions) {
-      const builtinFunc = createBuiltinFunc(
+      const builtinFunc = createBuiltinFunc({
         name,
-        Builtin.Functions[name]
-      ) as InternalType;
+        body: Builtin.Functions[name],
+      }) as InternalType;
       builtin.register(name, builtinFunc);
     }
     const env = new Environment(code, builtin);

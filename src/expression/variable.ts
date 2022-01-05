@@ -1,5 +1,5 @@
+import { NameNotFound } from "../error";
 import Environment from "../runtime/environment";
-import * as Err from "../error";
 import { default as Sym } from "../symbol";
 import { InternalType } from "../type";
 
@@ -22,7 +22,7 @@ export default class Variable {
   [Sym.evaluate](env: Environment): InternalType {
     const value = env.context.lookUp(this.name);
     if (value === undefined) {
-      throw new Err.NameNotFound(this.name);
+      throw new NameNotFound(this.name);
     } else {
       return value;
     }

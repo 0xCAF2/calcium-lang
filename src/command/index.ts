@@ -1,5 +1,6 @@
 export { default as Assignment } from "./assignment";
 export { default as Call } from "./call";
+export { default as Class } from "./class";
 export { default as Command } from "./command";
 export { default as Comment } from "./comment";
 export { default as CompoundAssignment } from "./compoundAssignment";

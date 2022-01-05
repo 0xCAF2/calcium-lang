@@ -6,8 +6,9 @@ import { default as Sym } from "../symbol";
 import Environment from "../runtime/environment";
 import { AttributeNotFound } from "../error";
 import { invoke } from "../util";
+import functionType from "./functionType";
 
-export default function createFunc(value: {
+export default function createFunc(src: {
   address: Address;
   name: string;
   params: string[];
@@ -17,7 +18,7 @@ export default function createFunc(value: {
     {},
     {
       get(target, property, receiver) {
-        if (property === Sym.name) return value.name;
+        if (property === Sym.name) return src.name;
         else if (property === Sym.call)
           return (f: {
             args: Expression[];
@@ -25,17 +26,17 @@ export default function createFunc(value: {
             lhs: Reference;
           }) => {
             invoke({
-              address: value.address,
+              address: src.address,
               args: f.args,
               env: f.env,
               lhs: f.lhs,
-              params: value.params,
-              parent: value.parent,
-              returnValue: (env) => env.returnedValue,
+              params: src.params,
+              parent: src.parent,
             });
           };
         else if (property === Sym.evaluate) return (env: Environment) => self;
-        else throw new AttributeNotFound(property.toString());
+        else if (property === Sym.class) return functionType;
+        throw new AttributeNotFound(property.toString());
       },
     }
   );

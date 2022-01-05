@@ -4,7 +4,6 @@ import Address from "../runtime/address";
 import { Block, Kind, Result } from "../runtime/block";
 import Environment from "../runtime/environment";
 import Namespace from "../runtime/namespace";
-import { InternalType } from "../type";
 import evaluate from "./evaluate";
 
 export default function invoke(f: {
@@ -14,7 +13,6 @@ export default function invoke(f: {
   lhs: Expr.Reference;
   params: string[];
   parent: Namespace;
-  returnValue: (env: Environment) => InternalType;
 }) {
   const callerAddress = f.env.address.clone();
   const local = new Namespace(f.parent);
@@ -34,7 +32,7 @@ export default function invoke(f: {
       env.address.jump(callerAddress);
       env.context = env.stack.pop()!;
       if (f.lhs !== null) {
-        f.lhs.assign(f.returnValue(env), env);
+        f.lhs.assign(env.returnedValue, env);
       }
       env.returnedValue = None;
       return Result.Jumpped;

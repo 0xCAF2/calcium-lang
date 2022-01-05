@@ -3,11 +3,12 @@ import BinaryOperation from "./binaryOperation";
 import { InternalType } from "../type";
 import UnaryOperation from "./unaryOperation";
 import Variable from "./variable";
+import Attribute from "./attribute";
 
 /**
  * any expression that contains an identifier
  */
-export type Reference = Variable;
+export type Reference = Variable | Attribute;
 
 /**
  * any expression that is not evaluated
@@ -19,4 +20,4 @@ export type Expression =
   | UnaryOperation
   | typeof None;
 
-export { BinaryOperation, UnaryOperation, Variable };
+export { Attribute, BinaryOperation, UnaryOperation, Variable };

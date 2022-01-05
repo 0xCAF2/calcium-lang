@@ -11,19 +11,19 @@ import { AttributeNotFound } from "../error";
  * @param body
  * @returns the internal representation of a built-in function
  */
-export default function createBuiltinFunc(
-  name: string,
-  body: FuncBody
-): InternalType {
+export default function createBuiltinFunc(src: {
+  name: string;
+  body: FuncBody;
+}): InternalType {
   const self = new Proxy(
     {},
     {
-      get(target, property) {
-        if (property === Sym.name) return name;
-        else if (property === Sym.body) return body;
+      get(target, property, receiver) {
+        if (property === Sym.name) return src.name;
+        else if (property === Sym.body) return src.body;
         else if (property === Sym.call)
           return (f: { args: Expression[]; env: Environment }) =>
-            body(f.args, f.env);
+            src.body(f.args, f.env);
         else if (property === Sym.evaluate) return (env: Environment) => self;
         else throw new AttributeNotFound(property.toString());
       },

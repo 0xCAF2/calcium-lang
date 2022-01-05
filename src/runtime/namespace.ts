@@ -20,6 +20,10 @@ export default class Namespace {
     public readonly isClassScope = false
   ) {}
 
+  get(key: string): InternalType | undefined {
+    return this.dict.get(key);
+  }
+
   /**
    * searches identifier and return its value
    * @param key identifier
@@ -44,6 +48,7 @@ export default class Namespace {
 
   /**
    * the parent scope of a function or a method
+   * When this namespace is not a class scope, then returns this.
    */
   get nestingScope(): Namespace {
     let scope: Namespace = this;

@@ -47,6 +47,16 @@ export default class Parser {
       return new Cmd.Call(lhs, funcRef, args);
     });
 
+    this.table.set(Kw.Command.Class, (stmt) => {
+      const className = stmt[Index.Class.Name] as string;
+      const superclassName = stmt[Index.Class.SuperclassName] as string | null;
+      if (superclassName === null) {
+        return new Cmd.Class(className);
+      } else {
+        return new Cmd.Class(className, superclassName);
+      }
+    });
+
     // a comment line
     this.table.set(Kw.Command.Comment, (stmt) => {
       const text = stmt[Index.Comment.Text];
@@ -245,6 +255,15 @@ export default class Parser {
     const kw = expr[Index.Expression.Keyword];
     if (kw === Kw.Reference.Variable) {
       return new Expr.Variable(expr[Index.Variable.Name] as string);
+    } else if (kw === Kw.Reference.Attribute) {
+      const attrNames: string[] = [];
+      for (let i = Index.Attribute.attributeNames; i < expr.length; ++i) {
+        attrNames.push(expr[i] as string);
+      }
+      return new Expr.Attribute(
+        expr[Index.Attribute.varName] as string,
+        attrNames
+      );
     } else {
       throw new Err.UnsupportedKeyword(kw as string);
     }

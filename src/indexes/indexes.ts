@@ -66,8 +66,8 @@ export enum Expression {
 }
 
 export enum Attribute {
-  ObjName = 1,
-  PropertiesName = 2,
+  varName = 1,
+  attributeNames = 2,
 }
 
 export enum BinaryOperator {
