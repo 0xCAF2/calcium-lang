@@ -264,6 +264,25 @@ export default class Parser {
         expr[Index.Attribute.varName] as string,
         attrNames
       );
+    } else if (kw === Kw.Reference.Subscript) {
+      if (expr.length === 3) {
+        const ref = this.translateReference(expr[Index.Subscript.ReferredObj]);
+        const index = this.translateExpression(expr[Index.Subscript.IndexExpr]);
+        return new Expr.Subscript(ref, index);
+      } else if (expr.length >= 4) {
+        // slice
+        const ref = this.translateReference(
+          expr[Index.Subscript.ReferredObj] as JSONElementType.Reference
+        );
+        const lower = this.translateExpression(
+          expr[Index.Subscript.SliceStart] as JSONElementType.Any
+        );
+        const upper = this.translateExpression(
+          expr[Index.Subscript.SliceEnd] as JSONElementType.Any
+        );
+        return new Expr.Subscript(ref, lower, upper);
+      }
+      throw new Err.FewerElement();
     } else {
       throw new Err.UnsupportedKeyword(kw as string);
     }

@@ -54,7 +54,7 @@ export type Attribute = ["attr", Reference, string];
 
 export type Subscript = ["sub", Reference, IndexOrKey, SliceEnd?];
 
-export type IndexOrKey = number | string | Variable;
+export type IndexOrKey = number | string | Variable | Attribute;
 
 export type SliceEnd = number | Variable;
 

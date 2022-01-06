@@ -16,9 +16,10 @@ export default function createInt(value: number): InternalType {
         if (property === Sym.description) return value.toString();
         else if (property === Sym.value) return value;
         else if (property === Sym.evaluate) return (env: Environment) => self;
+        else if (property === Symbol.toPrimitive) return (_: string) => value;
         else throw new AttributeNotFound(property.toString());
       },
     }
-  );
-  return self as InternalType;
+  ) as InternalType;
+  return self;
 }

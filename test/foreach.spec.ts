@@ -3,7 +3,7 @@ import * as Calcium from "../src";
 
 it("foreach.py", () => {
   const code = [
-  [1, [], "#", "0_18"],
+  [1, [], "#", "0.19"],
   [1, [], "=", ["var", "s"], "test"],
   [1, [], "=", ["var", "n"], 0],
   [1, [], "=", ["var", "r"], true],

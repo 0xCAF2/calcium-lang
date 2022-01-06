@@ -16,7 +16,15 @@ export default function createStr(value: string): InternalType {
         if (property === Sym.description) return value;
         else if (property === Sym.value) return value;
         else if (property === Sym.evaluate) return (env: Environment) => self;
-        else throw new AttributeNotFound(property.toString());
+        else if (property === Sym.iterator) {
+          let counter = 0;
+          return {
+            next(): InternalType | undefined {
+              if (counter >= value.length) return undefined;
+              else return createStr(value[counter++]);
+            },
+          };
+        } else throw new AttributeNotFound(property.toString());
       },
     }
   );

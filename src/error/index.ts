@@ -16,6 +16,7 @@ export class CannotInherit extends Error {
 }
 
 export class CommandNotFound extends Error {}
+export class FewerElement extends Error {}
 export class InconsistentBlock extends Error {}
 export class IndexMustBeInt extends Error {}
 export class InvalidRange extends Error {}
@@ -28,7 +29,7 @@ export class NameNotFound extends Error {
   }
 }
 
-export class ObjectNotIterable extends Error {}
+export class NotIterable extends Error {}
 
 export class OperationFailed extends Error {}
 

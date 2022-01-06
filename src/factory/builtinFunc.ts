@@ -1,9 +1,10 @@
-import { Expression } from "../expression";
+import { Expression, Reference } from "../expression";
 import { FuncBody } from "../builtin";
 import { InternalType } from "../type";
 import { default as Sym } from "../symbol";
 import Environment from "../runtime/environment";
 import { AttributeNotFound } from "../error";
+import { None } from ".";
 
 /**
  *
@@ -22,8 +23,17 @@ export default function createBuiltinFunc(src: {
         if (property === Sym.name) return src.name;
         else if (property === Sym.body) return src.body;
         else if (property === Sym.call)
-          return (f: { args: Expression[]; env: Environment }) =>
-            src.body(f.args, f.env);
+          return (f: {
+            args: Expression[];
+            env: Environment;
+            lhs: Reference | typeof None;
+          }) => {
+            const result = src.body(f.args, f.env);
+            if (f.lhs !== None) {
+              const ref: Reference = f.lhs as Reference;
+              ref.assign(result, f.env);
+            }
+          };
         else if (property === Sym.evaluate) return (env: Environment) => self;
         else throw new AttributeNotFound(property.toString());
       },

@@ -4,11 +4,12 @@ import { InternalType } from "../type";
 import UnaryOperation from "./unaryOperation";
 import Variable from "./variable";
 import Attribute from "./attribute";
+import Subscript from "./subscript";
 
 /**
  * any expression that contains an identifier
  */
-export type Reference = Variable | Attribute;
+export type Reference = Variable | Attribute | Subscript;
 
 /**
  * any expression that is not evaluated
@@ -20,4 +21,4 @@ export type Expression =
   | UnaryOperation
   | typeof None;
 
-export { Attribute, BinaryOperation, UnaryOperation, Variable };
+export { Attribute, BinaryOperation, UnaryOperation, Subscript, Variable };

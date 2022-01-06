@@ -3,7 +3,7 @@ import * as Calcium from "../src";
 
 it("if.py", () => {
   const code = [
-  [1, [], "#", "0_18"],
+  [1, [], "#", "0.19"],
   [1, [], "=", ["var", "a"], true],
   [1, [], "=", ["var", "b"], false],
   [1, [], "=", ["var", "c"], null],

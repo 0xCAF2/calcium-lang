@@ -1,13 +1,12 @@
 import Command from "./command";
 import Environment from "../runtime/environment";
 import { Expression } from "../expression";
-import { createInternalType } from "../factory";
-import retrieveValue from "../util/retrieveValue";
-import { ObjectNotIterable } from "../error";
 import { default as Sym } from "../symbol";
 import LoopCounter from "../runtime/loopCounter";
 import { Block, Kind, Result } from "../runtime/block";
 import { InternalType } from "../type";
+import { NotIterable } from "../error";
+import { evaluate } from "../util";
 
 export default class ForEach implements Command {
   constructor(
@@ -15,36 +14,19 @@ export default class ForEach implements Command {
     public readonly iterable: Expression
   ) {}
   execute(env: Environment) {
-    const iterableObj = retrieveValue(this.iterable, env);
+    const iterableObj = evaluate(this.iterable, env);
     let count: number;
-    let getElemValue: (index: number) => InternalType;
-    if (typeof iterableObj === "string" || Array.isArray(iterableObj)) {
-      count = iterableObj.length;
-      getElemValue = (i) => createInternalType(iterableObj[i]);
-    } else if (
-      typeof iterableObj === "object" &&
-      iterableObj !== null &&
-      Reflect.has(iterableObj, Sym.keys)
-    ) {
-      const keysMethod = Reflect.get(iterableObj, Sym.keys);
-      const keys = Reflect.apply(keysMethod, iterableObj, []) as string[];
-      count = keys.length;
-      getElemValue = (i) =>
-        createInternalType(Reflect.get(iterableObj, keys[i]));
-    } else {
-      throw new ObjectNotIterable();
-    }
-    const loopCounter = new LoopCounter(0, count);
+    const iterator = Reflect.get(iterableObj, Sym.iterator);
     const block = new Block(
       Kind.ForEach,
       env.address,
       (env) => {
-        const nextIndex = loopCounter.next();
-        if (nextIndex !== null) {
-          env.context.register(this.elemName, getElemValue(nextIndex));
-          return true;
-        } else {
+        const nextValue = iterator.next();
+        if (nextValue === undefined) {
           return false;
+        } else {
+          env.context.register(this.elemName, nextValue);
+          return true;
         }
       },
       (env) => {

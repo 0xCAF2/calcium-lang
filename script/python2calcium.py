@@ -3,7 +3,7 @@ import ast
 import json
 import traceback
 
-VERSION = '0_18'
+VERSION = '0.19'
 
 KEYWORD_COMMENT = '#'
 KEYWORD_VARIABLE = 'var'
@@ -415,10 +415,8 @@ class PyCaVisitor(ast.NodeVisitor):
             return [KEYWORD_SUBSCRIPT, value, lower, upper]
         if isinstance(node.slice, ast.Name):
             sub = self.visit(node.slice)
-        elif isinstance(node.slice.value, ast.Num):
-            sub = node.slice.value.n
-        elif isinstance(node.slice.value, ast.Str):
-            sub = node.slice.value.s
+        elif isinstance(node.slice, ast.Constant):
+            sub = node.slice.value
         return [KEYWORD_SUBSCRIPT, value, sub]
 
     def visit_Expr(self, node):

@@ -21,6 +21,6 @@ export default function createInternalType(value: RawType): InternalType {
       if (value === null) {
         return None;
       }
-      throw new Error("type not implemented.");
+      return value as InternalType;
   }
 }
