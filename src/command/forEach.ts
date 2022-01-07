@@ -1,21 +1,25 @@
 import Command from "./command";
 import Environment from "../runtime/environment";
-import { Expression } from "../expression";
+import { Reference } from "../expression";
 import { default as Sym } from "../symbol";
-import LoopCounter from "../runtime/loopCounter";
 import { Block, Kind, Result } from "../runtime/block";
-import { InternalType } from "../type";
-import { NotIterable } from "../error";
 import { evaluate } from "../util";
 
+/**
+ * a foreach loop that don't use a function to get an iterable
+ */
 export default class ForEach implements Command {
+  /**
+   *
+   * @param elemName the identifier of the retrieved object
+   * @param iterable must refer to an iterable object
+   */
   constructor(
     public readonly elemName: string,
-    public readonly iterable: Expression
+    public readonly iterable: Reference
   ) {}
   execute(env: Environment) {
     const iterableObj = evaluate(this.iterable, env);
-    let count: number;
     const iterator = Reflect.get(iterableObj, Sym.iterator);
     const block = new Block(
       Kind.ForEach,
@@ -30,10 +34,10 @@ export default class ForEach implements Command {
         }
       },
       (env) => {
-        block.enter(env);
+        block.willEnter(env);
         return Result.Jumpped;
       }
     );
-    block.enter(env);
+    block.willEnter(env);
   }
 }

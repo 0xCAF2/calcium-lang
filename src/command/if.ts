@@ -7,6 +7,11 @@ import retrieveValue from "../util/retrieveValue";
  * if control flow
  */
 export default class If extends Conditional {
+  /**
+   *
+   * @param condition an arbitrary expression to determine whether
+   * the statement shoule be executed
+   */
   constructor(public readonly condition: Expression) {
     super();
   }

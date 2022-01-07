@@ -8,6 +8,7 @@ const Symbols = {
   keys: Symbol("keys"),
   len: Symbol("__len__"),
   name: Symbol("name"),
+  slice: Symbol("slice"),
   subscript: Symbol("subscript"),
   value: Symbol("value"),
 };

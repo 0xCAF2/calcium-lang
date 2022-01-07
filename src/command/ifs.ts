@@ -17,6 +17,6 @@ export default class Ifs implements Command {
         return Result.Exited;
       }
     );
-    block.enter(env);
+    block.willEnter(env);
   }
 }

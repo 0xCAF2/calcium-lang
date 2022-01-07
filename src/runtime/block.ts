@@ -79,16 +79,16 @@ export class Block {
     this.address = address.clone();
   }
 
-  enter(env: Environment) {
+  willEnter(env: Environment) {
     env.address = this.address.clone();
     if (this.shouldEnter(env)) {
-      env.address.shift(1); // add x by one step
+      env.address.shift(1);
       env.blocks.push(this);
     }
   }
 
   exit(env: Environment): Result {
-    env.blocks.pop(); // this block should be popped from the stack
+    env.blocks.pop();
     if (env.exceptionThrown) {
       return Result.Invalid;
     }

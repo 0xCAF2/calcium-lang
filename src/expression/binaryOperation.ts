@@ -10,14 +10,14 @@ import { default as Sym } from "../symbol";
 /**
  * execute an arbitrary binary operator
  */
-type Operate = (l: RawType, r: RawType, env: Environment) => InternalType;
+type Operate = (l: RawType, r: RawType) => InternalType;
 
 /**
  * use a binary operator and calculate
  */
 export default class BinaryOperation {
   static table: { [key: string]: Operate } = {
-    [Kw.BinaryOperator.Addition]: (l, r, env) => {
+    [Kw.BinaryOperator.Addition]: (l, r) => {
       if (typeof l === "number" && typeof r === "number") {
         return Factory.createInt(l + r);
       } else if (typeof l === "string" && typeof r === "string") {
@@ -27,7 +27,7 @@ export default class BinaryOperation {
       }
     },
 
-    [Kw.BinaryOperator.Subtraction]: (l, r, env) => {
+    [Kw.BinaryOperator.Subtraction]: (l, r) => {
       if (typeof l === "number" && typeof r === "number") {
         return Factory.createInt(l - r);
       } else {
@@ -35,7 +35,7 @@ export default class BinaryOperation {
       }
     },
 
-    [Kw.BinaryOperator.Multiplication]: (l, r, env) => {
+    [Kw.BinaryOperator.Multiplication]: (l, r) => {
       if (typeof r === "number") {
         if (typeof l === "number") {
           return Factory.createInt(l * r);
@@ -46,7 +46,7 @@ export default class BinaryOperation {
       throw new OperationFailed();
     },
 
-    [Kw.BinaryOperator.FloorDivision]: (l, r, env) => {
+    [Kw.BinaryOperator.FloorDivision]: (l, r) => {
       if (typeof l === "number" && typeof r === "number") {
         return Factory.createInt(Math.floor(l / r));
       } else {
@@ -54,7 +54,7 @@ export default class BinaryOperation {
       }
     },
 
-    [Kw.BinaryOperator.Remainder]: (l, r, env) => {
+    [Kw.BinaryOperator.Remainder]: (l, r) => {
       if (typeof l === "number" && typeof r === "number") {
         return Factory.createInt(l % r);
       } else {
@@ -62,7 +62,7 @@ export default class BinaryOperation {
       }
     },
 
-    [Kw.BinaryOperator.Exponentiation]: (l, r, env) => {
+    [Kw.BinaryOperator.Exponentiation]: (l, r) => {
       if (typeof l === "number" && typeof r === "number") {
         return Factory.createInt(l ** r);
       } else {
@@ -70,15 +70,15 @@ export default class BinaryOperation {
       }
     },
 
-    [Kw.BinaryOperator.Equal]: (l, r, env) => {
+    [Kw.BinaryOperator.Equal]: (l, r) => {
       return Factory.createBool(l === r);
     },
 
-    [Kw.BinaryOperator.NotEqual]: (l, r, env) => {
+    [Kw.BinaryOperator.NotEqual]: (l, r) => {
       return Factory.createBool(l !== r);
     },
 
-    [Kw.BinaryOperator.LessThan]: (l, r, env) => {
+    [Kw.BinaryOperator.LessThan]: (l, r) => {
       if (typeof l === "number" && typeof r === "number") {
         return Factory.createBool(l < r);
       } else if (typeof l === "string" && typeof r === "string") {
@@ -88,12 +88,12 @@ export default class BinaryOperation {
       }
     },
 
-    [Kw.BinaryOperator.And]: (l, r, env) => {
+    [Kw.BinaryOperator.And]: (l, r) => {
       const result = l && r;
       return Factory.createInternalType(result);
     },
 
-    [Kw.BinaryOperator.Or]: (l, r, env) => {
+    [Kw.BinaryOperator.Or]: (l, r) => {
       const result = l || r;
       return Factory.createInternalType(result);
     },
@@ -108,6 +108,6 @@ export default class BinaryOperation {
   [Sym.evaluate](env: Environment): InternalType {
     const valueL = retrieveValue(this.left, env);
     const valueR = retrieveValue(this.right, env);
-    return BinaryOperation.table[this.operator](valueL, valueR, env);
+    return BinaryOperation.table[this.operator](valueL, valueR);
   }
 }

@@ -3,7 +3,16 @@ import Environment from "../runtime/environment";
 import * as Expr from "../expression";
 import evaluate from "../util/evaluate";
 
+/**
+ * eg. `+=`, `-=` or `*=`
+ */
 export default class CompoundAssignment implements Command {
+  /**
+   *
+   * @param operator same as the correspoding binary operator
+   * @param lhs
+   * @param rhs
+   */
   constructor(
     public readonly operator: string,
     public readonly lhs: Expr.Reference,

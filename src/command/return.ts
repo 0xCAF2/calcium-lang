@@ -4,6 +4,9 @@ import { Expression } from "../expression";
 import { evaluate } from "../util";
 import { None } from "../factory";
 
+/**
+ * return an expression, if any (default `None`)
+ */
 export default class Return implements Command {
   constructor(public readonly expr?: Expression) {}
   execute(env: Environment) {

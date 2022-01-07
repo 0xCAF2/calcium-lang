@@ -38,5 +38,5 @@ export default function invoke(f: {
       return Result.Jumpped;
     }
   );
-  block.enter(f.env);
+  block.willEnter(f.env);
 }

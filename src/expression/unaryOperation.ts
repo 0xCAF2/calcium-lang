@@ -11,10 +11,10 @@ import { default as Sym } from "../symbol";
  */
 export default class UnaryOperation {
   static table: {
-    [key: string]: (operand: RawType, env: Environment) => InternalType;
+    [key: string]: (operand: RawType) => InternalType;
   } = {
-    [Kw.UnaryOperator.Not]: (op) => {
-      return createBool(!op);
+    [Kw.UnaryOperator.Not]: (operand) => {
+      return createBool(!operand);
     },
   };
   constructor(
@@ -24,6 +24,6 @@ export default class UnaryOperation {
 
   [Sym.evaluate](env: Environment): InternalType {
     const value = retrieveValue(this.operand, env);
-    return UnaryOperation.table[this.operator](value, env);
+    return UnaryOperation.table[this.operator](value);
   }
 }

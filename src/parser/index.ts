@@ -110,7 +110,9 @@ export default class Parser {
 
     this.table.set(Kw.Command.ForEach, (stmt) => {
       const elemName = stmt[Index.ForEach.ElementName] as string;
-      const iterable = this.translateExpression(stmt[Index.ForEach.Iterable]);
+      const iterable = this.translateReference(
+        stmt[Index.ForEach.Iterable] as JSONElementType.Reference
+      );
       return new Cmd.ForEach(elemName, iterable);
     });
 
@@ -256,13 +258,13 @@ export default class Parser {
     if (kw === Kw.Reference.Variable) {
       return new Expr.Variable(expr[Index.Variable.Name] as string);
     } else if (kw === Kw.Reference.Attribute) {
-      const attrNames: string[] = [];
+      const attrsName: string[] = [];
       for (let i = Index.Attribute.firstAttributeName; i < expr.length; ++i) {
-        attrNames.push(expr[i] as string);
+        attrsName.push(expr[i] as string);
       }
       return new Expr.Attribute(
         expr[Index.Attribute.varName] as string,
-        attrNames
+        attrsName
       );
     } else if (kw === Kw.Reference.Subscript) {
       if (expr.length === 3) {

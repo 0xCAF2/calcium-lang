@@ -6,10 +6,10 @@ import Sym from "../symbol";
 import { evaluate } from "../util";
 
 /**
- * the built-in print function
+ * built-in `print()` function
  * @param args positional arguments
  * @param env
- * @returns return None
+ * @returns None
  */
 export default function print(
   args: Expression[],

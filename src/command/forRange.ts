@@ -10,6 +10,13 @@ import { createInt } from "../factory";
  * `for i in range(start, stop, step):` loop
  */
 export default class ForRange implements Command {
+  /**
+   *
+   * @param varName a counter variable
+   * @param start start from the value (default 0)
+   * @param stop stop to the value
+   * @param step step by the value (default 1)
+   */
   constructor(
     public readonly varName: string,
     public readonly start: Expr.Expression | null,
@@ -46,10 +53,10 @@ export default class ForRange implements Command {
         }
       },
       (env) => {
-        block.enter(env);
+        block.willEnter(env);
         return Result.Jumpped;
       }
     );
-    block.enter(env);
+    block.willEnter(env);
   }
 }

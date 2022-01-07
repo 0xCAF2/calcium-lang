@@ -6,6 +6,7 @@ import { evaluate } from "../util";
 import { createInt, None } from ".";
 import { AttributeNotFound } from "../error";
 import createBuiltinMethod from "./builtinMethod";
+import Slice from "../runtime/slice";
 
 export default function createList(value: Expression[]): InternalType {
   let list: InternalType[];
@@ -15,23 +16,10 @@ export default function createList(value: Expression[]): InternalType {
       get(target, property, receiver) {
         if (property === Sym.evaluate)
           return (env: Environment) => {
-            list = [];
-            for (let elem of value) {
-              list.push(evaluate(elem, env));
-            }
+            list = value.map((v) => evaluate(v, env));
             return self;
           };
         else if (property === Sym.value) return list;
-        else if (property === Sym.subscript)
-          return (...indexes: number[]) => {
-            if (indexes.length === 1) {
-              return list[indexes[0]];
-            } else {
-              // TODO consider None
-              return list.slice(indexes[0], indexes[1]);
-            }
-          };
-        else if (property === Sym.len) return createInt(list.length);
         else if (property === Sym.iterator) {
           let counter = 0;
           return {
@@ -40,7 +28,33 @@ export default function createList(value: Expression[]): InternalType {
               else return list[counter++];
             },
           };
-        } else if (property === "append")
+        } else if (property === Sym.len) return createInt(list.length);
+        else if (property === Sym.slice)
+          return (
+            lower: InternalType,
+            upper: InternalType,
+            value?: InternalType[]
+          ): InternalType => {
+            const slice = new Slice(list);
+            if (value === undefined) {
+              return createList(slice.get(lower, upper));
+            } else {
+              slice.set(lower, upper, value);
+              return None;
+            }
+          };
+        else if (property === Sym.subscript)
+          return (index: InternalType, value?: InternalType): InternalType => {
+            let idx = Reflect.get(index, Sym.value) as number;
+            if (idx < 0) idx += list.length;
+            if (value === undefined) {
+              return list[idx];
+            } else {
+              list[idx] = value;
+              return None;
+            }
+          };
+        else if (property === "append")
           return createBuiltinMethod({
             name: "append",
             body: (args, env) => {

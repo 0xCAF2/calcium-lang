@@ -8,7 +8,15 @@ import { Block, Kind, Result } from "../runtime/block";
 import Namespace from "../runtime/namespace";
 import createClassObj from "../factory/classObj";
 
+/**
+ * `class` statement
+ */
 export default class Class implements Command {
+  /**
+   *
+   * @param name the name of the class
+   * @param superclassName must be an dentifier that can be referred as a name
+   */
   constructor(
     public readonly name: string,
     public readonly superclassName?: string
@@ -50,6 +58,6 @@ export default class Class implements Command {
         return Result.Exited;
       }
     );
-    block.enter(env);
+    block.willEnter(env);
   }
 }

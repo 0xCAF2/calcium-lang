@@ -6,8 +6,8 @@ import Conditional from "./conditional";
  */
 export default class Else extends Conditional {
   isSatisfied(env: Environment): boolean {
-    // when an else command become the current line,
-    // the runtime always enter this block.
+    // when an else command becomes the current line,
+    // the runtime always enters this block.
     return true;
   }
 }

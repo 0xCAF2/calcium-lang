@@ -2,7 +2,15 @@ import Command from "./command";
 import Environment from "../runtime/environment";
 import { createFuncObj } from "../factory";
 
+/**
+ * `def` statement (function definition)
+ */
 export default class Def implements Command {
+  /**
+   *
+   * @param funcName the name of the function
+   * @param paramsName positional parameters' name
+   */
   constructor(
     public readonly funcName: string,
     public readonly paramsName: string[]

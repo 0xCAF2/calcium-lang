@@ -8,18 +8,17 @@ import { Block, Kind, Result } from "../runtime/block";
 export default abstract class Conditional implements Command {
   execute(env: Environment): void {
     if (this.isSatisfied(env)) {
-      // should enter to this block
       const block = new Block(
         Kind.IfElifElse,
         env.address,
         () => true,
         (env) => {
-          env.address.shift(-2);
-          env.blocks.pop();
+          env.address.shift(-2); // the indent is now same as Ifs command
+          env.blocks.pop(); // therefore the Ifs block will be popped here
           return Result.Jumpped;
         }
       );
-      block.enter(env);
+      block.willEnter(env);
     }
   }
 

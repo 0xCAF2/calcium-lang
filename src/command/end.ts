@@ -6,10 +6,8 @@ import Environment from "../runtime/environment";
  */
 export default class End implements Command {
   /**
-   * do nothing.
+   * do nothing
    * @param env
    */
-  execute(env: Environment) {
-    // Do nothing
-  }
+  execute(env: Environment) {}
 }

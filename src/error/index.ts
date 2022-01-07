@@ -1,6 +1,6 @@
 export class AttributeNotFound extends Error {
   constructor(public readonly key: string) {
-    super(`${key} not found.`);
+    super(`attribute ${key} not found.`);
     this.key = key;
   }
 }
