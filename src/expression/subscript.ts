@@ -3,7 +3,7 @@ import { None } from "../factory";
 import Environment from "../runtime/environment";
 import { default as Sym } from "../symbol";
 import { InternalType } from "../type";
-import { evaluate } from "../util";
+import { evaluate, retrieveValue } from "../util";
 
 /**
  * access the element by an index or a key
@@ -24,7 +24,7 @@ export default class Subscript {
 
   assign(rhs: InternalType, env: Environment) {
     const ref = evaluate(this.referredObj, env);
-    const rhsValue = evaluate(rhs, env);
+    const rhsValue = retrieveValue(rhs, env); // Proxy cannot be used as a list
     if (this.upper === undefined) {
       const index = evaluate(this.lower, env);
       Reflect.get(ref, Sym.subscript)(index, rhsValue);
