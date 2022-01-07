@@ -12,5 +12,6 @@ export { default as ForEach } from "./forEach";
 export { default as ForRange } from "./forRange";
 export { default as If } from "./if";
 export { default as Ifs } from "./ifs";
+export { default as Pass } from "./pass";
 export { default as Return } from "./return";
 export { default as While } from "./while";

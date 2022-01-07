@@ -146,6 +146,10 @@ export default class Parser {
       return new Cmd.Ifs();
     });
 
+    this.table.set(Kw.Command.Pass, (stmt) => {
+      return new Cmd.Pass();
+    });
+
     this.table.set(Kw.Command.Return, (stmt) => {
       if (stmt.length > Index.Return.Expr) {
         const expr = this.translateExpression(stmt[Index.Return.Expr]);
