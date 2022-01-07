@@ -6,6 +6,7 @@ import Environment from "../runtime/environment";
 import { Expression, Reference } from "../expression";
 import { AttributeNotFound } from "../error";
 import createInstance from "./instance";
+import { None } from ".";
 
 export default function createClassObj(src: {
   className: string;
@@ -23,7 +24,7 @@ export default function createClassObj(src: {
           return (f: {
             args: Expression[];
             env: Environment;
-            lhs: Reference;
+            lhs: Reference | typeof None;
           }) => {
             const instance = createInstance({ classObj: self });
             f.args.unshift(instance);
@@ -31,8 +32,12 @@ export default function createClassObj(src: {
             const __init__ = src.attributes.get("__init__");
             if (__init__) {
               Reflect.get(__init__, Sym.call)(f);
+              f.env.returnedValue = instance;
+            } else {
+              if (f.lhs !== None) {
+                (f.lhs as Reference).assign(instance, f.env);
+              }
             }
-            f.env.returnedValue = instance;
           };
         else if (typeof property === "string") {
           const attr = src.attributes.get(property);
