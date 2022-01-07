@@ -1,4 +1,4 @@
-import * as Expr from "../expression";
+import { Expression, Reference } from "../expression";
 import { None } from "../factory";
 import Address from "../runtime/address";
 import { Block, Kind, Result } from "../runtime/block";
@@ -8,9 +8,9 @@ import evaluate from "./evaluate";
 
 export default function invoke(f: {
   address: Address;
-  args: Expr.Expression[];
+  args: Expression[];
   env: Environment;
-  lhs: Expr.Reference;
+  lhs: Reference;
   params: string[];
   parent: Namespace;
 }) {

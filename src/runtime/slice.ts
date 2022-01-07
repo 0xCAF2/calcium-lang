@@ -1,30 +1,27 @@
 import { InternalType } from "../type";
-import { default as Sym } from "../symbol";
 import { None } from "../factory";
+import { SliceNotSupported } from "../error";
 
 export default class Slice {
-  constructor(private readonly list: InternalType[]) {}
+  constructor(private readonly list: InternalType[] | string) {}
 
-  get(
-    lower: number | typeof None,
-    upper: number | typeof None
-  ): InternalType[] {
+  get(lower: InternalType, upper: InternalType): InternalType[] | string {
     const [start, end] = this.getRange(lower, upper);
     return this.list.slice(start, end);
   }
 
-  set(
-    lower: number | typeof None,
-    upper: number | typeof None,
-    value: InternalType[]
-  ) {
+  set(lower: InternalType, upper: InternalType, value: InternalType[]) {
     const [start, count] = this.calcStartAndCount(lower, upper);
-    this.list.splice(start, count, ...value);
+    if (typeof this.list !== "string") {
+      this.list.splice(start, count, ...value);
+    } else {
+      throw new SliceNotSupported();
+    }
   }
 
   private calcStartAndCount(
-    lower: number | typeof None,
-    upper: number | typeof None
+    lower: InternalType,
+    upper: InternalType
   ): [number, number] {
     let [l, u] = this.getRange(lower, upper);
     if (l < 0) {
@@ -46,12 +43,9 @@ export default class Slice {
     return [l, count];
   }
 
-  private getRange(
-    lower: number | typeof None,
-    upper: number | typeof None
-  ): [number, number] {
-    const l = lower === None ? 0 : (lower as number);
-    const u = upper === None ? this.list.length : (upper as number);
+  private getRange(lower: InternalType, upper: InternalType): [number, number] {
+    const l = lower === None ? 0 : +lower;
+    const u = upper === None ? this.list.length : +upper;
     return [l, u];
   }
 }

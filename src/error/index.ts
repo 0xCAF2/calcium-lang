@@ -30,8 +30,8 @@ export class NameNotFound extends Error {
 }
 
 export class NotIterable extends Error {}
-
 export class OperationFailed extends Error {}
+export class SliceNotSupported extends Error {}
 
 export class UnsupportedKeyword extends Error {
   constructor(public readonly keyword: string) {

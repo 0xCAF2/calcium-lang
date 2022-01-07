@@ -43,8 +43,7 @@ export default class Subscript {
     } else {
       const l = evaluate(this.lower, env);
       const u = evaluate(this.upper, env);
-      // slice requires to be evaluated to create new list object
-      return evaluate(Reflect.get(ref, Sym.slice)(l, u), env);
+      return Reflect.get(ref, Sym.slice)(l, u);
     }
   }
 

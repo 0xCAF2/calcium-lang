@@ -2,6 +2,8 @@ import { AttributeNotFound } from "../error";
 import { InternalType } from "../type";
 import Environment from "../runtime/environment";
 import { default as Sym } from "../symbol";
+import Slice from "../runtime/slice";
+import { createInt } from ".";
 
 /**
  *
@@ -24,7 +26,19 @@ export default function createStr(value: string): InternalType {
               else return createStr(value[counter++]);
             },
           };
-        } else throw new AttributeNotFound(property.toString());
+        } else if (property === Sym.len) return createInt(value.length);
+        else if (property === Sym.slice)
+          return (lower: InternalType, upper: InternalType): InternalType => {
+            const slice = new Slice(value);
+            return createStr(slice.get(lower, upper) as string);
+          };
+        else if (property === Sym.subscript)
+          return (index: InternalType): InternalType => {
+            let idx = Reflect.get(index, Sym.value) as number;
+            if (idx < 0) idx += value.length;
+            return createStr(value.charAt(idx));
+          };
+        else throw new AttributeNotFound(property.toString());
       },
     }
   );

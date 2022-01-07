@@ -9,7 +9,7 @@ import createBuiltinMethod from "./builtinMethod";
 import Slice from "../runtime/slice";
 
 export default function createList(value: Expression[]): InternalType {
-  let list: InternalType[];
+  let list = value;
   const self = new Proxy(
     {},
     {
@@ -25,7 +25,7 @@ export default function createList(value: Expression[]): InternalType {
           return {
             next(): InternalType | undefined {
               if (counter >= list.length) return undefined;
-              else return list[counter++];
+              else return list[counter++] as InternalType;
             },
           };
         } else if (property === Sym.len) return createInt(list.length);
@@ -35,9 +35,9 @@ export default function createList(value: Expression[]): InternalType {
             upper: InternalType,
             value?: InternalType[]
           ): InternalType => {
-            const slice = new Slice(list);
+            const slice = new Slice(list as InternalType[]);
             if (value === undefined) {
-              return createList(slice.get(lower, upper));
+              return createList(slice.get(lower, upper) as InternalType[]);
             } else {
               slice.set(lower, upper, value);
               return None;
@@ -48,7 +48,7 @@ export default function createList(value: Expression[]): InternalType {
             let idx = Reflect.get(index, Sym.value) as number;
             if (idx < 0) idx += list.length;
             if (value === undefined) {
-              return list[idx];
+              return list[idx] as InternalType;
             } else {
               list[idx] = value;
               return None;

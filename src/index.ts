@@ -1,4 +1,2 @@
-import Runtime from "./runtime/runtime";
-import Status from "./runtime/status";
-
-export { Runtime, Status };
+export { default as Runtime } from "./runtime/runtime";
+export { default as Status } from "./runtime/status";
