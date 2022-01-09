@@ -12,6 +12,7 @@ export default function createInstance(src: {
     {
       get(target, property, receiver) {
         if (property === Sym.evaluate) return (env: Environment) => self;
+        else if (property === Sym.class) return src.classObj;
 
         const instanceProp = Reflect.get(target, property);
         if (instanceProp) return instanceProp;

@@ -5,6 +5,7 @@ import { default as Sym } from "../symbol";
 import Environment from "../runtime/environment";
 import { AttributeNotFound } from "../error";
 import { None } from ".";
+import builtinFunctionOrMethod from "./builtinFunctionOrMethod";
 
 /**
  *
@@ -12,7 +13,7 @@ import { None } from ".";
  * @param body
  * @returns the internal representation of a built-in function
  */
-export default function createBuiltinFunc(src: {
+export default function createBuiltinFunction(src: {
   name: string;
   body: FuncBody;
 }): InternalType {
@@ -21,7 +22,6 @@ export default function createBuiltinFunc(src: {
     {
       get(target, property, receiver) {
         if (property === Sym.name) return src.name;
-        else if (property === Sym.body) return src.body;
         else if (property === Sym.call)
           return (f: {
             args: Expression[];
@@ -35,6 +35,7 @@ export default function createBuiltinFunc(src: {
             }
           };
         else if (property === Sym.evaluate) return (env: Environment) => self;
+        else if (property === Sym.class) return builtinFunctionOrMethod;
         else throw new AttributeNotFound(property.toString());
       },
     }

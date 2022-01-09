@@ -38,6 +38,7 @@ export default function createStr(value: string): InternalType {
             if (idx < 0) idx += value.length;
             return createStr(value.charAt(idx));
           };
+        else if (property === Sym.class) return "str";
         else throw new AttributeNotFound(property.toString());
       },
     }

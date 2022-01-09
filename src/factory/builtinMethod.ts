@@ -14,7 +14,6 @@ export default function createBuiltinMethod(src: {
     {
       get(target, property, receiver) {
         if (property === Sym.name) return src.name;
-        else if (property === Sym.body) return src.body;
         else if (property === Sym.call)
           return (f: { args: Expression[]; env: Environment }) => {
             src.body(f.args, f.env);

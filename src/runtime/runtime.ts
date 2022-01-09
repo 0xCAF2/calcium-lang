@@ -1,5 +1,5 @@
 import * as Cmd from "../command";
-import createBuiltinFunc from "../factory/builtinFunc";
+import createBuiltinFunction from "../factory/builtinFunction";
 import Environment from "./environment";
 import Namespace from "./namespace";
 import Parser from "../parser";
@@ -40,7 +40,7 @@ export default class Runtime {
     // set up built-ins
     const builtin = new Namespace();
     for (let name in Builtin.Functions) {
-      const builtinFunc = createBuiltinFunc({
+      const builtinFunc = createBuiltinFunction({
         name,
         body: Builtin.Functions[name],
       }) as InternalType;

@@ -17,6 +17,7 @@ export default function createInt(value: number): InternalType {
         else if (property === Sym.value) return value;
         else if (property === Sym.evaluate) return (env: Environment) => self;
         else if (property === Symbol.toPrimitive) return (_: string) => value;
+        else if (property === Sym.class) return "int";
         else throw new AttributeNotFound(property.toString());
       },
     }
