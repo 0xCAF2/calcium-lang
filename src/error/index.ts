@@ -20,7 +20,7 @@ export class FewerElement extends Error {}
 export class InconsistentBlock extends Error {}
 export class IndexMustBeInt extends Error {}
 export class InvalidRange extends Error {}
-export class KeyMustBeStr extends Error {}
+export class KeyMustBeStrOrInt extends Error {}
 
 export class NameNotFound extends Error {
   constructor(public readonly name: string) {

@@ -30,8 +30,7 @@ export default function createBuiltinFunction(src: {
           }) => {
             const result = src.body(f.args, f.env);
             if (f.lhs !== None) {
-              const ref: Reference = f.lhs as Reference;
-              ref.assign(result, f.env);
+              (f.lhs as Reference).assign(result, f.env);
             }
           };
         else if (property === Sym.evaluate) return (env: Environment) => self;

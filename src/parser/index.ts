@@ -5,7 +5,14 @@ import * as Expr from "../expression";
 import Index from "../indexes/index";
 import * as Kw from "../keyword";
 import Statement from "../runtime/statement";
-import { createBool, createInt, createList, createStr, None } from "../factory";
+import {
+  createBool,
+  createDict,
+  createInt,
+  createList,
+  createStr,
+  None,
+} from "../factory";
 import { InternalType } from "../type";
 
 /**
@@ -247,6 +254,9 @@ export default class Parser {
       return createBool(expr);
     } else if (expr === null) {
       return None;
+    } else if (typeof expr === "object") {
+      // can generate an empty dict only
+      return createDict({});
     } else {
       throw new Err.CannotConvertToExpression();
     }

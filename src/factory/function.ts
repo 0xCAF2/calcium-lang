@@ -7,8 +7,9 @@ import Environment from "../runtime/environment";
 import { AttributeNotFound } from "../error";
 import { invoke } from "../util";
 import functionType from "./functionType";
+import { None } from ".";
 
-export default function createFunc(src: {
+export default function createFunction(src: {
   address: Address;
   name: string;
   params: string[];
@@ -23,7 +24,7 @@ export default function createFunc(src: {
           return (f: {
             args: Expression[];
             env: Environment;
-            lhs: Reference;
+            lhs: Reference | typeof None;
           }) => {
             invoke({
               address: src.address,

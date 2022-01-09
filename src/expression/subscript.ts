@@ -24,11 +24,12 @@ export default class Subscript {
 
   assign(rhs: InternalType, env: Environment) {
     const ref = evaluate(this.referredObj, env);
-    const rhsValue = retrieveValue(rhs, env); // Proxy cannot be used as a list
     if (this.upper === undefined) {
+      const rhsValue = evaluate(rhs, env);
       const index = evaluate(this.lower, env);
       Reflect.get(ref, Sym.subscript)(index, rhsValue);
     } else {
+      const rhsValue = retrieveValue(rhs, env); // Proxy cannot be used as a list
       const l = evaluate(this.lower, env);
       const u = evaluate(this.upper, env);
       Reflect.get(ref, Sym.slice)(l, u, rhsValue);

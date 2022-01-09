@@ -10,7 +10,7 @@ export default function invoke(f: {
   address: Address;
   args: Expression[];
   env: Environment;
-  lhs: Reference;
+  lhs: Reference | typeof None;
   params: string[];
   parent: Namespace;
 }) {
@@ -31,8 +31,8 @@ export default function invoke(f: {
     (env) => {
       env.address.jump(callerAddress);
       env.context = env.stack.pop()!;
-      if (f.lhs !== null) {
-        f.lhs.assign(env.returnedValue, env);
+      if (f.lhs !== None) {
+        (f.lhs as Reference).assign(env.returnedValue, env);
       }
       env.returnedValue = None;
       return Result.Jumpped;
