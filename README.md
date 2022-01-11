@@ -13,9 +13,9 @@ const code = [
 
 prints "Hello, World!".
 
-Calcium supports primitive statements such as `if`, `for`, `while`, functions, and classes. [See here](https://sites.google.com/view/calcium-lang/commands).
+Calcium supports basic statements such as `if`, `for`, `while`, function, and class definition. [See here](https://sites.google.com/view/calcium-lang/commands).
 
-## Python's subset code can be translated to the Calcium code.
+## Python's subset code can be translated to Calcium code.
 
 [There is a script](https://github.com/0xCAF2/python2calcium) which reads a Python program and generates a JSON array. For example,
 
@@ -67,28 +67,27 @@ will be translated to:
   [1, [], "=", ["var", "result"], ["var", "prime"]],
   [1, [], "call", null, ["var", "print"], [["var", "result"]]],
   [1, [], "end"]
-];
+]
 ```
 
-Calcium's one line corresponds to Python's.
+Calcium's one line corresponds to Python's one.
 
-## The interpreter is implemented by pure JavaScript.
-
-You can use a calcium engine in a Web page or an embedded WebView.
+## The Calcium engine can be embedded in a Web page or a WebView.
 
 ```javascript
 import { Calcium } from "calcium-lang";
 const engine = new Calcium.Engine(code); // code should be a JSON array.
 ```
 
-creates the runtime engine. To output from print function set a callback as:
+creates the runtime engine. To output from print function, set a callback as:
 
 ```javascript
 engine.setPrintFunction((desc) => console.log(desc));
 ```
 
-To execute the code, invoke
+To execute the code, invoke `run()` method.
 
 ```javascript
 engine.run(); // Run the code.
 ```
+
