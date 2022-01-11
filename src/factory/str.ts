@@ -3,7 +3,9 @@ import { InternalType } from "../type";
 import Environment from "../runtime/environment";
 import { default as Sym } from "../symbol";
 import Slice from "../runtime/slice";
-import { createInt } from ".";
+import { createInt, createList } from ".";
+import createBuiltinMethod from "./builtinMethod";
+import { retrieveValue } from "../util";
 
 /**
  *
@@ -39,6 +41,24 @@ export default function createStr(value: string): InternalType {
             return createStr(value.charAt(idx));
           };
         else if (property === Sym.class) return "str";
+        else if (property === "find")
+          return createBuiltinMethod({
+            name: "find",
+            body: (args, env) => {
+              const substr = retrieveValue(args[0], env) as string;
+              const index = value.indexOf(substr);
+              return createInt(index);
+            },
+          });
+        else if (property === "split")
+          return createBuiltinMethod({
+            name: "split",
+            body: (args, env) => {
+              const sep = retrieveValue(args[0], env) as string;
+              const result = value.split(sep);
+              return createList(result.map((v) => createStr(v)));
+            },
+          });
         else throw new AttributeNotFound(property.toString());
       },
     }

@@ -13,6 +13,11 @@ it("list.py", () => {
     [2, [], "ifs"],
       [3, [], "if", ["!=", ["%", ["var", "e"], 2], 0]],
         [4, [], "=", ["var", "r"], false],
+  [1, [], "call", ["var", "e"], ["attr", "l", "pop"], [0]],
+  [1, [], "call", ["var", "e2"], ["attr", "l", "pop"], []],
+  [1, [], "call", null, ["attr", "l", "insert"], [0, ["var", "e2"]]],
+  [1, [], "call", ["var", "size"], ["var", "len"], [["var", "l"]]],
+  [1, [], "=", ["var", "r"], ["and", ["and", ["and", ["var", "r"], ["==", ["var", "e"], 0]], ["==", ["var", "e2"], 4]], ["==", ["var", "size"], 2]]],
   [1, [], "call", null, ["var", "print"], [["var", "r"]]],
   [1, [], "end"]
 ] as any[];

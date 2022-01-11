@@ -2,9 +2,9 @@ import { InternalType } from "../type";
 import { default as Sym } from "../symbol";
 import Environment from "../runtime/environment";
 import { Expression } from "../expression";
-import { evaluate } from "../util";
+import { evaluate, retrieveValue } from "../util";
 import { createInt, None } from ".";
-import { AttributeNotFound } from "../error";
+import { AttributeNotFound, ListIsEmpty } from "../error";
 import createBuiltinMethod from "./builtinMethod";
 import Slice from "../runtime/slice";
 
@@ -20,6 +20,7 @@ export default function createList(value: Expression[]): InternalType {
             return self;
           };
         else if (property === Sym.value) return list;
+        else if (property === Sym.class) return "list";
         else if (property === Sym.iterator) {
           let counter = 0;
           return {
@@ -60,6 +61,31 @@ export default function createList(value: Expression[]): InternalType {
             body: (args, env) => {
               list.push(evaluate(args[0], env));
               return None;
+            },
+          });
+        else if (property === "insert")
+          return createBuiltinMethod({
+            name: "insert",
+            body: (args, env) => {
+              const index = retrieveValue(args[0], env) as number;
+              const value = evaluate(args[1], env);
+              list.splice(index, 0, value);
+              return None;
+            },
+          });
+        else if (property === "pop")
+          return createBuiltinMethod({
+            name: "pop",
+            body: (args, env) => {
+              if (args.length === 0) {
+                const value = list.pop();
+                if (value === undefined) throw new ListIsEmpty();
+                return value as InternalType;
+              } else {
+                const index = retrieveValue(args[0], env) as number;
+                const value = list.splice(index, 1)[0];
+                return value as InternalType;
+              }
             },
           });
         throw new AttributeNotFound(property.toString());

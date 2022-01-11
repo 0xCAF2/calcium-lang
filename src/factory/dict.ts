@@ -1,12 +1,9 @@
 import { InternalType } from "../type";
 import { default as Sym } from "../symbol";
 import Environment from "../runtime/environment";
-import { Expression } from "../expression";
-import { evaluate } from "../util";
 import { createInt, createList, createStr, None } from ".";
 import { AttributeNotFound, KeyMustBeStrOrInt } from "../error";
 import createBuiltinMethod from "./builtinMethod";
-import Slice from "../runtime/slice";
 
 export default function createDict(value: {}): InternalType {
   let map = new Map<string | number, InternalType>();

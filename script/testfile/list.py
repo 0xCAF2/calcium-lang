@@ -8,4 +8,10 @@ for e in l:
     if e % 2 != 0:
         r = False
 
+e = l.pop(0)
+e2 = l.pop()
+l.insert(0, e2)
+size = len(l)
+r = r and e == 0 and e2 == 4 and size == 2
+
 print(r)
