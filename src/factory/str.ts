@@ -50,6 +50,15 @@ export default function createStr(value: string): InternalType {
               return createInt(index);
             },
           });
+        else if (property === "replace")
+          return createBuiltinMethod({
+            name: "replace",
+            body: (args, env) => {
+              const fromStr = retrieveValue(args[0], env) as string;
+              const toStr = retrieveValue(args[1], env) as string;
+              return createStr(value.replace(new RegExp(fromStr, "g"), toStr));
+            },
+          });
         else if (property === "split")
           return createBuiltinMethod({
             name: "split",

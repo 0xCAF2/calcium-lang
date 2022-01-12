@@ -9,6 +9,8 @@ it("str.py", () => {
   [1, [], "call", ["var", "l"], ["attr", "s", "split"], ["s"]],
   [1, [], "call", ["var", "r"], ["var", "isinstance"], [["var", "l"], ["var", "list"]]],
   [1, [], "=", ["var", "r"], ["and", ["and", ["and", ["var", "r"], ["==", ["var", "p"], 1]], ["==", ["sub", ["var", "l"], 0], "te"]], ["==", ["sub", ["var", "l"], 1], "t"]]],
+  [1, [], "call", ["var", "s2"], ["attr", "s", "replace"], ["t", "l"]],
+  [1, [], "=", ["var", "r"], ["and", ["var", "r"], ["==", ["var", "s2"], "lesl"]]],
   [1, [], "call", null, ["var", "print"], [["var", "r"]]],
   [1, [], "end"]
 ] as any[];
