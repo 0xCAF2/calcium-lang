@@ -10,6 +10,8 @@ const Symbols = {
   name: Symbol("name"),
   slice: Symbol("slice"),
   subscript: Symbol("subscript"),
+  super: Symbol("super"),
+  superclass: Symbol("superclass"),
   value: Symbol("value"),
 };
 

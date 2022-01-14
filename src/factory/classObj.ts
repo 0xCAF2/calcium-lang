@@ -39,6 +39,7 @@ export default function createClassObj(src: {
               }
             }
           };
+        else if (property === Sym.superclass) return src.superclass;
         else if (typeof property === "string") {
           const attr = src.attributes.get(property);
           if (attr === undefined) {

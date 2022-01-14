@@ -3,6 +3,7 @@ import { default as Sym } from "../symbol";
 import Environment from "../runtime/environment";
 import functionType from "./functionType";
 import createMethod from "./method";
+import createSuper from "./super";
 
 export default function createInstance(src: {
   classObj: InternalType;
@@ -13,6 +14,8 @@ export default function createInstance(src: {
       get(target, property, receiver) {
         if (property === Sym.evaluate) return (env: Environment) => self;
         else if (property === Sym.class) return src.classObj;
+        else if (property === Sym.super)
+          return createSuper({ classObj: src.classObj, instance: self });
 
         const instanceProp = Reflect.get(target, property);
         if (instanceProp) return instanceProp;

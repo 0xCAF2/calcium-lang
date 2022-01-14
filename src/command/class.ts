@@ -29,9 +29,9 @@ export default class Class implements Command {
     ) {
       superclass = object;
     } else {
-      const obj = env.context.lookUp(this.name);
-      if (obj && Reflect.get(obj, Sym.class) === type) {
-        superclass = obj;
+      const superclassObj = env.context.lookUp(this.superclassName);
+      if (superclassObj && Reflect.get(superclassObj, Sym.class) === type) {
+        superclass = superclassObj;
       } else {
         throw new CannotInherit(this.superclassName);
       }
