@@ -6,7 +6,7 @@ import { default as Sym } from "../symbol";
 import { CannotInherit } from "../error";
 import { Block, Kind, Result } from "../runtime/block";
 import Namespace from "../runtime/namespace";
-import createClassObj from "../factory/classObj";
+import { createClassObj } from "../factory";
 
 /**
  * `class` statement

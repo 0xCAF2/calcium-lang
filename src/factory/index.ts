@@ -11,3 +11,6 @@ export { default as builtinFunctionOrMethod } from "./builtinFunctionOrMethod";
 
 export { default as createInternalType } from "./internalType";
 export { default as createFuncObj } from "./function";
+export { default as createClassObj } from "./classObj";
+export { default as createInstance } from "./instance";
+export { default as createSuper } from "./super";
