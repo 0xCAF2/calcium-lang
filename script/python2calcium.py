@@ -3,37 +3,40 @@ import ast
 import json
 import traceback
 
-VERSION = '0.19'
+VERSION = "0_20"
 
-KEYWORD_COMMENT = '#'
-KEYWORD_VARIABLE = 'var'
-KEYWORD_ATTRIBUTE = 'attr'
-KEYWORD_SUBSCRIPT = 'sub'
-KEYWORD_ASSIGNMENT = '='
-KEYWORD_FOR_RANGE = 'for range'
-KEYWORD_FOR_EACH = 'for each'
-KEYWORD_WHILE = 'while'
-KEYWORD_BREAK = 'break'
-KEYWORD_CONTINUE = 'continue'
-KEYWORD_IFS = 'ifs'
-KEYWORD_IF = 'if'
-KEYWORD_ELIF = 'elif'
-KEYWORD_ELSE = 'else'
-KEYWORD_CALL = 'call'
-KEYWORD_RETURN = 'return'
-KEYWORD_FUNC_DEF = 'def'
-KEYWORD_CLASS_DEF = 'class'
-KEYWORD_TRY = 'try'
-KEYWORD_EXCEPT = 'except'
-KEYWORD_RAISE = 'raise'
-KEYWORD_END_OF_CODE = 'end'
-KEYWORD_PASS = 'pass'
+KEYWORD_COMMENT = "#"
 
-OBJECT_TYPE_NAME = 'object'
+KEYWORD_VARIABLE = "var"
+KEYWORD_ATTRIBUTE = "attr"
+KEYWORD_SUBSCRIPT = "sub"
+KEYWORD_CALL = "call"
+
+KEYWORD_EXPR = "expr"
+KEYWORD_ASSIGNMENT = "="
+KEYWORD_FOR_RANGE = "for range"
+KEYWORD_FOR_EACH = "for each"
+KEYWORD_WHILE = "while"
+KEYWORD_BREAK = "break"
+KEYWORD_CONTINUE = "continue"
+KEYWORD_IFS = "ifs"
+KEYWORD_IF = "if"
+KEYWORD_ELIF = "elif"
+KEYWORD_ELSE = "else"
+KEYWORD_RETURN = "return"
+KEYWORD_FUNC_DEF = "def"
+KEYWORD_CLASS_DEF = "class"
+KEYWORD_TRY = "try"
+KEYWORD_EXCEPT = "except"
+KEYWORD_RAISE = "raise"
+KEYWORD_END = "end"
+KEYWORD_PASS = "pass"
+
+OBJECT_TYPE_NAME = "object"
 
 
 class PyCaVisitor(ast.NodeVisitor):
-    def __init__(self, indent_spaces='    '):
+    def __init__(self, indent_spaces="    "):
         super().__init__()
         self.lines = []
         self.indents = []
@@ -43,8 +46,7 @@ class PyCaVisitor(ast.NodeVisitor):
         self.indent_offset = len(indent_spaces)
 
     def get_indent(self, node):
-        return node.col_offset // self.indent_offset \
-            + 1 + self.count_of_nested_if
+        return node.col_offset // self.indent_offset + 1 + self.count_of_nested_if
 
     def output_command(self, indent, keyword, elements=[]):
         self.indents.append(indent)
@@ -57,58 +59,38 @@ class PyCaVisitor(ast.NodeVisitor):
         self.output_command(1, KEYWORD_COMMENT, [VERSION])
 
     def output_end_of_code(self):
-        self.output_command(1, KEYWORD_END_OF_CODE)
+        self.output_command(1, KEYWORD_END)
 
     def output_node(self, node, keyword, elements=[]):
         indent = self.get_indent(node)
         self.output_command(indent, keyword, elements)
 
-    def output_call(self, node, indent, lhs=None):
-        assert isinstance(node, ast.Call), \
-            'Not call node: line {}'.format(node.lineno)
-        elems = []
-        if lhs is not None:
-            elems.append(self.visit(lhs))
-        else:
-            elems.append(None)
-        # self.get_call returns a tuple.
-        func_ref, args = self.get_call(node)
-        elems.append(func_ref)
-        elems.append(args)
-        self.output_command(indent, KEYWORD_CALL, elems)
-
     def get_call(self, node):
-        return self.visit(node.func), \
-            self.get_arguments(node.args)
+        return self.visit(node.func), self.get_arguments(node.args)
 
     def get_arguments(self, args):
         return [self.visit(arg) for arg in args]
 
     def output_for_range(self, node):
-        elems = [
-            node.target.id,
-            [self.visit(arg) for arg in node.iter.args]
-        ]
+        elems = [node.target.id, [self.visit(arg) for arg in node.iter.args]]
         self.output_node(node, KEYWORD_FOR_RANGE, elems)
 
     def output_for_each(self, node):
-        elems = [
-            node.target.id,
-            self.visit(node.iter)
-        ]
+        elems = [node.target.id, self.visit(node.iter)]
         self.output_node(node, KEYWORD_FOR_EACH, elems)
 
     def output_elif_or_else(self, node, indent):
-        if hasattr(node.orelse[0], 'test') and \
-                node.orelse[0].col_offset == \
-                node.col_offset + self.indent_offset:
+        if (
+            hasattr(node.orelse[0], "test")
+            and node.orelse[0].col_offset == node.col_offset + self.indent_offset
+        ):
             # eg.
             # else:
             #     if condition:
             self.output_command(indent, KEYWORD_ELSE)
             for stmt in node.orelse:
                 self.visit(stmt)
-        elif hasattr(node.orelse[0], 'test'):
+        elif hasattr(node.orelse[0], "test"):
             self.output_elif(node.orelse[0], indent)
         else:
             self.output_command(indent, KEYWORD_ELSE)
@@ -117,72 +99,64 @@ class PyCaVisitor(ast.NodeVisitor):
 
     def output_elif(self, node, indent):
         # Should not call output_node()
-        self.output_command(
-            indent,
-            KEYWORD_ELIF,
-            [self.visit(node.test)]
-        )
+        self.output_command(indent, KEYWORD_ELIF, [self.visit(node.test)])
         for stmt in node.body:
             self.visit(stmt)
         if len(node.orelse) != 0:
             self.output_elif_or_else(node, indent)
 
     def get_bin_op(self, node, op, left, right):
-        return [
-            self.get_operator(op),
-            self.visit(left),
-            self.visit(right)
-        ]
+        return [self.get_operator(op), self.visit(left), self.visit(right)]
 
     def get_operator(self, op):
         if isinstance(op, ast.Add):
-            return '+'
+            return "+"
         elif isinstance(op, ast.Sub):
-            return '-'
+            return "-"
         elif isinstance(op, ast.Mult):
-            return '*'
+            return "*"
         elif isinstance(op, ast.Pow):
-            return '**'
+            return "**"
         elif isinstance(op, ast.Div):
-            return '/'
+            return "/"
         elif isinstance(op, ast.FloorDiv):
-            return '//'
+            return "//"
         elif isinstance(op, ast.Mod):
-            return '%'
+            return "%"
         elif isinstance(op, ast.BitAnd):
-            return '&'
+            return "&"
         elif isinstance(op, ast.BitOr):
-            return '|'
+            return "|"
         elif isinstance(op, ast.BitXor):
-            return '^'
+            return "^"
         elif isinstance(op, ast.LShift):
-            return '<<'
+            return "<<"
         elif isinstance(op, ast.RShift):
-            return '>>'
+            return ">>"
         elif isinstance(op, ast.And):
-            return 'and'
+            return "and"
         elif isinstance(op, ast.Or):
-            return 'or'
+            return "or"
         elif isinstance(op, ast.Eq):
-            return '=='
+            return "=="
         elif isinstance(op, ast.NotEq):
-            return '!='
+            return "!="
         elif isinstance(op, ast.Lt):
-            return '<'
+            return "<"
         elif isinstance(op, ast.LtE):
-            return '<='
+            return "<="
         elif isinstance(op, ast.Gt):
-            return '>'
+            return ">"
         elif isinstance(op, ast.GtE):
-            return '>='
+            return ">="
         elif isinstance(op, ast.Is):
-            return 'is'
+            return "is"
         elif isinstance(op, ast.IsNot):
-            return 'is not'
+            return "is not"
         elif isinstance(op, ast.In):
-            return 'in'
+            return "in"
         elif isinstance(op, ast.NotIn):
-            return 'not in'
+            return "not in"
 
     # Visit
     def visit_Module(self, node):
@@ -192,10 +166,7 @@ class PyCaVisitor(ast.NodeVisitor):
         self.output_end_of_code()
 
     def visit_FunctionDef(self, node):
-        elems = [
-            node.name,
-            [arg.arg for arg in node.args.args]
-        ]
+        elems = [node.name, [arg.arg for arg in node.args.args]]
         self.output_node(node, KEYWORD_FUNC_DEF, elems)
         for stmt in node.body:
             self.visit(stmt)
@@ -211,31 +182,20 @@ class PyCaVisitor(ast.NodeVisitor):
             self.visit(stmt)
 
     def visit_Assign(self, node):
-        assert len(node.targets) == 1, \
-            'invalid lhs: line {}'.format(node.lineno)
+        assert len(node.targets) == 1, "invalid lhs: line {}".format(node.lineno)
         elems = []
-        if isinstance(node.value, ast.Call):
-            self.output_call(
-                node.value,
-                self.get_indent(node),
-                node.targets[0]
-            )
-        else:
-            elems.append(self.visit(node.targets[0]))
-            elems.append(self.visit(node.value))
-            self.output_node(node, KEYWORD_ASSIGNMENT, elems)
+        elems.append(self.visit(node.targets[0]))
+        elems.append(self.visit(node.value))
+        self.output_node(node, KEYWORD_ASSIGNMENT, elems)
 
     def visit_AugAssign(self, node):
         if isinstance(node.op, ast.Add):
-            keyword = '+='
+            keyword = "+="
         elif isinstance(node.op, ast.Sub):
-            keyword = '-='
+            keyword = "-="
         elif isinstance(node.op, ast.Mult):
-            keyword = '*='
-        elems = [
-            self.visit(node.target),
-            self.visit(node.value)
-        ]
+            keyword = "*="
+        elems = [self.visit(node.target), self.visit(node.value)]
         self.output_node(node, keyword, elems)
 
     def visit_Tuple(self, node):
@@ -271,7 +231,7 @@ class PyCaVisitor(ast.NodeVisitor):
 
     def visit_Return(self, node):
         elems = []
-        if hasattr(node, 'value'):
+        if hasattr(node, "value"):
             if node.value is None:
                 elems.append(None)
             else:
@@ -297,11 +257,7 @@ class PyCaVisitor(ast.NodeVisitor):
                 elems.append(ex.type.id)
             if ex.name != None:
                 elems.append(ex.name)
-            self.output_command(
-                self.get_indent(ex),
-                KEYWORD_EXCEPT,
-                elems
-            )
+            self.output_command(self.get_indent(ex), KEYWORD_EXCEPT, elems)
             for stmt in ex.body:
                 self.visit(stmt)
 
@@ -314,53 +270,35 @@ class PyCaVisitor(ast.NodeVisitor):
         self.output_command(self.get_indent(node), KEYWORD_RAISE, elems)
 
     def visit_Compare(self, node):
-        return self.get_bin_op(
-            node,
-            node.ops[0],
-            node.left,
-            node.comparators[0]
-        )
+        return self.get_bin_op(node, node.ops[0], node.left, node.comparators[0])
 
     def visit_BinOp(self, node):
-        return self.get_bin_op(
-            node,
-            node.op,
-            node.left,
-            node.right
-        )
+        return self.get_bin_op(node, node.op, node.left, node.right)
 
     def visit_BoolOp(self, node):
         if isinstance(node.op, ast.And):
-            op = 'and'
+            op = "and"
         else:
-            op = 'or'
-        elems = [
-            op,
-            self.visit(node.values[0]),
-            self.visit(node.values[1])
-        ]
+            op = "or"
+        elems = [op, self.visit(node.values[0]), self.visit(node.values[1])]
         count = len(node.values)
         i = 2
         while i < count:
-            elems = [
-                op,
-                elems,
-                self.visit(node.values[i])
-            ]
+            elems = [op, elems, self.visit(node.values[i])]
             i += 1
         return elems
 
     def visit_UnaryOp(self, node):
         elems = []
         if isinstance(node.op, ast.Not):
-            keyword = 'not'
+            keyword = "not"
         elif isinstance(node.op, ast.USub):
-            keyword = '-_'
+            keyword = "-_"
             if isinstance(node.operand, ast.Num):
                 # Return by a literal with - sign
                 return -node.operand.n
         elif isinstance(node.op, ast.Invert):
-            keyword = '~'
+            keyword = "~"
         # if keyword not exist, then error will be raised
         elems.append(keyword)
         elems.append(self.visit(node.operand))
@@ -368,9 +306,7 @@ class PyCaVisitor(ast.NodeVisitor):
 
     def visit_List(self, node):
         # List must be nested
-        return [
-            [self.visit(e) for e in node.elts]
-        ]
+        return [[self.visit(e) for e in node.elts]]
 
     def visit_Dict(self, node):
         obj = {}
@@ -382,7 +318,7 @@ class PyCaVisitor(ast.NodeVisitor):
         return node.n
 
     def visit_Str(self, node):
-        return node.s.replace('\n', '\\n')
+        return node.s.replace("\n", "\\n")
 
     def visit_Name(self, node):
         return [KEYWORD_VARIABLE, node.id]
@@ -420,8 +356,15 @@ class PyCaVisitor(ast.NodeVisitor):
         return [KEYWORD_SUBSCRIPT, value, sub]
 
     def visit_Expr(self, node):
-        if isinstance(node.value, ast.Call):
-            self.output_call(node.value, self.get_indent(node))
+        value = self.visit(node.value)
+        return self.output_node(node, KEYWORD_EXPR, [value])
+
+    def visit_Call(self, node):
+        elems = [KEYWORD_CALL]
+        func_ref, args = self.get_call(node)
+        elems.append(func_ref)
+        elems.append(args)
+        return elems
 
     def generic_visit(self, node):
         super().generic_visit(node)
@@ -434,15 +377,15 @@ def convert(src):
         visitor.visit(module_node)
         lines = []
         for indent, line in zip(visitor.indents, visitor.lines):
-            lines.append('{}{}'.format('  ' * indent, line))
-        code = (',\n').join(lines)
-        return '[\n{}\n]\n'.format(code)
+            lines.append("{}{}".format("  " * indent, line))
+        code = (",\n").join(lines)
+        return "[\n{}\n]\n".format(code)
     except Exception:
         return traceback.format_exc()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     filename = sys.argv[1]
-    with open(filename, encoding='utf-8') as fin:
+    with open(filename, encoding="utf-8") as fin:
         json_array = convert(fin.read())
         print(json_array)
