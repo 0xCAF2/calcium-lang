@@ -3,7 +3,7 @@ import * as Calcium from "../src";
 
 it("if.py", () => {
   const code = [
-  [1, [], "#", "0.19"],
+  [1, [], "#", "0_20"],
   [1, [], "=", ["var", "a"], true],
   [1, [], "=", ["var", "b"], false],
   [1, [], "=", ["var", "c"], null],
@@ -18,7 +18,7 @@ it("if.py", () => {
           [5, [], "=", ["var", "c"], "NG 3"],
     [2, [], "else"],
       [3, [], "=", ["var", "c"], "NG 4"],
-  [1, [], "call", null, ["var", "print"], [["==", ["var", "c"], null]]],
+  [1, [], "expr", ["call", ["var", "print"], [["==", ["var", "c"], null]]]],
   [1, [], "end"]
 ] as any[];
   const runtime = new Calcium.Runtime(code);

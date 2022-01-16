@@ -3,7 +3,7 @@ import * as Calcium from "../src";
 
 it("add.py", () => {
   const code = [
-  [1, [], "#", "0.19"],
+  [1, [], "#", "0_20"],
   [1, [], "=", ["var", "a"], 7],
   [1, [], "=", ["var", "b"], ["+", ["var", "a"], 3]],
   [1, [], "=", ["var", "c"], ["+", ["var", "a"], ["var", "b"]]],
@@ -17,9 +17,9 @@ it("add.py", () => {
   [1, [], "=", ["var", "l1"], [[["var", "a"], ["var", "b"], ["var", "c"], ["sub", ["var", "s"], null, -1]]]],
   [1, [], "=", ["var", "l2"], [[["var", "ss"]]]],
   [1, [], "=", ["var", "l3"], ["+", ["var", "l1"], ["var", "l2"]]],
-  [1, [], "call", ["var", "x"], ["var", "len"], [["var", "l3"]]],
+  [1, [], "=", ["var", "x"], ["call", ["var", "len"], [["var", "l3"]]]],
   [1, [], "=", ["var", "r"], ["and", ["var", "r"], ["==", ["var", "x"], 5]]],
-  [1, [], "call", null, ["var", "print"], [["var", "r"]]],
+  [1, [], "expr", ["call", ["var", "print"], [["var", "r"]]]],
   [1, [], "end"]
 ] as any[];
   const runtime = new Calcium.Runtime(code);

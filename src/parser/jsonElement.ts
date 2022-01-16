@@ -10,7 +10,7 @@ export type DictLiteral = {};
 /**
  * JSON representation of reference expressions in Calcium
  */
-export type Reference = Variable | Attribute | Subscript;
+export type Reference = Attribute | Call | Subscript | Variable;
 
 /**
  * JSON representation of binary operators in Calcium
@@ -48,11 +48,13 @@ export type BinaryOperation = [
 
 export type UnaryOperation = ["~" | "-_" | "not", Any];
 
-export type Variable = ["var", string];
-
 export type Attribute = ["attr", Reference, string];
 
+export type Call = ["call", Reference, Any[]];
+
 export type Subscript = ["sub", Reference, IndexOrKey, SliceEnd?];
+
+export type Variable = ["var", string];
 
 export type IndexOrKey = number | string | Variable | Attribute;
 

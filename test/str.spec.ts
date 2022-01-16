@@ -3,15 +3,15 @@ import * as Calcium from "../src";
 
 it("str.py", () => {
   const code = [
-  [1, [], "#", "0.19"],
+  [1, [], "#", "0_20"],
   [1, [], "=", ["var", "s"], "test"],
-  [1, [], "call", ["var", "p"], ["attr", "s", "find"], ["e"]],
-  [1, [], "call", ["var", "l"], ["attr", "s", "split"], ["s"]],
-  [1, [], "call", ["var", "r"], ["var", "isinstance"], [["var", "l"], ["var", "list"]]],
+  [1, [], "=", ["var", "p"], ["call", ["attr", "s", "find"], ["e"]]],
+  [1, [], "=", ["var", "l"], ["call", ["attr", "s", "split"], ["s"]]],
+  [1, [], "=", ["var", "r"], ["call", ["var", "isinstance"], [["var", "l"], ["var", "list"]]]],
   [1, [], "=", ["var", "r"], ["and", ["and", ["and", ["var", "r"], ["==", ["var", "p"], 1]], ["==", ["sub", ["var", "l"], 0], "te"]], ["==", ["sub", ["var", "l"], 1], "t"]]],
-  [1, [], "call", ["var", "s2"], ["attr", "s", "replace"], ["t", "l"]],
+  [1, [], "=", ["var", "s2"], ["call", ["attr", "s", "replace"], ["t", "l"]]],
   [1, [], "=", ["var", "r"], ["and", ["var", "r"], ["==", ["var", "s2"], "lesl"]]],
-  [1, [], "call", null, ["var", "print"], [["var", "r"]]],
+  [1, [], "expr", ["call", ["var", "print"], [["var", "r"]]]],
   [1, [], "end"]
 ] as any[];
   const runtime = new Calcium.Runtime(code);

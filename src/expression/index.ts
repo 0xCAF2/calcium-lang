@@ -2,23 +2,32 @@ import { None } from "../factory";
 import BinaryOperation from "./binaryOperation";
 import { InternalType } from "../type";
 import UnaryOperation from "./unaryOperation";
-import Variable from "./variable";
 import Attribute from "./attribute";
+import Call from "./call";
 import Subscript from "./subscript";
+import Variable from "./variable";
 
 /**
  * any expression that contains an identifier
  */
-export type Reference = Variable | Attribute | Subscript;
+export type Reference = Attribute | Subscript | Variable;
 
 /**
  * any expression that is not evaluated
  */
 export type Expression =
   | BinaryOperation
+  | Call
   | InternalType
   | Reference
   | UnaryOperation
   | typeof None;
 
-export { Attribute, BinaryOperation, UnaryOperation, Subscript, Variable };
+export {
+  Attribute,
+  BinaryOperation,
+  Call,
+  Subscript,
+  UnaryOperation,
+  Variable,
+};

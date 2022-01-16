@@ -16,15 +16,9 @@ export default function createBuiltinMethod(src: {
       get(target, property, receiver) {
         if (property === Sym.name) return src.name;
         else if (property === Sym.call)
-          return (f: {
-            args: Expression[];
-            env: Environment;
-            lhs: Reference | typeof None;
-          }) => {
+          return (f: { args: Expression[]; env: Environment }) => {
             const result = src.body(f.args, f.env);
-            if (f.lhs !== None) {
-              (f.lhs as Reference).assign(result, f.env);
-            }
+            return result;
           };
         else if (property === Sym.evaluate) return (env: Environment) => self;
         else throw new AttributeNotFound(property.toString());

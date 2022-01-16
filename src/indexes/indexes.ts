@@ -9,12 +9,6 @@ export enum Assignment {
   Rhs = 4,
 }
 
-export enum Call {
-  Lhs = 3,
-  FuncRef = 4,
-  Args = 5,
-}
-
 export enum Class {
   Name = 3,
   SuperclassName = 4,
@@ -63,6 +57,7 @@ export enum Return {
 
 export enum Expression {
   Keyword = 0,
+  value = 3,
 }
 
 export enum Attribute {
@@ -73,6 +68,11 @@ export enum Attribute {
 export enum BinaryOperator {
   Left = 1,
   Right = 2,
+}
+
+export enum Call {
+  FuncRef = 1,
+  Args = 2,
 }
 
 export enum Subscript {

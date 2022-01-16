@@ -13,11 +13,7 @@ export default function createMethod(src: {
     {
       get(target, property, receiver) {
         if (property === Sym.call) {
-          return (f: {
-            args: Expression[];
-            env: Environment;
-            lhs: Reference;
-          }) => {
+          return (f: { args: Expression[]; env: Environment }) => {
             f.args.unshift(src.boundObj);
             Reflect.get(src.funcObj, Sym.call)(f);
           };

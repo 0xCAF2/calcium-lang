@@ -16,7 +16,7 @@ export default function createList(value: Expression[]): InternalType {
       get(target, property, receiver) {
         if (property === Sym.evaluate)
           return (env: Environment) => {
-            list = value.map((v) => evaluate(v, env));
+            list = list.map((v) => evaluate(v, env));
             return self;
           };
         else if (property === Sym.value) return list;

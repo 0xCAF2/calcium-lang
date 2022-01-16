@@ -9,9 +9,11 @@ import * as Builtin from "../builtin";
 import { InternalType } from "../type";
 import Index from "../indexes";
 import { Result } from "./block";
-import { InconsistentBlock } from "../error";
+import { FunctionCalled, InconsistentBlock } from "../error";
 import * as Kw from "../keyword";
 import OutputFunction from "./outputFunction";
+import Address from "./address";
+import { None } from "../factory";
 
 export default class Runtime {
   breakpoints = new Set<number>();
@@ -129,11 +131,38 @@ export default class Runtime {
     }
 
     let stmt = this.currentStatement;
-    const cmd = this.parser.read(stmt);
+    let cmd = this.parser.read(stmt);
     if (cmd instanceof Cmd.End) {
       return Status.Terminated;
     }
-    cmd.execute(this.env);
+
+    const callerAddress = this.env.address.clone();
+    const lastCommand =
+      this.env.commandsWithCall[this.env.commandsWithCall.length - 1];
+    if (lastCommand && callerAddress.isAt(lastCommand.address)) {
+      cmd = lastCommand.command;
+      const returnedValue = this.env.commandsWithCall.pop()?.returnedValue;
+      if (returnedValue) {
+        this.env.returnedValue = returnedValue;
+      }
+    }
+
+    try {
+      cmd.execute(this.env);
+    } catch (e) {
+      if (e instanceof FunctionCalled) {
+        this.env.commandsWithCall.push({
+          address: callerAddress,
+          command: cmd,
+          returnedValue:
+            this.env.returnedValue === None
+              ? undefined
+              : this.env.returnedValue,
+        });
+      } else {
+        throw e;
+      }
+    }
 
     if (this.isPaused) return Status.Paused;
 

@@ -21,16 +21,11 @@ export default function createFunction(src: {
       get(target, property, receiver) {
         if (property === Sym.name) return src.name;
         else if (property === Sym.call)
-          return (f: {
-            args: Expression[];
-            env: Environment;
-            lhs: Reference | typeof None;
-          }) => {
+          return (f: { args: InternalType[]; env: Environment }) => {
             invoke({
               address: src.address,
               args: f.args,
               env: f.env,
-              lhs: f.lhs,
               params: src.params,
               parent: src.parent,
             });

@@ -1,5 +1,4 @@
 export { default as Assignment } from "./assignment";
-export { default as Call } from "./call";
 export { default as Class } from "./class";
 export { default as Command } from "./command";
 export { default as Comment } from "./comment";
@@ -8,6 +7,7 @@ export { default as Def } from "./def";
 export { default as Elif } from "./elif";
 export { default as Else } from "./else";
 export { default as End } from "./end";
+export { default as Expression } from "./expression";
 export { default as ForEach } from "./forEach";
 export { default as ForRange } from "./forRange";
 export { default as If } from "./if";

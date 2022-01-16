@@ -31,27 +31,11 @@ export default class Parser {
   ) {
     // an assignment
     this.table.set(Kw.Command.Assignment, (stmt) => {
-      const lhs = this.translateReference(
+      const lhs = this.readReference(
         stmt[Index.Assignment.Lhs] as JSONElementType.Reference
       );
-      const rhs = this.translateExpression(stmt[Index.Assignment.Rhs]);
+      const rhs = this.readExpression(stmt[Index.Assignment.Rhs]);
       return new Cmd.Assignment(lhs, rhs);
-    });
-
-    // a function call
-    this.table.set(Kw.Command.Call, (stmt) => {
-      const lhsElem = stmt[Index.Call.Lhs];
-      const lhs =
-        lhsElem === null
-          ? None
-          : this.translateReference(lhsElem as JSONElementType.Reference);
-      const funcRef = this.translateReference(
-        stmt[Index.Call.FuncRef] as JSONElementType.Reference
-      );
-      const args = this.extractArgs(
-        stmt[Index.Call.Args] as JSONElementType.Any[]
-      );
-      return new Cmd.Call(lhs, funcRef, args);
     });
 
     this.table.set(Kw.Command.Class, (stmt) => {
@@ -76,18 +60,18 @@ export default class Parser {
 
     // compound assignment
     this.table.set(Kw.Command.CompoundAddition, (stmt) => {
-      const lhs = this.translateReference(
+      const lhs = this.readReference(
         stmt[Index.Assignment.Lhs] as JSONElementType.Reference
       );
-      const rhs = this.translateExpression(stmt[Index.Assignment.Rhs]);
+      const rhs = this.readExpression(stmt[Index.Assignment.Rhs]);
       return new Cmd.CompoundAssignment(Kw.BinaryOperator.Addition, lhs, rhs);
     });
 
     this.table.set(Kw.Command.CompoundMultiplication, (stmt) => {
-      const lhs = this.translateReference(
+      const lhs = this.readReference(
         stmt[Index.Assignment.Lhs] as JSONElementType.Reference
       );
-      const rhs = this.translateExpression(stmt[Index.Assignment.Rhs]);
+      const rhs = this.readExpression(stmt[Index.Assignment.Rhs]);
       return new Cmd.CompoundAssignment(
         Kw.BinaryOperator.Multiplication,
         lhs,
@@ -102,7 +86,7 @@ export default class Parser {
     });
 
     this.table.set(Kw.Command.Elif, (stmt) => {
-      const condition = this.translateExpression(stmt[Index.Conditional.Expr]);
+      const condition = this.readExpression(stmt[Index.Conditional.Expr]);
       return new Cmd.Elif(condition);
     });
 
@@ -115,9 +99,14 @@ export default class Parser {
       return new Cmd.End();
     });
 
+    this.table.set(Kw.Command.Expression, (stmt) => {
+      const expr = this.readExpression(stmt[Index.Expression.value]);
+      return new Cmd.Expression(expr);
+    });
+
     this.table.set(Kw.Command.ForEach, (stmt) => {
       const elemName = stmt[Index.ForEach.ElementName] as string;
-      const iterable = this.translateReference(
+      const iterable = this.readReference(
         stmt[Index.ForEach.Iterable] as JSONElementType.Reference
       );
       return new Cmd.ForEach(elemName, iterable);
@@ -130,14 +119,14 @@ export default class Parser {
         stop: Expr.Expression,
         step = null;
       if (rangeValues.length === 1) {
-        stop = this.translateExpression(rangeValues[0]);
+        stop = this.readExpression(rangeValues[0]);
       } else if (rangeValues.length === 2) {
-        start = this.translateExpression(rangeValues[0]);
-        stop = this.translateExpression(rangeValues[1]);
+        start = this.readExpression(rangeValues[0]);
+        stop = this.readExpression(rangeValues[1]);
       } else if (rangeValues.length === 3) {
-        start = this.translateExpression(rangeValues[0]);
-        stop = this.translateExpression(rangeValues[1]);
-        step = this.translateExpression(rangeValues[2]);
+        start = this.readExpression(rangeValues[0]);
+        stop = this.readExpression(rangeValues[1]);
+        step = this.readExpression(rangeValues[2]);
       } else {
         throw new Err.InvalidRange();
       }
@@ -145,7 +134,7 @@ export default class Parser {
     });
 
     this.table.set(Kw.Command.If, (stmt) => {
-      const condition = this.translateExpression(stmt[Index.Conditional.Expr]);
+      const condition = this.readExpression(stmt[Index.Conditional.Expr]);
       return new Cmd.If(condition);
     });
 
@@ -159,7 +148,7 @@ export default class Parser {
 
     this.table.set(Kw.Command.Return, (stmt) => {
       if (stmt.length > Index.Return.Expr) {
-        const expr = this.translateExpression(stmt[Index.Return.Expr]);
+        const expr = this.readExpression(stmt[Index.Return.Expr]);
         return new Cmd.Return(expr);
       } else {
         return new Cmd.Return();
@@ -167,7 +156,7 @@ export default class Parser {
     });
 
     this.table.set(Kw.Command.While, (stmt) => {
-      const condition = this.translateExpression(stmt[Index.Conditional.Expr]);
+      const condition = this.readExpression(stmt[Index.Conditional.Expr]);
       return new Cmd.While(condition);
     });
   }
@@ -180,7 +169,7 @@ export default class Parser {
   extractArgs(args: JSONElementType.Any[]): Expr.Expression[] {
     const convertedArgs: Expr.Expression[] = [];
     for (let a of args) {
-      const arg = this.translateExpression(a);
+      const arg = this.readExpression(a);
       convertedArgs.push(arg);
     }
     return convertedArgs;
@@ -201,15 +190,15 @@ export default class Parser {
     }
   }
 
-  translateBinaryOperation(
+  readBinaryOperation(
     operator: string,
     expr: JSONElementType.BinaryOperation
   ): Expr.BinaryOperation {
     if (!Kw.BinaryOperatorsSet.has(operator)) {
       throw new Err.CannotConvertToExpression();
     }
-    const left = this.translateExpression(expr[Index.BinaryOperator.Left]);
-    const right = this.translateExpression(expr[Index.BinaryOperator.Right]);
+    const left = this.readExpression(expr[Index.BinaryOperator.Left]);
+    const right = this.readExpression(expr[Index.BinaryOperator.Right]);
     return new Expr.BinaryOperation(operator, left, right);
   }
 
@@ -218,31 +207,39 @@ export default class Parser {
    * @param expr any JSON element
    * @returns an internal type or a reference
    */
-  translateExpression(expr: JSONElementType.Any): Expr.Expression {
+  readExpression(expr: JSONElementType.Any): Expr.Expression {
     if (Array.isArray(expr)) {
       if (Array.isArray(expr[0])) {
         // expr is an array literal.
         const list: Expr.Expression[] = [];
         for (let elem of expr[0]) {
-          list.push(this.translateExpression(elem));
+          list.push(this.readExpression(elem));
         }
         return createList(list) as InternalType;
       } else if (
-        expr[0] === Kw.Reference.Variable ||
         expr[0] === Kw.Reference.Attribute ||
-        expr[0] === Kw.Reference.Subscript
+        expr[0] === Kw.Reference.Subscript ||
+        expr[0] === Kw.Reference.Variable
       ) {
         // expr is a reference.
-        return this.translateReference(expr);
+        return this.readReference(expr);
+      } else if (expr[0] === Kw.Reference.Call) {
+        const func = this.readReference(
+          expr[Index.Call.FuncRef] as JSONElementType.Reference
+        );
+        const args = this.extractArgs(
+          expr[Index.Call.Args] as JSONElementType.Any[]
+        );
+        return new Expr.Call(func, args);
       } else if (
         expr[0] === Kw.UnaryOperator.BitwiseNot ||
         expr[0] === Kw.UnaryOperator.Negative ||
         expr[0] === Kw.UnaryOperator.Not
       ) {
-        return this.translateUnaryOperation(expr[0], expr);
+        return this.readUnaryOperation(expr[0], expr);
       } else if (expr.length === 3) {
         // expr could be a binary operation
-        return this.translateBinaryOperation(expr[0], expr);
+        return this.readBinaryOperation(expr[0], expr);
       } else {
         throw new Err.CannotConvertToExpression();
       }
@@ -267,7 +264,7 @@ export default class Parser {
    * @param expr a reference array such as `["var", "x"]`
    * @returns a reference object to be evaluated later
    */
-  translateReference(expr: JSONElementType.Reference): Expr.Reference {
+  readReference(expr: JSONElementType.Reference): Expr.Reference {
     const kw = expr[Index.Expression.Keyword];
     if (kw === Kw.Reference.Variable) {
       return new Expr.Variable(expr[Index.Variable.Name] as string);
@@ -282,18 +279,18 @@ export default class Parser {
       );
     } else if (kw === Kw.Reference.Subscript) {
       if (expr.length === 3) {
-        const ref = this.translateReference(expr[Index.Subscript.ReferredObj]);
-        const index = this.translateExpression(expr[Index.Subscript.IndexExpr]);
+        const ref = this.readReference(expr[Index.Subscript.ReferredObj]);
+        const index = this.readExpression(expr[Index.Subscript.IndexExpr]);
         return new Expr.Subscript(ref, index);
       } else if (expr.length >= 4) {
         // slice
-        const ref = this.translateReference(
+        const ref = this.readReference(
           expr[Index.Subscript.ReferredObj] as JSONElementType.Reference
         );
-        const lower = this.translateExpression(
+        const lower = this.readExpression(
           expr[Index.Subscript.SliceStart] as JSONElementType.Any
         );
-        const upper = this.translateExpression(
+        const upper = this.readExpression(
           expr[Index.Subscript.SliceEnd] as JSONElementType.Any
         );
         return new Expr.Subscript(ref, lower, upper);
@@ -304,7 +301,7 @@ export default class Parser {
     }
   }
 
-  translateUnaryOperation(
+  readUnaryOperation(
     operator: string,
     expr: JSONElementType.UnaryOperation
   ): Expr.UnaryOperation {

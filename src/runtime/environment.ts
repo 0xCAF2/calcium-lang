@@ -5,6 +5,7 @@ import OutputFunction from "./outputFunction";
 import Statement from "./statement";
 import { InternalType } from "../type";
 import { None } from "../factory";
+import { Command } from "../command";
 
 /**
  * the runtime environment that has data to control the execution
@@ -19,6 +20,15 @@ export default class Environment {
    * a stack of command blocks
    */
   blocks: Block[] = [];
+
+  /**
+   * used when a function call is returned, and the command is restarted
+   */
+  commandsWithCall: {
+    address: Address;
+    command: Command;
+    returnedValue?: InternalType;
+  }[] = [];
 
   /**
    * an array that contains code lines

@@ -24,20 +24,16 @@ export default function createClassObj(src: {
           return (f: {
             args: Expression[];
             env: Environment;
-            lhs: Reference | typeof None;
-          }) => {
+          }): InternalType => {
             const instance = createInstance({ classObj: self });
             f.args.unshift(instance);
             // check whether __init__ is defined
             const __init__ = src.attributes.get("__init__");
             if (__init__) {
-              Reflect.get(__init__, Sym.call)(f);
               f.env.returnedValue = instance;
-            } else {
-              if (f.lhs !== None) {
-                (f.lhs as Reference).assign(instance, f.env);
-              }
+              Reflect.get(__init__, Sym.call)(f);
             }
+            return instance;
           };
         else if (property === Sym.superclass) return src.superclass;
         else if (typeof property === "string") {

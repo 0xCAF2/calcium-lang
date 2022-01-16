@@ -17,6 +17,7 @@ export class CannotInherit extends Error {
 
 export class CommandNotFound extends Error {}
 export class FewerElement extends Error {}
+export class FunctionCalled extends Error {}
 export class InconsistentBlock extends Error {}
 export class IndexMustBeInt extends Error {}
 export class InvalidRange extends Error {}
