@@ -1,7 +1,5 @@
 import { InternalType } from "../type";
 import { default as Sym } from "../symbol";
-import { Expression, Reference } from "../expression";
-import Environment from "../runtime/environment";
 import { AttributeNotFound } from "../error";
 import object from "./object";
 import createMethod from "./method";
@@ -21,6 +19,7 @@ export default function createSuper(src: {
             if (funcObj) {
               return createMethod({ funcObj, boundObj: src.instance });
             }
+            superclass = Reflect.get(src.classObj, Sym.superclass);
           }
         }
         throw new AttributeNotFound(property.toString());

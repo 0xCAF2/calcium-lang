@@ -1,8 +1,8 @@
 import Environment from "../runtime/environment";
 import { Expression } from "../expression";
 import { InternalType } from "../type";
-import { default as Sym } from "../symbol";
-import { SuperIsFailed } from "../error";
+import { evaluate } from "../util";
+import { createSuper } from "../factory";
 
 /**
  * built-in `super()` function
@@ -14,9 +14,7 @@ export default function super_(
   args: Expression[],
   env: Environment
 ): InternalType {
-  const self = env.context.lookUp("self");
-  if (self === undefined) {
-    throw new SuperIsFailed();
-  }
-  return Reflect.get(self, Sym.super);
+  const classObj = evaluate(args[0], env);
+  const self = evaluate(args[1], env);
+  return createSuper({ classObj, instance: self });
 }

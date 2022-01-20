@@ -86,6 +86,16 @@ export default class BinaryOperation {
       return createBool(l !== r);
     },
 
+    [Kw.BinaryOperator.GreaterThan]: (l, r) => {
+      if (typeof l === "number" && typeof r === "number") {
+        return createBool(l > r);
+      } else if (typeof l === "string" && typeof r === "string") {
+        return createBool(l > r);
+      } else {
+        throw new OperationFailed();
+      }
+    },
+
     [Kw.BinaryOperator.LessThan]: (l, r) => {
       if (typeof l === "number" && typeof r === "number") {
         return createBool(l < r);
