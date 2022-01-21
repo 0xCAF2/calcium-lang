@@ -44,20 +44,6 @@ export enum Result {
 }
 
 /**
- */
-const results: Map<Kind, Result> = new Map([
-  [Kind.Ifs, Result.Exited],
-  [Kind.IfElifElse, Result.Jumpped],
-  [Kind.ForRange, Result.Jumpped],
-  [Kind.ForEach, Result.Jumpped],
-  [Kind.While, Result.Jumpped],
-  [Kind.Call, Result.Jumpped],
-  [Kind.ClassDef, Result.Exited],
-  [Kind.Try, Result.Exited],
-  [Kind.Except, Result.Exited],
-]);
-
-/**
  * a syntactic scope
  */
 export class Block {

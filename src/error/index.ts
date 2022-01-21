@@ -20,6 +20,7 @@ export class FewerElement extends Error {}
 export class FunctionCalled extends Error {}
 export class InconsistentBlock extends Error {}
 export class IndexMustBeInt extends Error {}
+export class InvalidBreak extends Error {}
 export class InvalidRange extends Error {}
 export class KeyMustBeStrOrInt extends Error {}
 export class ListIsEmpty extends Error {}

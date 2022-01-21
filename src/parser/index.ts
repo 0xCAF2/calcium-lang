@@ -38,6 +38,10 @@ export default class Parser {
       return new Cmd.Assignment(lhs, rhs);
     });
 
+    this.table.set(Kw.Command.Break, (stmt) => {
+      return new Cmd.Break();
+    });
+
     this.table.set(Kw.Command.Class, (stmt) => {
       const className = stmt[Index.Class.Name] as string;
       const superclassName = stmt[Index.Class.SuperclassName] as string | null;

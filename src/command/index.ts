@@ -1,4 +1,5 @@
 export { default as Assignment } from "./assignment";
+export { default as Break } from "./break";
 export { default as Class } from "./class";
 export { default as Command } from "./command";
 export { default as Comment } from "./comment";

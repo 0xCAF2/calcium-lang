@@ -13,12 +13,13 @@ export default class Return implements Command {
   execute(env: Environment) {
     env.returnedValue = evaluate(this.expr ?? None, env);
     while (true) {
-      const block = env.blocks.pop();
-      switch (block?.kind) {
+      const block = env.lastBlock;
+      switch (block.kind) {
         case Kind.Call:
           block.exit(env);
           return;
         default:
+          env.blocks.pop();
           continue;
       }
     }
