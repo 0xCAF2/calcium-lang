@@ -23,7 +23,13 @@ export default function createList(value: Expression[]): InternalType {
         else if (property === Sym.class) return "list";
         else if (property === Sym.description) {
           return `[${list
-            .map((v) => Reflect.get(v, Sym.description))
+            .map((v) => {
+              if (Reflect.get(v, Sym.class) === "str") {
+                return `'${Reflect.get(v, Sym.description)}'`;
+              } else {
+                return Reflect.get(v, Sym.description);
+              }
+            })
             .join(", ")}]`;
         } else if (property === Sym.iterator) {
           let counter = 0;

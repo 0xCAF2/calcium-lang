@@ -2,7 +2,8 @@ r = True
 l = [0, 2]
 l.append(4)
 size = len(l)
-r = r and (size == 3) and (l[1] == 2)
+l[0] = "0"
+r = r and (size == 3) and (l[1] == 2) and str(l) == "['0', 2, 4]"
 print(r)
 
 # for e in l:
