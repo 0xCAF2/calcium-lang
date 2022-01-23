@@ -12,7 +12,6 @@ import { Result } from "./block";
 import { FunctionCalled, InconsistentBlock } from "../error";
 import * as Kw from "../keyword";
 import OutputFunction from "./outputFunction";
-import Address from "./address";
 import { None } from "../factory";
 
 export default class Runtime {

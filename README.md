@@ -49,7 +49,7 @@ print(
 will be translated to:
 
 ```json
-
+[
   [1, [], "#", "0_20"],
   [1, [], "def", "is_remainder_zero", ["x", "y"]],
     [2, [], "=", ["var", "r"], ["==", ["%", ["var", "x"], ["var", "y"]], 0]],
@@ -88,7 +88,7 @@ const runtime = new Calcium.Runtime(code); // code should be a JSON array.
 creates the runtime. To output from print function, set a callback as:
 
 ```javascript
-runtime.setPrintFunction((desc) => console.log(desc));
+runtime.setOutputFunction((desc) => console.log(desc));
 ```
 
 To execute the code, invoke `run()` method.
