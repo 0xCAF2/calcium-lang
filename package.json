@@ -2,10 +2,29 @@
   "name": "calcium-lang",
   "version": "0.6.4",
   "description": "Calcium language interpreter",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dict/index.d.ts",
   "files": [
-    "index.js"
+    "dist"
   ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "eslint": "^7.27.0",
+    "jest": "^27.0.4",
+    "@babel/core": "^7.12.17",
+    "@babel/preset-env": "^7.12.17",
+    "@babel/preset-typescript": "^7.12.17",
+    "@types/jest": "^27.0.4",
+    "@types/node": "^14.14.31",
+    "babel-jest": "^27.0.4",
+    "ts-jest": "^27.0.4",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.5"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/0xCAF2/calcium-lang.git"
@@ -15,17 +34,10 @@
     "language",
     "interpreter"
   ],
-  "author": "0xCAF2 <ht@0xcaf2.dev>",
+  "author": "0xCAF2 <pub@0xcaf2.dev>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/0xCAF2/calcium-lang/issues"
   },
-  "homepage": "https://github.com/0xCAF2/calcium-lang#readme",
-  "devDependencies": {
-    "eslint": "^7.27.0",
-    "jest": "^27.0.4"
-  },
-  "scripts": {
-    "test": "jest"
-  }
+  "homepage": "https://github.com/0xCAF2/calcium-lang#readme"
 }
