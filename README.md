@@ -6,14 +6,15 @@ Calcium language interpreter
 
 ```javascript
 const code = [
-  [1, [], "call", null, ["var", "print"], ["Hello, World!"]],
+  [1, [], "#", "0_20"],
+  [1, [], "expr", ["call", ["var", "print"], ["Hello, World."]]],
   [1, [], "end"],
 ];
 ```
 
 prints "Hello, World!".
 
-Calcium supports basic statements such as `if`, `for`, `while`, function, and class definition. [See here](https://sites.google.com/view/calcium-lang/commands).
+Calcium supports basic statements such as `if`, `while`, functions, and class definition. [See here](https://sites.google.com/view/calcium-lang/commands).
 
 ## Python's subset code can be translated to Calcium code.
 
@@ -23,6 +24,7 @@ Calcium supports basic statements such as `if`, `for`, `while`, function, and cl
 def is_remainder_zero(x, y):
     r = (x % y) == 0
     return r
+
 
 prime = []
 for i in range(101):
@@ -38,13 +40,17 @@ for i in range(101):
     if j == i:
         prime.append(i)
 result = prime
-print(result)
+print(
+    str(result)
+    == "[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]"
+)
 ```
 
 will be translated to:
 
 ```json
-[
+
+  [1, [], "#", "0_20"],
   [1, [], "def", "is_remainder_zero", ["x", "y"]],
     [2, [], "=", ["var", "r"], ["==", ["%", ["var", "x"], ["var", "y"]], 0]],
     [2, [], "return", ["var", "r"]],
@@ -55,7 +61,7 @@ will be translated to:
       [3, [], "ifs"],
         [4, [], "if", [">=", ["var", "j"], ["var", "i"]]],
           [5, [], "break"],
-      [3, [], "call", ["var", "is_zero"], ["var", "is_remainder_zero"], [["var", "i"], ["var", "j"]]],
+      [3, [], "=", ["var", "is_zero"], ["call", ["var", "is_remainder_zero"], [["var", "i"], ["var", "j"]]]],
       [3, [], "ifs"],
         [4, [], "if", ["var", "is_zero"]],
           [5, [], "break"],
@@ -63,9 +69,9 @@ will be translated to:
           [5, [], "+=", ["var", "j"], 1],
     [2, [], "ifs"],
       [3, [], "if", ["==", ["var", "j"], ["var", "i"]]],
-        [4, [], "call", null, ["attr", "prime", "append"], [["var", "i"]]],
+        [4, [], "expr", ["call", ["attr", "prime", "append"], [["var", "i"]]]],
   [1, [], "=", ["var", "result"], ["var", "prime"]],
-  [1, [], "call", null, ["var", "print"], [["var", "result"]]],
+  [1, [], "expr", ["call", ["var", "print"], [["==", ["call", ["var", "str"], [["var", "result"]]], "[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]"]]]],
   [1, [], "end"]
 ]
 ```
@@ -75,19 +81,18 @@ Calcium's one line corresponds to Python's one.
 ## The Calcium engine can be embedded in a Web page or a WebView.
 
 ```javascript
-import { Calcium } from "calcium-lang";
-const engine = new Calcium.Engine(code); // code should be a JSON array.
+import * as Calcium from "calcium-lang";
+const runtime = new Calcium.Runtime(code); // code should be a JSON array.
 ```
 
-creates the runtime engine. To output from print function, set a callback as:
+creates the runtime. To output from print function, set a callback as:
 
 ```javascript
-engine.setPrintFunction((desc) => console.log(desc));
+runtime.setPrintFunction((desc) => console.log(desc));
 ```
 
 To execute the code, invoke `run()` method.
 
 ```javascript
-engine.run(); // Run the code.
+runtime.run(); // Run the code.
 ```
-
