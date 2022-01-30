@@ -32,8 +32,7 @@ for i in range(101):
     while True:
         if j >= i:
             break
-        is_zero = is_remainder_zero(i, j)
-        if is_zero:
+        if is_remainder_zero(i, j):
             break
         else:
             j += 1
@@ -61,9 +60,8 @@ will be translated to:
       [3, [], "ifs"],
         [4, [], "if", [">=", ["var", "j"], ["var", "i"]]],
           [5, [], "break"],
-      [3, [], "=", ["var", "is_zero"], ["call", ["var", "is_remainder_zero"], [["var", "i"], ["var", "j"]]]],
       [3, [], "ifs"],
-        [4, [], "if", ["var", "is_zero"]],
+        [4, [], "if", ["call", ["var", "is_remainder_zero"], [["var", "i"], ["var", "j"]]]],
           [5, [], "break"],
         [4, [], "else"],
           [5, [], "+=", ["var", "j"], 1],
@@ -76,7 +74,7 @@ will be translated to:
 ]
 ```
 
-Calcium's one line corresponds to Python's one.
+Basically Calcium's one line corresponds to Python's one.
 
 ## The Calcium engine can be embedded in a Web page or a WebView.
 
