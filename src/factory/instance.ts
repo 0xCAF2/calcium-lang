@@ -1,11 +1,11 @@
 import { InternalType } from "../type";
 import { default as Sym } from "../symbol";
 import Environment from "../runtime/environment";
-import functionType from "./functionType";
 import createMethod from "./method";
-import createSuper from "./super";
 
-export default function createInstance(src: {
+export default function createInstance({
+  classObj,
+}: {
   classObj: InternalType;
 }): InternalType {
   const self = new Proxy(
@@ -13,14 +13,14 @@ export default function createInstance(src: {
     {
       get(target, property, receiver) {
         if (property === Sym.evaluate) return (env: Environment) => self;
-        else if (property === Sym.class) return src.classObj;
+        else if (property === Sym.class) return classObj;
 
         const instanceProp = Reflect.get(target, property);
         if (instanceProp) return instanceProp;
 
-        const classProp = Reflect.get(src.classObj, property);
+        const classProp = Reflect.get(classObj, property);
         const __class__ = Reflect.get(classProp, Sym.class);
-        if (__class__ === functionType) {
+        if (__class__ === "function") {
           return createMethod({ funcObj: classProp, boundObj: self });
         } else {
           return classProp;

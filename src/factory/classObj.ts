@@ -8,7 +8,11 @@ import { AttributeNotFound } from "../error";
 import createInstance from "./instance";
 import { None } from ".";
 
-export default function createClassObj(src: {
+export default function createClassObj({
+  className,
+  superclass,
+  attributes,
+}: {
   className: string;
   superclass: InternalType;
   attributes: Namespace;
@@ -18,7 +22,7 @@ export default function createClassObj(src: {
     {
       get(target, property, receiver) {
         if (property === Sym.class) return typeObj;
-        else if (property === Sym.name) return src.className;
+        else if (property === Sym.name) return className;
         else if (property === Sym.evaluate) return (env: Environment) => self;
         else if (property === Sym.call)
           return (f: {
@@ -28,16 +32,16 @@ export default function createClassObj(src: {
             const instance = createInstance({ classObj: self });
             f.args.unshift(instance);
             // check whether __init__ is defined
-            const __init__ = src.attributes.get("__init__");
+            const __init__ = attributes.get("__init__");
             if (__init__) {
               f.env.returnedValue = instance;
               Reflect.get(__init__, Sym.call)(f);
             }
             return instance;
           };
-        else if (property === Sym.superclass) return src.superclass;
+        else if (property === Sym.superclass) return superclass;
         else if (typeof property === "string") {
-          const attr = src.attributes.get(property);
+          const attr = attributes.get(property);
           if (attr === undefined) {
             throw new AttributeNotFound(property);
           }

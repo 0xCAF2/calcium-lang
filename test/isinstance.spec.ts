@@ -3,8 +3,8 @@ import * as Calcium from "../src";
 
 it("isinstance.py", () => {
   const code = [
-  [1, [], "#", "0_20"],
-  [1, [], "class", "C", "object"],
+  [1, [], "#", "0_21"],
+  [1, [], "class", "C"],
     [2, [], "pass"],
   [1, [], "=", ["var", "c"], ["call", ["var", "C"], []]],
   [1, [], "=", ["var", "r"], ["call", ["var", "isinstance"], [["var", "c"], ["var", "C"]]]],

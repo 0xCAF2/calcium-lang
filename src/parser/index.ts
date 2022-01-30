@@ -30,12 +30,12 @@ export default class Parser {
     >()
   ) {
     // an assignment
-    this.table.set(Kw.Command.Assignment, (stmt) => {
+    this.table.set(Kw.Command.Assign, (stmt) => {
       const lhs = this.readReference(
-        stmt[Index.Assignment.Lhs] as JSONElementType.Reference
+        stmt[Index.Assign.Lhs] as JSONElementType.Reference
       );
-      const rhs = this.readExpression(stmt[Index.Assignment.Rhs]);
-      return new Cmd.Assignment(lhs, rhs);
+      const rhs = this.readExpression(stmt[Index.Assign.Rhs]);
+      return new Cmd.Assign(lhs, rhs);
     });
 
     this.table.set(Kw.Command.Break, (stmt) => {
@@ -65,22 +65,18 @@ export default class Parser {
     // compound assignment
     this.table.set(Kw.Command.CompoundAddition, (stmt) => {
       const lhs = this.readReference(
-        stmt[Index.Assignment.Lhs] as JSONElementType.Reference
+        stmt[Index.Assign.Lhs] as JSONElementType.Reference
       );
-      const rhs = this.readExpression(stmt[Index.Assignment.Rhs]);
-      return new Cmd.CompoundAssignment(Kw.BinaryOperator.Addition, lhs, rhs);
+      const rhs = this.readExpression(stmt[Index.Assign.Rhs]);
+      return new Cmd.CompoundAssign(Kw.BinaryOperator.Addition, lhs, rhs);
     });
 
     this.table.set(Kw.Command.CompoundMultiplication, (stmt) => {
       const lhs = this.readReference(
-        stmt[Index.Assignment.Lhs] as JSONElementType.Reference
+        stmt[Index.Assign.Lhs] as JSONElementType.Reference
       );
-      const rhs = this.readExpression(stmt[Index.Assignment.Rhs]);
-      return new Cmd.CompoundAssignment(
-        Kw.BinaryOperator.Multiplication,
-        lhs,
-        rhs
-      );
+      const rhs = this.readExpression(stmt[Index.Assign.Rhs]);
+      return new Cmd.CompoundAssign(Kw.BinaryOperator.Multiplication, lhs, rhs);
     });
 
     this.table.set(Kw.Command.Def, (stmt) => {
@@ -108,33 +104,12 @@ export default class Parser {
       return new Cmd.Expression(expr);
     });
 
-    this.table.set(Kw.Command.ForEach, (stmt) => {
-      const elemName = stmt[Index.ForEach.ElementName] as string;
-      const iterable = this.readReference(
-        stmt[Index.ForEach.Iterable] as JSONElementType.Reference
+    this.table.set(Kw.Command.For, (stmt) => {
+      const variable = this.readReference(
+        stmt[Index.For.Variable] as JSONElementType.Reference
       );
-      return new Cmd.ForEach(elemName, iterable);
-    });
-
-    this.table.set(Kw.Command.ForRange, (stmt) => {
-      const varName = stmt[Index.ForRange.VariableName] as string;
-      const rangeValues = stmt[Index.ForRange.Values] as JSONElementType.Any[];
-      let start = null,
-        stop: Expr.Expression,
-        step = null;
-      if (rangeValues.length === 1) {
-        stop = this.readExpression(rangeValues[0]);
-      } else if (rangeValues.length === 2) {
-        start = this.readExpression(rangeValues[0]);
-        stop = this.readExpression(rangeValues[1]);
-      } else if (rangeValues.length === 3) {
-        start = this.readExpression(rangeValues[0]);
-        stop = this.readExpression(rangeValues[1]);
-        step = this.readExpression(rangeValues[2]);
-      } else {
-        throw new Err.InvalidRange();
-      }
-      return new Cmd.ForRange(varName, start, stop, step);
+      const iterable = this.readExpression(stmt[Index.For.Iterable]);
+      return new Cmd.For(variable, iterable);
     });
 
     this.table.set(Kw.Command.If, (stmt) => {
@@ -222,6 +197,7 @@ export default class Parser {
         return createList(list) as InternalType;
       } else if (
         expr[0] === Kw.Reference.Attribute ||
+        expr[0] === Kw.Reference.Comma ||
         expr[0] === Kw.Reference.Subscript ||
         expr[0] === Kw.Reference.Variable
       ) {
@@ -283,7 +259,9 @@ export default class Parser {
       );
     } else if (kw === Kw.Reference.Subscript) {
       if (expr.length === 3) {
-        const ref = this.readReference(expr[Index.Subscript.ReferredObj]);
+        const ref = this.readReference(
+          expr[Index.Subscript.ReferredObj] as JSONElementType.Reference
+        );
         const index = this.readExpression(expr[Index.Subscript.IndexExpr]);
         return new Expr.Subscript(ref, index);
       } else if (expr.length >= 4) {
@@ -300,6 +278,12 @@ export default class Parser {
         return new Expr.Subscript(ref, lower, upper);
       }
       throw new Err.FewerElement();
+    } else if (kw === Kw.Reference.Comma) {
+      const refs: Expr.Reference[] = [];
+      for (let i = 1; i < expr.length; ++i) {
+        refs.push(this.readReference(expr[i] as JSONElementType.Reference));
+      }
+      return new Expr.Comma(refs);
     } else {
       throw new Err.UnsupportedKeyword(kw as string);
     }

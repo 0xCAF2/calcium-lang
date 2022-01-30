@@ -3,7 +3,7 @@ import * as Calcium from "../src";
 
 it("str.py", () => {
   const code = [
-  [1, [], "#", "0_20"],
+  [1, [], "#", "0_21"],
   [1, [], "=", ["var", "s"], "test"],
   [1, [], "=", ["var", "p"], ["call", ["attr", "s", "find"], ["e"]]],
   [1, [], "=", ["var", "l"], ["call", ["attr", "s", "split"], ["s"]]],

@@ -7,19 +7,25 @@ import Namespace from "../runtime/namespace";
 import { FunctionCalled } from "../error";
 import { InternalType } from "../type";
 
-export default function invoke(f: {
+export default function invoke({
+  address,
+  args,
+  env,
+  params,
+  parent,
+}: {
   address: Address;
   args: InternalType[];
   env: Environment;
   params: string[];
   parent: Namespace;
 }) {
-  const callerAddress = f.env.address.clone();
-  const local = new Namespace(f.parent);
-  for (let i = 0; i < f.args.length; ++i) {
-    local.register(f.params[i], f.args[i]);
+  const callerAddress = env.address.clone();
+  const local = new Namespace(parent);
+  for (let i = 0; i < args.length; ++i) {
+    local.register(params[i], args[i]);
   }
-  const calleeAddress = f.address.clone();
+  const calleeAddress = address.clone();
   calleeAddress.call = callerAddress.call + 1;
   const block = new Block(
     Kind.Call,
@@ -37,6 +43,6 @@ export default function invoke(f: {
       return Result.Jumpped;
     }
   );
-  block.willEnter(f.env);
+  block.willEnter(env);
   throw new FunctionCalled();
 }

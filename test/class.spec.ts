@@ -3,8 +3,8 @@ import * as Calcium from "../src";
 
 it("class.py", () => {
   const code = [
-  [1, [], "#", "0_20"],
-  [1, [], "class", "MyClass", "object"],
+  [1, [], "#", "0_21"],
+  [1, [], "class", "MyClass"],
     [2, [], "def", "__init__", ["self", "name"]],
       [3, [], "=", ["attr", "self", "name"], ["var", "name"]],
     [2, [], "def", "greet", ["self"]],

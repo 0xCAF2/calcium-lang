@@ -17,15 +17,16 @@ export type Exit = (env: Environment) => Result;
  * the kind of a `Block`
  */
 export enum Kind {
-  Ifs = "Ifs",
-  IfElifElse = "IfElifElse",
-  ForRange = "ForRange",
-  ForEach = "ForEach",
-  While = "While",
   Call = "Call",
   ClassDef = "ClassDef",
-  Try = "Try",
   Except = "Except",
+  For = "For",
+  IfElifElse = "IfElifElse",
+  Ifs = "Ifs",
+  ForEach = "ForEach",
+  ForRange = "ForRange",
+  Try = "Try",
+  While = "While",
 }
 
 export enum Result {

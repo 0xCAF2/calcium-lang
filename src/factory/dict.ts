@@ -21,7 +21,7 @@ export default function createDict(value: {}): InternalType {
             return self;
           };
         else if (property === Sym.value) return map;
-        else if (property === Sym.iterator) {
+        else if (property === Sym.iter) {
           let counter = 0;
           const keys = new Array(...map.keys());
           return {

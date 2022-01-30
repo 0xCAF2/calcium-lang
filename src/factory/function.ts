@@ -1,15 +1,17 @@
 import Address from "../runtime/address";
-import { Expression, Reference } from "../expression";
 import Namespace from "../runtime/namespace";
 import { InternalType } from "../type";
 import { default as Sym } from "../symbol";
 import Environment from "../runtime/environment";
 import { AttributeNotFound } from "../error";
 import { invoke } from "../util";
-import functionType from "./functionType";
-import { None } from ".";
 
-export default function createFunction(src: {
+export default function createFunction({
+  address,
+  name,
+  params,
+  parent,
+}: {
   address: Address;
   name: string;
   params: string[];
@@ -19,19 +21,19 @@ export default function createFunction(src: {
     {},
     {
       get(target, property, receiver) {
-        if (property === Sym.name) return src.name;
+        if (property === Sym.name) return name;
         else if (property === Sym.call)
           return (f: { args: InternalType[]; env: Environment }) => {
             invoke({
-              address: src.address,
+              address: address,
               args: f.args,
               env: f.env,
-              params: src.params,
-              parent: src.parent,
+              params: params,
+              parent: parent,
             });
           };
         else if (property === Sym.evaluate) return (env: Environment) => self;
-        else if (property === Sym.class) return functionType;
+        else if (property === Sym.class) return "function";
         throw new AttributeNotFound(property.toString());
       },
     }

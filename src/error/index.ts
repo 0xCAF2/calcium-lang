@@ -15,6 +15,7 @@ export class CannotInherit extends Error {
   }
 }
 
+export class CannotUnpackValue extends Error {}
 export class CommandNotFound extends Error {}
 export class FewerElement extends Error {}
 export class FunctionCalled extends Error {}
@@ -36,6 +37,7 @@ export class NotIterable extends Error {}
 export class OperationFailed extends Error {}
 export class SliceNotSupported extends Error {}
 export class SuperIsFailed extends Error {}
+export class TupleIsImmutable extends Error {}
 
 export class UnsupportedKeyword extends Error {
   constructor(public readonly keyword: string) {

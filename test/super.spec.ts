@@ -3,8 +3,8 @@ import * as Calcium from "../src";
 
 it("super.py", () => {
   const code = [
-  [1, [], "#", "0_20"],
-  [1, [], "class", "A", "object"],
+  [1, [], "#", "0_21"],
+  [1, [], "class", "A"],
     [2, [], "def", "__init__", ["self", "n"]],
       [3, [], "=", ["attr", "self", "m"], ["*", ["var", "n"], 2]],
       [3, [], "pass"],

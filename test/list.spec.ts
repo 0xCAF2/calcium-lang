@@ -3,7 +3,7 @@ import * as Calcium from "../src";
 
 it("list.py", () => {
   const code = [
-  [1, [], "#", "0_20"],
+  [1, [], "#", "0_21"],
   [1, [], "=", ["var", "r"], true],
   [1, [], "=", ["var", "l"], [[0, 2]]],
   [1, [], "expr", ["call", ["attr", "l", "append"], [4]]],

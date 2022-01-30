@@ -4,7 +4,7 @@ export enum Statement {
   Keyword = 2,
 }
 
-export enum Assignment {
+export enum Assign {
   Lhs = 3,
   Rhs = 4,
 }
@@ -27,14 +27,9 @@ export enum Except {
   ObjName = 4,
 }
 
-export enum ForEach {
-  ElementName = 3,
+export enum For {
+  Variable = 3,
   Iterable = 4,
-}
-
-export enum ForRange {
-  VariableName = 3,
-  Values = 4,
 }
 
 export enum FuncDef {

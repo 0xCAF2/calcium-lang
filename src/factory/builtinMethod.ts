@@ -6,7 +6,10 @@ import { AttributeNotFound } from "../error";
 import { FuncBody } from "../builtin";
 import None from "./none";
 
-export default function createBuiltinMethod(src: {
+export default function createBuiltinMethod({
+  name,
+  body,
+}: {
   name: string;
   body: FuncBody;
 }): InternalType {
@@ -14,10 +17,10 @@ export default function createBuiltinMethod(src: {
     {},
     {
       get(target, property, receiver) {
-        if (property === Sym.name) return src.name;
+        if (property === Sym.name) return name;
         else if (property === Sym.call)
           return (f: { args: Expression[]; env: Environment }) => {
-            const result = src.body(f.args, f.env);
+            const result = body(f.args, f.env);
             return result;
           };
         else if (property === Sym.evaluate) return (env: Environment) => self;

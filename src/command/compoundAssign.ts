@@ -6,7 +6,7 @@ import evaluate from "../util/evaluate";
 /**
  * eg. `+=`, `-=` or `*=`
  */
-export default class CompoundAssignment implements Command {
+export default class CompoundAssign implements Command {
   /**
    *
    * @param operator same as the correspoding binary operator

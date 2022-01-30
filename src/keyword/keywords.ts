@@ -29,7 +29,7 @@ export enum BinaryOperator {
 }
 
 export enum Command {
-  Assignment = "=",
+  Assign = "=",
   Break = "break",
   Class = "class",
   Comment = "#",
@@ -43,8 +43,7 @@ export enum Command {
   End = "end",
   Except = "except",
   Expression = "expr",
-  ForEach = "for each",
-  ForRange = "for range",
+  For = "for",
   If = "if",
   Ifs = "ifs",
   Import = "import",
@@ -58,6 +57,7 @@ export enum Command {
 export enum Reference {
   Attribute = "attr",
   Call = "call",
+  Comma = ",",
   Subscript = "sub",
   Variable = "var",
 }

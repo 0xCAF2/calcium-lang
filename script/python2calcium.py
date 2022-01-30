@@ -3,36 +3,37 @@ import ast
 import json
 import traceback
 
-VERSION = "0_20"
+VERSION = "0_21"
 
 KEYWORD_COMMENT = "#"
 
-KEYWORD_VARIABLE = "var"
+# expressions
 KEYWORD_ATTRIBUTE = "attr"
-KEYWORD_SUBSCRIPT = "sub"
 KEYWORD_CALL = "call"
-
+KEYWORD_COMMA = ","
 KEYWORD_EXPR = "expr"
-KEYWORD_ASSIGNMENT = "="
-KEYWORD_FOR_RANGE = "for range"
-KEYWORD_FOR_EACH = "for each"
-KEYWORD_WHILE = "while"
+KEYWORD_SUBSCRIPT = "sub"
+KEYWORD_TUPLE = "tuple"
+KEYWORD_VARIABLE = "var"
+
+# commands
+KEYWORD_ASSIGN = "="
 KEYWORD_BREAK = "break"
+KEYWORD_CLASS_DEF = "class"
 KEYWORD_CONTINUE = "continue"
-KEYWORD_IFS = "ifs"
-KEYWORD_IF = "if"
 KEYWORD_ELIF = "elif"
 KEYWORD_ELSE = "else"
-KEYWORD_RETURN = "return"
-KEYWORD_FUNC_DEF = "def"
-KEYWORD_CLASS_DEF = "class"
-KEYWORD_TRY = "try"
-KEYWORD_EXCEPT = "except"
-KEYWORD_RAISE = "raise"
 KEYWORD_END = "end"
+KEYWORD_EXCEPT = "except"
+KEYWORD_FOR = "for"
+KEYWORD_FUNC_DEF = "def"
+KEYWORD_IF = "if"
+KEYWORD_IFS = "ifs"
 KEYWORD_PASS = "pass"
-
-OBJECT_TYPE_NAME = "object"
+KEYWORD_RAISE = "raise"
+KEYWORD_RETURN = "return"
+KEYWORD_TRY = "try"
+KEYWORD_WHILE = "while"
 
 
 class PyCaVisitor(ast.NodeVisitor):
@@ -70,14 +71,6 @@ class PyCaVisitor(ast.NodeVisitor):
 
     def get_arguments(self, args):
         return [self.visit(arg) for arg in args]
-
-    def output_for_range(self, node):
-        elems = [node.target.id, [self.visit(arg) for arg in node.iter.args]]
-        self.output_node(node, KEYWORD_FOR_RANGE, elems)
-
-    def output_for_each(self, node):
-        elems = [node.target.id, self.visit(node.iter)]
-        self.output_node(node, KEYWORD_FOR_EACH, elems)
 
     def output_elif_or_else(self, node, indent):
         if (
@@ -175,18 +168,20 @@ class PyCaVisitor(ast.NodeVisitor):
         elems = [node.name]
         if len(node.bases) > 0:
             elems.append(node.bases[0].id)
-        else:
-            elems.append(OBJECT_TYPE_NAME)
         self.output_node(node, KEYWORD_CLASS_DEF, elems)
         for stmt in node.body:
             self.visit(stmt)
 
     def visit_Assign(self, node):
-        assert len(node.targets) == 1, "invalid lhs: line {}".format(node.lineno)
         elems = []
-        elems.append(self.visit(node.targets[0]))
+        if len(node.targets) == 1:
+            elems.append(self.visit(node.targets[0]))
+        else:
+            lhs = [KEYWORD_COMMA]
+            lhs.extend([self.visit(n) for n in node.targets])
+            elems.append(lhs)
         elems.append(self.visit(node.value))
-        self.output_node(node, KEYWORD_ASSIGNMENT, elems)
+        self.output_node(node, KEYWORD_ASSIGN, elems)
 
     def visit_AugAssign(self, node):
         if isinstance(node.op, ast.Add):
@@ -199,13 +194,18 @@ class PyCaVisitor(ast.NodeVisitor):
         self.output_node(node, keyword, elems)
 
     def visit_Tuple(self, node):
-        return [self.visit(e) for e in node.elts]
+        elems = [KEYWORD_TUPLE]
+        elems.extend([self.visit(e) for e in node.elts])
+        return elems
 
     def visit_For(self, node):
-        if isinstance(node.iter, ast.Call):
-            self.output_for_range(node)
-        else:
-            self.output_for_each(node)
+        elems = []
+        var_elem = self.visit(node.target)
+        if isinstance(var_elem, list) and var_elem[0] == KEYWORD_TUPLE:
+            var_elem[0] = KEYWORD_COMMA  # convert to reference in Calcium
+        elems.append(var_elem)
+        elems.append(self.visit(node.iter))
+        self.output_node(node, KEYWORD_FOR, elems)
         for stmt in node.body:
             self.visit(stmt)
 

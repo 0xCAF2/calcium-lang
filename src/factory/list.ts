@@ -7,6 +7,7 @@ import { createInt, None } from ".";
 import { AttributeNotFound, ListIsEmpty } from "../error";
 import createBuiltinMethod from "./builtinMethod";
 import Slice from "../runtime/slice";
+import createIterator from "./iterator";
 
 export default function createList(value: Expression[]): InternalType {
   let list = value;
@@ -31,14 +32,14 @@ export default function createList(value: Expression[]): InternalType {
               }
             })
             .join(", ")}]`;
-        } else if (property === Sym.iterator) {
-          let counter = 0;
-          return {
-            next(): InternalType | undefined {
-              if (counter >= list.length) return undefined;
-              else return list[counter++] as InternalType;
+        } else if (property === Sym.iter) {
+          return createIterator({
+            name: "list_iterator",
+            next: (index) => {
+              if (index >= list.length) return null;
+              else return list[index] as InternalType;
             },
-          };
+          });
         } else if (property === Sym.len) return createInt(list.length);
         else if (property === Sym.slice)
           return (

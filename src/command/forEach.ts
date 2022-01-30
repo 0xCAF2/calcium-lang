@@ -20,7 +20,7 @@ export default class ForEach implements Command {
   ) {}
   execute(env: Environment) {
     const iterableObj = evaluate(this.iterable, env);
-    const iterator = Reflect.get(iterableObj, Sym.iterator);
+    const iterator = Reflect.get(iterableObj, Sym.iter);
     const block = new Block(
       Kind.ForEach,
       env.address,

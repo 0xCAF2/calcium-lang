@@ -3,20 +3,19 @@ import * as Calcium from "../src";
 
 it("prime.py", () => {
   const code = [
-  [1, [], "#", "0_20"],
+  [1, [], "#", "0_21"],
   [1, [], "def", "is_remainder_zero", ["x", "y"]],
     [2, [], "=", ["var", "r"], ["==", ["%", ["var", "x"], ["var", "y"]], 0]],
     [2, [], "return", ["var", "r"]],
   [1, [], "=", ["var", "prime"], [[]]],
-  [1, [], "for range", "i", [101]],
+  [1, [], "for", ["var", "i"], ["call", ["var", "range"], [101]]],
     [2, [], "=", ["var", "j"], 2],
     [2, [], "while", true],
       [3, [], "ifs"],
         [4, [], "if", [">=", ["var", "j"], ["var", "i"]]],
           [5, [], "break"],
-      [3, [], "=", ["var", "is_zero"], ["call", ["var", "is_remainder_zero"], [["var", "i"], ["var", "j"]]]],
       [3, [], "ifs"],
-        [4, [], "if", ["var", "is_zero"]],
+        [4, [], "if", ["call", ["var", "is_remainder_zero"], [["var", "i"], ["var", "j"]]]],
           [5, [], "break"],
         [4, [], "else"],
           [5, [], "+=", ["var", "j"], 1],

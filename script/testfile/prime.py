@@ -9,8 +9,7 @@ for i in range(101):
     while True:
         if j >= i:
             break
-        is_zero = is_remainder_zero(i, j)
-        if is_zero:
+        if is_remainder_zero(i, j):
             break
         else:
             j += 1

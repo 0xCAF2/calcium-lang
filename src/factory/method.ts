@@ -4,7 +4,10 @@ import { Expression, Reference } from "../expression";
 import Environment from "../runtime/environment";
 import { AttributeNotFound } from "../error";
 
-export default function createMethod(src: {
+export default function createMethod({
+  funcObj,
+  boundObj,
+}: {
   funcObj: InternalType;
   boundObj: InternalType;
 }): InternalType {
@@ -14,8 +17,8 @@ export default function createMethod(src: {
       get(target, property, receiver) {
         if (property === Sym.call) {
           return (f: { args: Expression[]; env: Environment }) => {
-            f.args.unshift(src.boundObj);
-            Reflect.get(src.funcObj, Sym.call)(f);
+            f.args.unshift(boundObj);
+            Reflect.get(funcObj, Sym.call)(f);
           };
         }
         throw new AttributeNotFound(property.toString());

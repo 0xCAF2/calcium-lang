@@ -6,6 +6,7 @@ import Slice from "../runtime/slice";
 import { createInt, createList } from ".";
 import createBuiltinMethod from "./builtinMethod";
 import { retrieveValue } from "../util";
+import createIterator from "./iterator";
 
 /**
  *
@@ -20,14 +21,12 @@ export default function createStr(value: string): InternalType {
         if (property === Sym.description) return value;
         else if (property === Sym.value) return value;
         else if (property === Sym.evaluate) return (env: Environment) => self;
-        else if (property === Sym.iterator) {
-          let counter = 0;
-          return {
-            next(): InternalType | undefined {
-              if (counter >= value.length) return undefined;
-              else return createStr(value[counter++]);
-            },
-          };
+        else if (property === Sym.iter) {
+          return createIterator({
+            name: "str_iterator",
+            next: (index) =>
+              index >= value.length ? null : createStr(value[index]),
+          });
         } else if (property === Sym.len) return createInt(value.length);
         else if (property === Sym.slice)
           return (lower: InternalType, upper: InternalType): InternalType => {

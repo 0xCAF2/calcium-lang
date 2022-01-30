@@ -6,11 +6,12 @@ import Attribute from "./attribute";
 import Call from "./call";
 import Subscript from "./subscript";
 import Variable from "./variable";
+import Comma from "./comma";
 
 /**
  * any expression that contains an identifier
  */
-export type Reference = Attribute | Subscript | Variable;
+export type Reference = Attribute | Comma | Subscript | Variable;
 
 /**
  * any expression that is not evaluated
@@ -27,6 +28,7 @@ export {
   Attribute,
   BinaryOperation,
   Call,
+  Comma,
   Subscript,
   UnaryOperation,
   Variable,

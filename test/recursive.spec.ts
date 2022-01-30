@@ -3,7 +3,7 @@ import * as Calcium from "../src";
 
 it("recursive.py", () => {
   const code = [
-  [1, [], "#", "0_20"],
+  [1, [], "#", "0_21"],
   [1, [], "def", "fib", ["n"]],
     [2, [], "ifs"],
       [3, [], "if", ["or", ["==", ["var", "n"], 1], ["==", ["var", "n"], 2]]],
