@@ -9,7 +9,7 @@ import createTuple from "../factory/tuple";
 
 /**
  * built-in `enumerate()` function
- * @param args accept one argument that is iterable
+ * @param args accept an argument that is iterable
  * @param env
  * @returns a tuple with an index and an element
  */
