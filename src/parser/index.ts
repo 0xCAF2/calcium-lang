@@ -105,9 +105,15 @@ export default class Parser {
     });
 
     this.table.set(Kw.Command.For, (stmt) => {
-      const variable = this.readReference(
-        stmt[Index.For.Variable] as JSONElementType.Reference
-      );
+      const variables = stmt[Index.For.Variables] as Array<any>;
+      let variable: Expr.Reference | Expr.Comma;
+      if (variables[0] === Kw.Syntax.Comma) {
+        variable = this.readExpression(variables) as Expr.Comma;
+      } else {
+        variable = this.readReference(
+          stmt[Index.For.Variables] as JSONElementType.Reference
+        );
+      }
       const iterable = this.readExpression(stmt[Index.For.Iterable]);
       return new Cmd.For(variable, iterable);
     });
@@ -197,7 +203,6 @@ export default class Parser {
         return createList(list) as InternalType;
       } else if (
         expr[0] === Kw.Reference.Attribute ||
-        expr[0] === Kw.Reference.Comma ||
         expr[0] === Kw.Reference.Subscript ||
         expr[0] === Kw.Reference.Variable
       ) {
@@ -211,6 +216,16 @@ export default class Parser {
           expr[Index.Call.Args] as JSONElementType.Any[]
         );
         return new Expr.Call(func, args);
+      } else if (expr[0] === Kw.Syntax.Comma) {
+        const refs: Expr.Reference[] = [];
+        for (let i = 1; i < expr.length; ++i) {
+          refs.push(this.readReference(expr[i] as JSONElementType.Reference));
+        }
+        return new Expr.Comma(refs);
+      } else if (expr[0] === Kw.Syntax.KwArg) {
+        const keyword = expr[1];
+        const value = this.readExpression(expr[2]);
+        return new Expr.KwArg(keyword, value);
       } else if (
         expr[0] === Kw.UnaryOperator.BitwiseNot ||
         expr[0] === Kw.UnaryOperator.Negative ||
@@ -278,12 +293,6 @@ export default class Parser {
         return new Expr.Subscript(ref, lower, upper);
       }
       throw new Err.FewerElement();
-    } else if (kw === Kw.Reference.Comma) {
-      const refs: Expr.Reference[] = [];
-      for (let i = 1; i < expr.length; ++i) {
-        refs.push(this.readReference(expr[i] as JSONElementType.Reference));
-      }
-      return new Expr.Comma(refs);
     } else {
       throw new Err.UnsupportedKeyword(kw as string);
     }

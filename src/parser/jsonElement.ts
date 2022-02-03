@@ -10,7 +10,9 @@ export type DictLiteral = {};
 /**
  * JSON representation of reference expressions in Calcium
  */
-export type Reference = Attribute | Call | Comma | Subscript | Variable;
+export type Reference = Attribute | Call | Subscript | Variable;
+
+export type Syntax = Comma | KwArg;
 
 /**
  * JSON representation of binary operators in Calcium
@@ -54,6 +56,8 @@ export type Call = ["call", Reference, Any[]];
 
 export type Comma = [",", ...Any[]];
 
+export type KwArg = ["kwarg", string, Any];
+
 export type Subscript = ["sub", Reference, IndexOrKey, SliceEnd?];
 
 export type Variable = ["var", string];
@@ -70,5 +74,6 @@ export type Any =
   | ArrayLiteral
   | DictLiteral
   | Reference
+  | Syntax
   | BinaryOperation
   | UnaryOperation;

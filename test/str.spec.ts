@@ -10,14 +10,14 @@ it("str.py", () => {
   [1, [], "=", ["var", "r"], ["call", ["var", "isinstance"], [["var", "l"], ["var", "list"]]]],
   [1, [], "=", ["var", "r"], ["and", ["and", ["and", ["var", "r"], ["==", ["var", "p"], 1]], ["==", ["sub", ["var", "l"], 0], "te"]], ["==", ["sub", ["var", "l"], 1], "t"]]],
   [1, [], "=", ["var", "s2"], ["call", ["attr", "s", "replace"], ["t", "l"]]],
-  [1, [], "=", ["var", "r"], ["and", ["var", "r"], ["==", ["var", "s2"], "lesl"]]],
+  [1, [], "=", ["var", "r"], ["and", ["and", ["var", "r"], ["==", ["var", "s2"], "lesl"]], ["==", ["call", ["var", "len"], [["call", ["attr", "s", "replace"], ["t", "b"]]]], 4]]],
   [1, [], "expr", ["call", ["var", "print"], [["var", "r"]]]],
   [1, [], "end"]
 ] as any[];
   const runtime = new Calcium.Runtime(code);
   runtime.setOutputFunction((desc) => {
     console.log(desc);
-    expect(desc).toMatch('True');
+    expect(desc).toMatch('True\n');
   });
   expect(runtime.run()).toBe(Calcium.Status.Terminated);
 });

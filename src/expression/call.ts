@@ -24,12 +24,10 @@ export default class Call {
         return this.returnedValue;
       }
 
-      const evaluatedArgs = this.args.map((a) => evaluate(a, env));
-
       const func = evaluate(this.funcRef, env);
       this.willGetReturnedValue = true;
       // FunctionCalled could be thrown
-      return Reflect.get(func, Sym.call)({ args: evaluatedArgs, env });
+      return Reflect.get(func, Sym.call)(this.args, env);
     } else {
       return this.returnedValue;
     }

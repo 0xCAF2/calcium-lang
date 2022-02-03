@@ -4,6 +4,7 @@ import { InternalType } from "../type";
 import { default as Sym } from "../symbol";
 import { evaluate } from "../util";
 import { createStr } from "../factory";
+import FuncBody from "./funcBody";
 
 /**
  * built-in `str()` function
@@ -11,11 +12,10 @@ import { createStr } from "../factory";
  * @param env
  * @returns a string value
  */
-export default function str(
-  args: Expression[],
-  env: Environment
-): InternalType {
+const str: FuncBody = (args: Expression[], env: Environment): InternalType => {
   const target = evaluate(args[0], env);
   const strValue = Reflect.get(target, Sym.description);
   return createStr(strValue);
-}
+};
+
+export default str;

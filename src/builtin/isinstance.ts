@@ -3,8 +3,9 @@ import { Expression } from "../expression";
 import { InternalType } from "../type";
 import { default as Sym } from "../symbol";
 import { evaluate } from "../util";
-import { builtinFunctionOrMethod, type as typeObj } from "../factory";
+import { builtinFunctionOrMethod, typeObj } from "../factory";
 import { createBool } from "../factory";
+import FuncBody from "./funcBody";
 
 /**
  * built-in `isinstance()` function
@@ -13,10 +14,10 @@ import { createBool } from "../factory";
  * @param env
  * @returns a boolean value
  */
-export default function isinstance(
+const isinstance: FuncBody = (
   args: Expression[],
   env: Environment
-): InternalType {
+): InternalType => {
   const instance = evaluate(args[0], env);
   const classOrType = evaluate(args[1], env);
   const __class__ = Reflect.get(classOrType, Sym.class);
@@ -44,4 +45,6 @@ export default function isinstance(
   } else {
     throw new TypeError();
   }
-}
+};
+
+export default isinstance;

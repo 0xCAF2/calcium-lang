@@ -7,6 +7,7 @@ import Call from "./call";
 import Subscript from "./subscript";
 import Variable from "./variable";
 import Comma from "./comma";
+import KwArg from "./kwArg";
 
 /**
  * any expression that contains an identifier
@@ -19,6 +20,7 @@ export type Reference = Attribute | Comma | Subscript | Variable;
 export type Expression =
   | BinaryOperation
   | Call
+  | KwArg
   | InternalType
   | Reference
   | UnaryOperation
@@ -29,6 +31,7 @@ export {
   BinaryOperation,
   Call,
   Comma,
+  KwArg,
   Subscript,
   UnaryOperation,
   Variable,

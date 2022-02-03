@@ -3,6 +3,7 @@ import { Expression } from "../expression";
 import { InternalType } from "../type";
 import { retrieveValue } from "../util";
 import { createInt } from "../factory";
+import FuncBody from "./funcBody";
 
 /**
  * built-in `int()` function
@@ -10,10 +11,7 @@ import { createInt } from "../factory";
  * @param env
  * @returns an integer value
  */
-export default function int(
-  args: Expression[],
-  env: Environment
-): InternalType {
+const int: FuncBody = (args: Expression[], env: Environment): InternalType => {
   const target = retrieveValue(args[0], env);
   if (typeof target === "string") {
     const num = parseInt(target);
@@ -24,4 +22,6 @@ export default function int(
   } else {
     throw new TypeError();
   }
-}
+};
+
+export default int;

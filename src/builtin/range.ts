@@ -1,22 +1,21 @@
 import Environment from "../runtime/environment";
 import { Expression } from "../expression";
 import { InternalType } from "../type";
-import { default as Sym } from "../symbol";
-import { evaluate, retrieveValue } from "../util";
+import { retrieveValue } from "../util";
 import createIterator from "../factory/iterator";
 import { createInt } from "../factory";
-import createTuple from "../factory/tuple";
+import FuncBody from "./funcBody";
 
 /**
  * built-in `range()` function
  * @param args start, stop, step
  * @param env
- * @returns a counter
+ * @returns a range object (i.e. iterator)
  */
-export default function range(
+const range: FuncBody = (
   args: Expression[],
   env: Environment
-): InternalType {
+): InternalType => {
   let start: number, stop: number, step: number;
   if (args.length === 1) {
     start = 0;
@@ -45,4 +44,6 @@ export default function range(
     },
   });
   return rangeObject;
-}
+};
+
+export default range;

@@ -1,12 +1,11 @@
 import Namespace from "../runtime/namespace";
 import { InternalType } from "../type";
 import { default as Sym } from "../symbol";
-import { default as typeObj } from "./type";
+import { default as typeObj } from "./typeObj";
 import Environment from "../runtime/environment";
-import { Expression, Reference } from "../expression";
+import { Expression } from "../expression";
 import { AttributeNotFound } from "../error";
 import createInstance from "./instance";
-import { None } from ".";
 
 export default function createClassObj({
   className,
@@ -25,17 +24,14 @@ export default function createClassObj({
         else if (property === Sym.name) return className;
         else if (property === Sym.evaluate) return (env: Environment) => self;
         else if (property === Sym.call)
-          return (f: {
-            args: Expression[];
-            env: Environment;
-          }): InternalType => {
+          return (args: Expression[], env: Environment): InternalType => {
             const instance = createInstance({ classObj: self });
-            f.args.unshift(instance);
+            args.unshift(instance);
             // check whether __init__ is defined
             const __init__ = attributes.get("__init__");
             if (__init__) {
-              f.env.returnedValue = instance;
-              Reflect.get(__init__, Sym.call)(f);
+              env.returnedValue = instance;
+              Reflect.get(__init__, Sym.call)(args, env);
             }
             return instance;
           };

@@ -28,7 +28,7 @@ export enum Except {
 }
 
 export enum For {
-  Variable = 3,
+  Variables = 3,
   Iterable = 4,
 }
 
@@ -68,6 +68,11 @@ export enum BinaryOperator {
 export enum Call {
   FuncRef = 1,
   Args = 2,
+}
+
+export enum KwArg {
+  Keyword = 1,
+  Value = 2,
 }
 
 export enum Subscript {

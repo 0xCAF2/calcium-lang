@@ -57,9 +57,13 @@ export enum Command {
 export enum Reference {
   Attribute = "attr",
   Call = "call",
-  Comma = ",",
   Subscript = "sub",
   Variable = "var",
+}
+
+export enum Syntax {
+  Comma = ",",
+  KwArg = "kwarg",
 }
 
 export enum UnaryOperator {

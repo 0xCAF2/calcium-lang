@@ -1,11 +1,10 @@
-import { Expression } from "../expression";
-import { None } from "../factory";
 import Address from "../runtime/address";
 import { Block, Kind, Result } from "../runtime/block";
 import Environment from "../runtime/environment";
 import Namespace from "../runtime/namespace";
 import { FunctionCalled } from "../error";
-import { InternalType } from "../type";
+import { Expression } from "../expression";
+import evaluate from "./evaluate";
 
 export default function invoke({
   address,
@@ -15,7 +14,7 @@ export default function invoke({
   parent,
 }: {
   address: Address;
-  args: InternalType[];
+  args: Expression[];
   env: Environment;
   params: string[];
   parent: Namespace;
@@ -23,7 +22,7 @@ export default function invoke({
   const callerAddress = env.address.clone();
   const local = new Namespace(parent);
   for (let i = 0; i < args.length; ++i) {
-    local.register(params[i], args[i]);
+    local.register(params[i], evaluate(args[i], env));
   }
   const calleeAddress = address.clone();
   calleeAddress.call = callerAddress.call + 1;
