@@ -1,10 +1,9 @@
 import { InternalType } from "../type";
 import { default as Sym } from "../symbol";
-import { Expression, Reference } from "../expression";
+import { Expression } from "../expression";
 import Environment from "../runtime/environment";
 import { AttributeNotFound } from "../error";
 import { FuncBody } from "../builtin";
-import None from "./none";
 
 export default function createBuiltinMethod({
   name,
@@ -19,8 +18,8 @@ export default function createBuiltinMethod({
       get(target, property, receiver) {
         if (property === Sym.name) return name;
         else if (property === Sym.call)
-          return (f: { args: Expression[]; env: Environment }) => {
-            const result = body(f.args, f.env);
+          return (args: Expression[], env: Environment) => {
+            const result = body(args, env);
             return result;
           };
         else if (property === Sym.evaluate) return (env: Environment) => self;

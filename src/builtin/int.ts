@@ -1,25 +1,27 @@
 import Environment from "../runtime/environment";
 import { Expression } from "../expression";
 import { InternalType } from "../type";
-import { default as Sym } from "../symbol";
-import { evaluate } from "../util";
+import { retrieveValue } from "../util";
 import { createInt } from "../factory";
+import FuncBody from "./funcBody";
 
 /**
  * built-in `int()` function
- * @param args accept one argument
+ * @param args accept an argument that is a number or a string
  * @param env
  * @returns an integer value
  */
-export default function int(
-  args: Expression[],
-  env: Environment
-): InternalType {
-  const target = evaluate(args[0], env);
+const int: FuncBody = (args: Expression[], env: Environment): InternalType => {
+  const target = retrieveValue(args[0], env);
   if (typeof target === "string") {
     const num = parseInt(target);
     return createInt(num);
+  } else if (typeof target === "number") {
+    if (Number.isInteger(target)) return createInt(target);
+    else return createInt(Math.floor(target));
   } else {
     throw new TypeError();
   }
-}
+};
+
+export default int;

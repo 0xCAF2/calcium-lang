@@ -6,17 +6,18 @@ import { evaluate } from "../util";
 import createIterator from "../factory/iterator";
 import { createInt } from "../factory";
 import createTuple from "../factory/tuple";
+import FuncBody from "./funcBody";
 
 /**
  * built-in `enumerate()` function
- * @param args accept one argument that is iterable
+ * @param args accept an argument that is iterable
  * @param env
  * @returns a tuple with an index and an element
  */
-export default function enumerate(
+const enumerate: FuncBody = (
   args: Expression[],
   env: Environment
-): InternalType {
+): InternalType => {
   const iterable = evaluate(args[0], env);
   const iterator = Reflect.get(iterable, Sym.iter);
   const enumerateObject = createIterator({
@@ -28,4 +29,6 @@ export default function enumerate(
     },
   });
   return enumerateObject;
-}
+};
+
+export default enumerate;

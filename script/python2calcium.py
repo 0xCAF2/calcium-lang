@@ -12,6 +12,7 @@ KEYWORD_ATTRIBUTE = "attr"
 KEYWORD_CALL = "call"
 KEYWORD_COMMA = ","
 KEYWORD_EXPR = "expr"
+KEYWORD_KWARG = "kwarg"
 KEYWORD_SUBSCRIPT = "sub"
 KEYWORD_TUPLE = "tuple"
 KEYWORD_VARIABLE = "var"
@@ -364,6 +365,14 @@ class PyCaVisitor(ast.NodeVisitor):
         func_ref, args = self.get_call(node)
         elems.append(func_ref)
         elems.append(args)
+        if len(node.keywords) > 0:
+            for kwd in node.keywords:
+                kwarg = [KEYWORD_KWARG]
+                kwarg.append(kwd.arg)
+                kwarg.append(self.visit(kwd.value))
+                # append to the list already added to elems
+                args.append(kwarg)
+
         return elems
 
     def generic_visit(self, node):

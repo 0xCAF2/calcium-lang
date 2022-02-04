@@ -1,7 +1,7 @@
 import Command from "./command";
 import Environment from "../runtime/environment";
 import { InternalType } from "../type";
-import { object, type } from "../factory";
+import { object, typeObj } from "../factory";
 import { default as Sym } from "../symbol";
 import { CannotInherit } from "../error";
 import { Block, Kind, Result } from "../runtime/block";
@@ -30,7 +30,7 @@ export default class Class implements Command {
       superclass = object;
     } else {
       const superclassObj = env.context.lookUp(this.superclassName);
-      if (superclassObj && Reflect.get(superclassObj, Sym.class) === type) {
+      if (superclassObj && Reflect.get(superclassObj, Sym.class) === typeObj) {
         superclass = superclassObj;
       } else {
         throw new CannotInherit(this.superclassName);

@@ -5,6 +5,7 @@ import { default as Sym } from "../symbol";
 import Environment from "../runtime/environment";
 import { AttributeNotFound } from "../error";
 import { invoke } from "../util";
+import { Expression } from "../expression";
 
 export default function createFunction({
   address,
@@ -23,11 +24,11 @@ export default function createFunction({
       get(target, property, receiver) {
         if (property === Sym.name) return name;
         else if (property === Sym.call)
-          return (f: { args: InternalType[]; env: Environment }) => {
+          return (args: Expression[], env: Environment) => {
             invoke({
               address: address,
-              args: f.args,
-              env: f.env,
+              args,
+              env,
               params: params,
               parent: parent,
             });

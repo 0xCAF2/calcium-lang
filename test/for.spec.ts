@@ -18,7 +18,7 @@ it("for.py", () => {
   const runtime = new Calcium.Runtime(code);
   runtime.setOutputFunction((desc) => {
     console.log(desc);
-    expect(desc).toMatch('True');
+    expect(desc).toMatch('True\n');
   });
   expect(runtime.run()).toBe(Calcium.Status.Terminated);
 });

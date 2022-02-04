@@ -6,7 +6,7 @@ export { default as createDict } from "./dict";
 
 export { default as None } from "./none";
 export { default as object } from "./object";
-export { default as type } from "./type";
+export { default as typeObj } from "./typeObj";
 export { default as builtinFunctionOrMethod } from "./builtinFunctionOrMethod";
 
 export { default as createInternalType } from "./internalType";

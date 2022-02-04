@@ -16,9 +16,9 @@ export default function createMethod({
     {
       get(target, property, receiver) {
         if (property === Sym.call) {
-          return (f: { args: Expression[]; env: Environment }) => {
-            f.args.unshift(boundObj);
-            Reflect.get(funcObj, Sym.call)(f);
+          return (args: Expression[], env: Environment) => {
+            args.unshift(boundObj);
+            Reflect.get(funcObj, Sym.call)(args, env);
           };
         }
         throw new AttributeNotFound(property.toString());
