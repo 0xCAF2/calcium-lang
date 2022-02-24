@@ -8,7 +8,7 @@ export { default as Def } from "./def";
 export { default as Elif } from "./elif";
 export { default as Else } from "./else";
 export { default as End } from "./end";
-export { default as Expression } from "./expression";
+export { default as ExprStmt } from "./exprStmt";
 export { default as For } from "./for";
 export { default as If } from "./if";
 export { default as Ifs } from "./ifs";

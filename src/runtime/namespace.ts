@@ -1,15 +1,13 @@
 import { InternalType } from "../type";
 
-type Store = Map<string, InternalType>;
-
 /**
- * saves variables, functions, and so on in each namespace
+ * saves variables, functions, and so on in a specific scope
  */
 export default class Namespace {
   /**
-   * saves key value pairs.
+   * saves by key value pairs
    */
-  private dict: Store = new Map<string, InternalType>();
+  private dict = new Map<string, InternalType>();
 
   /**
    *
@@ -20,6 +18,11 @@ export default class Namespace {
     public readonly isClassScope = false
   ) {}
 
+  /**
+   * searches an attribute in a class scope
+   * @param key attribute's name
+   * @returns
+   */
   get(key: string): InternalType | undefined {
     return this.dict.get(key);
   }
@@ -47,13 +50,13 @@ export default class Namespace {
   }
 
   /**
-   * the parent scope of a function or a method
+   * the parent scope of a function or a method.
    * When this namespace is not a class scope, then returns this.
    */
   get nestingScope(): Namespace {
     let scope: Namespace = this;
-    while (scope.parent!.isClassScope) {
-      scope = scope.parent!;
+    while (scope?.parent?.isClassScope) {
+      scope = scope.parent;
     }
     return scope;
   }

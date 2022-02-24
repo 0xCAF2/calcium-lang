@@ -135,10 +135,10 @@ export default class Runtime {
       return Status.Terminated;
     }
 
-    const callerAddress = this.env.address.clone();
+    const callerAddr = this.env.address.clone();
     const lastCommand =
       this.env.commandsWithCall[this.env.commandsWithCall.length - 1];
-    if (lastCommand && callerAddress.isAt(lastCommand.address)) {
+    if (lastCommand && callerAddr.isAt(lastCommand.address)) {
       cmd = lastCommand.command;
       const returnedValue = this.env.commandsWithCall.pop()?.returnedValue;
       if (returnedValue) {
@@ -151,7 +151,7 @@ export default class Runtime {
     } catch (e) {
       if (e instanceof FunctionCalled) {
         this.env.commandsWithCall.push({
-          address: callerAddress,
+          address: callerAddr,
           command: cmd,
           returnedValue:
             this.env.returnedValue === None

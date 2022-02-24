@@ -7,8 +7,8 @@ import { createInt, None } from ".";
 import { AttributeNotFound, TupleIsImmutable } from "../error";
 import Slice from "../runtime/slice";
 
-export default function createTuple(...value: Expression[]): InternalType {
-  let tuple = value;
+export default function createTuple(...values: Expression[]): InternalType {
+  let tuple = values;
   const self = new Proxy(
     {},
     {

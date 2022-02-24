@@ -42,7 +42,7 @@ export enum Command {
   Else = "else",
   End = "end",
   Except = "except",
-  Expression = "expr",
+  ExprStmt = "expr",
   For = "for",
   If = "if",
   Ifs = "ifs",
