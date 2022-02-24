@@ -175,11 +175,11 @@ class PyCaVisitor(ast.NodeVisitor):
 
     def visit_Assign(self, node):
         elems = []
-        if len(node.targets) == 1:
+        if not isinstance(node.targets[0], ast.Tuple):
             elems.append(self.visit(node.targets[0]))
         else:
             lhs = [KEYWORD_COMMA]
-            lhs.extend([self.visit(n) for n in node.targets])
+            lhs.extend([self.visit(n) for n in node.targets[0].elts])
             elems.append(lhs)
         elems.append(self.visit(node.value))
         self.output_node(node, KEYWORD_ASSIGN, elems)
