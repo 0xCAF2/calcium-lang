@@ -3,7 +3,7 @@ import { Expression, Reference } from "./index";
 import Environment from "../runtime/environment";
 import { default as Sym } from "../symbol";
 import { evaluate } from "../util";
-import { None } from "../factory";
+import { builtinFunctionOrMethod, None } from "../factory";
 
 /**
  * use a unary operator and calculate
@@ -25,9 +25,14 @@ export default class Call {
       }
 
       const func = evaluate(this.funcRef, env);
-      this.willGetReturnedValue = true;
+      if (Reflect.get(func, Sym.class) === builtinFunctionOrMethod) {
+        this.willGetReturnedValue = false;
+      } else {
+        this.willGetReturnedValue = true;
+      }
       // FunctionCalled could be thrown
-      return Reflect.get(func, Sym.call)(this.args, env);
+      const result = Reflect.get(func, Sym.call)(this.args, env);
+      return result;
     } else {
       return this.returnedValue;
     }

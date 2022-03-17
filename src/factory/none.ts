@@ -13,6 +13,7 @@ const None = new Proxy(
       if (property === Sym.description) return "None";
       else if (property === Sym.evaluate) return (env: Environment) => None;
       else if (property === Sym.value) return null;
+      else if (property === Sym.class) return "None";
       else throw new Err.AttributeNotFound(property.toString());
     },
   }

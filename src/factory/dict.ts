@@ -60,7 +60,7 @@ export default function createDict(value: {}): InternalType {
               return createList(keys);
             },
           });
-        }
+        } else if (property === Sym.class) return "dict";
         throw new AttributeNotFound(property.toString());
       },
     }

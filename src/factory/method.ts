@@ -20,7 +20,7 @@ export default function createMethod({
             args.unshift(boundObj);
             Reflect.get(funcObj, Sym.call)(args, env);
           };
-        }
+        } else if (property === Sym.class) return "method";
         throw new AttributeNotFound(property.toString());
       },
     }
