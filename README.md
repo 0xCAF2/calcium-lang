@@ -6,7 +6,7 @@ Calcium language interpreter
 
 ```javascript
 const code = [
-  [1, [], "#", "0_20"],
+  [1, [], "#", "0_21"],
   [1, [], "expr", ["call", ["var", "print"], ["Hello, World."]]],
   [1, [], "end"],
 ];
@@ -49,12 +49,12 @@ will be translated to:
 
 ```json
 [
-  [1, [], "#", "0_20"],
+  [1, [], "#", "0_21"],
   [1, [], "def", "is_remainder_zero", ["x", "y"]],
     [2, [], "=", ["var", "r"], ["==", ["%", ["var", "x"], ["var", "y"]], 0]],
     [2, [], "return", ["var", "r"]],
   [1, [], "=", ["var", "prime"], [[]]],
-  [1, [], "for range", "i", [101]],
+  [1, [], "for", ["var", "i"], ["call", ["var", "range"], [101]]],
     [2, [], "=", ["var", "j"], 2],
     [2, [], "while", true],
       [3, [], "ifs"],
