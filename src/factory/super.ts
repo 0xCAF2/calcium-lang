@@ -24,7 +24,7 @@ export default function createSuper({
             }
             superclass = Reflect.get(classObj, Sym.superclass);
           }
-        }
+        } else if (property === Sym.class) return "super";
         throw new AttributeNotFound(property.toString());
       },
     }

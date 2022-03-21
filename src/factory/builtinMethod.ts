@@ -4,6 +4,7 @@ import { Expression } from "../expression";
 import Environment from "../runtime/environment";
 import { AttributeNotFound } from "../error";
 import { FuncBody } from "../builtin";
+import builtinFunctionOrMethod from "./builtinFunctionOrMethod";
 
 export default function createBuiltinMethod({
   name,
@@ -23,6 +24,7 @@ export default function createBuiltinMethod({
             return result;
           };
         else if (property === Sym.evaluate) return (env: Environment) => self;
+        else if (property === Sym.class) return builtinFunctionOrMethod;
         else throw new AttributeNotFound(property.toString());
       },
     }

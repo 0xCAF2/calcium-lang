@@ -41,7 +41,7 @@ export enum Result {
   /**
    * shifted one point only
    */
-  Exited = "Shifted",
+  Exited = "Exited",
 }
 
 /**

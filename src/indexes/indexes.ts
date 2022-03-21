@@ -27,6 +27,10 @@ export enum Except {
   ObjName = 4,
 }
 
+export enum ExprStmt {
+  Value = 3,
+}
+
 export enum For {
   Variables = 3,
   Iterable = 4,
@@ -52,12 +56,11 @@ export enum Return {
 
 export enum Expression {
   Keyword = 0,
-  value = 3,
 }
 
 export enum Attribute {
-  varName = 1,
-  firstAttributeName = 2,
+  VarName = 1,
+  FirstAttributeName = 2,
 }
 
 export enum BinaryOperator {

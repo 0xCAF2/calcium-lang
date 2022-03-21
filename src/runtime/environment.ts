@@ -55,7 +55,7 @@ export default class Environment {
   /**
    * a call stack
    */
-  stack: Namespace[] = [];
+  callStack: Namespace[] = [];
 
   /**
    *
