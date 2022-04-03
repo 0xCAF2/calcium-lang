@@ -1,43 +1,54 @@
 {
   "name": "calcium-lang",
   "version": "0.14.0",
-  "description": "Calcium language interpreter",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
   "scripts": {
-    "build": "tsc",
-    "prepublishOnly": "npm run build",
+    "serve": "vite preview",
+    "build": "vite build",
+    "test:unit": "cypress open-ct",
+    "test:e2e": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress open'",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "dev": "vite",
+    "preview": "vite preview --port 5050",
+    "test:e2e:ci": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress run'",
+    "test:unit:ci": "cypress run-ct --quiet --reporter spec",
+    "typecheck": "vue-tsc --noEmit",
     "test": "jest"
   },
+  "dependencies": {
+    "@mdi/font": "5.9.55",
+    "pinia": "^2.0.11",
+    "roboto-fontface": "*",
+    "vue": "^3.2.31",
+    "vuetify": "^3.0.0-beta.0",
+    "webfontloader": "^1.0.0"
+  },
   "devDependencies": {
-    "eslint": "^7.27.0",
-    "jest": "^27.0.4",
-    "@babel/core": "^7.12.17",
-    "@babel/preset-env": "^7.12.17",
-    "@babel/preset-typescript": "^7.12.17",
-    "@types/jest": "^27.0.4",
-    "@types/node": "^14.14.31",
-    "babel-jest": "^27.0.4",
-    "ts-jest": "^27.0.4",
-    "ts-node": "^9.1.1",
-    "typescript": "^4.1.5"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/0xCAF2/calcium-lang.git"
-  },
-  "keywords": [
-    "calcium",
-    "language",
-    "interpreter"
-  ],
-  "author": "0xCAF2 <pub@0xcaf2.dev>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/0xCAF2/calcium-lang/issues"
-  },
-  "homepage": "https://github.com/0xCAF2/calcium-lang#readme"
+    "@cypress/vite-dev-server": "^2.2.2",
+    "@cypress/vue": "^3.1.1",
+    "@rushstack/eslint-patch": "^1.1.0",
+    "@types/jest": "^27.4.1",
+    "@types/node": "^16.11.25",
+    "@types/webfontloader": "^1.0.0",
+    "@vitejs/plugin-vue": "^2.2.2",
+    "@volar/vue-language-service": "^0.33.9",
+    "@vue/eslint-config-prettier": "^7.0.0",
+    "@vue/eslint-config-typescript": "^10.0.0",
+    "@vue/tsconfig": "^0.1.3",
+    "@vuetify/vite-plugin": "^1.0.0-alpha.0",
+    "cypress": "^9.5.0",
+    "eslint": "^8.5.0",
+    "eslint-plugin-cypress": "^2.12.1",
+    "eslint-plugin-vue": "^8.2.0",
+    "jest": "^27.5.1",
+    "prettier": "^2.5.1",
+    "sass": "^1.38.0",
+    "sass-loader": "^10.0.0",
+    "start-server-and-test": "^1.14.0",
+    "ts-node": "^10.7.0",
+    "typescript": "~4.5.5",
+    "vite": "^2.8.4",
+    "vue-cli-plugin-vuetify": "~2.4.8",
+    "vue-tsc": "^0.31.4",
+    "vuetify-loader": "^2.0.0-alpha.0"
+  }
 }

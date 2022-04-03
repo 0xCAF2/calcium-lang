@@ -1,17 +1,17 @@
 {
-    "compilerOptions": {
-      "target": "es6",
-      "module": "es6",
-      "moduleResolution": "node",
-      "strict": true,
-      "declaration": true,
-      "pretty": true,
-      "noFallthroughCasesInSwitch": true,
-      "noImplicitAny": true,
-      "noImplicitReturns": true,
-      "strictNullChecks": true,
-      "outDir": "dist",
-      "sourceMap": true
-    },
-    "include": ["src/*", "src/*/*"]
+  "extends": "@vue/tsconfig/tsconfig.web.json",
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
+  "exclude": ["src/**/*.spec.ts"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+
+  "references": [
+    {
+      "path": "./tsconfig.vite-config.json"
+    }
+  ]
 }
