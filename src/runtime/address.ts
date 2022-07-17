@@ -4,9 +4,6 @@
 export default class Address {
   /**
    *
-   */
-  /**
-   *
    * @param indent corresponds to Python's indent
    * @param line line number (index in the code array)
    * @param file module index
@@ -23,7 +20,7 @@ export default class Address {
    * Make a copy
    */
   clone() {
-    return new Address(this.indent, this.line, this.file, this.call);
+    return new Address(this.indent, this.line, this.file, this.call)
   }
 
   /**
@@ -37,7 +34,7 @@ export default class Address {
       this.line === address.line &&
       this.file === address.file &&
       this.call === address.call
-    );
+    )
   }
 
   /**
@@ -45,9 +42,9 @@ export default class Address {
    * @param toPoint
    */
   jump(toPoint: Address) {
-    this.indent = toPoint.indent;
-    this.line = toPoint.line;
-    this.file = toPoint.file;
+    this.indent = toPoint.indent
+    this.line = toPoint.line
+    this.file = toPoint.file
   }
 
   /**
@@ -55,7 +52,7 @@ export default class Address {
    * @param x the delta of the indent
    */
   shift(x: number) {
-    this.indent += x;
+    this.indent += x
   }
 
   /**
@@ -63,6 +60,6 @@ export default class Address {
    * @param y the delta of the line number
    */
   skip(y: number) {
-    this.line += y;
+    this.line += y
   }
 }

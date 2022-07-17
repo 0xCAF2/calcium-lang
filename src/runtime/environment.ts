@@ -1,11 +1,12 @@
-import Address from "./address";
-import { Block } from "./block";
-import Namespace from "./namespace";
-import OutputFunction from "./outputFunction";
-import Statement from "./statement";
-import { InternalType } from "../type";
-import { None } from "../factory";
-import { Command } from "../command";
+import Address from './address'
+import { Block } from './block'
+import Namespace from './namespace'
+import Statement from './statement'
+import { InternalType } from '../type'
+import { None } from '../factory'
+import { Command } from '../command'
+
+export type OutputFunction = (desc: string) => void
 
 /**
  * the runtime environment that has data to control the execution
@@ -14,48 +15,48 @@ export default class Environment {
   /**
    * the current point of the execution
    */
-  address = new Address(1, 0);
+  address = new Address(1, 0)
 
   /**
    * a stack of command blocks
    */
-  blocks: Block[] = [];
+  blocks: Block[] = []
 
   /**
    * used when a function call is returned, and the command is restarted
    */
   commandsWithCall: {
-    address: Address;
-    command: Command;
-    returnedValue?: InternalType;
-  }[] = [];
+    address: Address
+    command: Command
+    returnedValue?: InternalType
+  }[] = []
 
   /**
    * an array that contains code lines
    */
-  code: Statement[];
+  code: Statement[]
 
   /**
    * the current context that has associations from a name to the value
    */
-  context: Namespace;
+  context: Namespace
 
-  exception?: Error;
+  exception?: Error
 
   /**
    * an external function to output from built-in print function
    */
-  funcToOutput?: OutputFunction;
+  funcToOutput?: OutputFunction
 
   /**
    * used to return a value from a function
    */
-  returnedValue: InternalType = None;
+  returnedValue: InternalType = None
 
   /**
    * a call stack
    */
-  callStack: Namespace[] = [];
+  callStack: Namespace[] = []
 
   /**
    *
@@ -63,30 +64,30 @@ export default class Environment {
    * @param builtin the namespace for built-in objects
    */
   constructor(code: string | Statement[], builtin: Namespace) {
-    if (typeof code === "string") {
-      this.code = JSON.parse(code);
+    if (typeof code === 'string') {
+      this.code = JSON.parse(code)
     } else {
-      this.code = code;
+      this.code = code
     }
-    const global = new Namespace(builtin);
-    this.context = global;
+    const global = new Namespace(builtin)
+    this.context = global
   }
 
   /**
    * get the current line index in the code array
    */
   get currentLineIndex(): number {
-    return this.address.line;
+    return this.address.line
   }
 
   get exceptionThrown(): boolean {
-    return this.exception !== undefined;
+    return this.exception !== undefined
   }
 
   /**
    * get the last block that had been entered
    */
   get lastBlock(): Block {
-    return this.blocks[this.blocks.length - 1];
+    return this.blocks[this.blocks.length - 1]
   }
 }
