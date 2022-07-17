@@ -22,7 +22,7 @@ Calcium supports basic statements such as `if`, `while`, functions, and class de
 
 ## Python's subset code can be translated to Calcium code.
 
-[There is a script](https://github.com/0xCAF2/python2calcium) which reads a Python program and generates a JSON array. For example,
+[There is a script](https://github.com/0xCAF2/calcium-py/python2calcium.py) which reads a Python program and generates a JSON array. For example,
 
 ```python
 def is_remainder_zero(x, y):
