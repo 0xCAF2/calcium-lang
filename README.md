@@ -2,6 +2,10 @@
 
 Calcium language interpreter
 
+## OBSOLETE
+
+This project was forked to [calcium-js](https://www.npmjs.com/package/calcium-js) and [calcium-py](https://github.com/0xCAF2/calcium-py).
+
 ## Calcium uses JSON-based code as input.
 
 ```javascript
